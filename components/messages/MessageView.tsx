@@ -73,60 +73,60 @@ export function MessageView({ otherUser, messages: initialMessages, session: ini
   }
 
   return (
-    <div className="container py-10 max-w-4xl">
-      <Link href="/messages" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-6">
+    <div className="container py-6 md:py-10 max-w-4xl px-4 md:px-6 max-w-full overflow-x-hidden">
+      <Link href="/messages" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 md:mb-6 text-sm md:text-base">
         <ArrowLeft className="h-4 w-4" />
-        Mesajlara Dön
+        <span className="truncate">Mesajlara Dön</span>
       </Link>
 
       <Card className="glass-effect">
         <CardContent className="p-0">
           {/* Header */}
-          <div className="flex items-center gap-4 p-4 border-b">
-            <Avatar>
+          <div className="flex items-center gap-3 md:gap-4 p-4 border-b">
+            <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0">
               <AvatarImage src={otherUser.avatarUrl || ''} />
-              <AvatarFallback>
+              <AvatarFallback className="text-sm md:text-base">
                 {otherUser.username[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div>
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="font-semibold">{otherUser.username}</span>
+                <span className="font-semibold text-sm md:text-base truncate">{otherUser.username}</span>
                 {otherUser.isVerified && (
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
                 )}
               </div>
             </div>
           </div>
 
           {/* Messages */}
-          <div className="h-[500px] overflow-y-auto p-4 space-y-4">
+          <div className="h-[400px] md:h-[500px] overflow-y-auto p-3 md:p-4 space-y-4">
             {messages.map((message) => {
               const isOwn = message.senderId === session?.user?.id
               return (
                 <div
                   key={message.id}
-                  className={`flex gap-3 ${isOwn ? 'flex-row-reverse' : ''}`}
+                  className={`flex gap-2 md:gap-3 ${isOwn ? 'flex-row-reverse' : ''}`}
                 >
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="h-8 w-8 flex-shrink-0">
                     <AvatarImage src={message.sender.avatarUrl || ''} />
-                    <AvatarFallback>
+                    <AvatarFallback className="text-xs">
                       {message.sender.username[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className={`flex-1 ${isOwn ? 'text-right' : ''}`}>
+                  <div className={`flex-1 min-w-0 ${isOwn ? 'text-right' : ''}`}>
                     <div
-                      className={`inline-block p-3 rounded-lg ${
+                      className={`inline-block p-2 md:p-3 rounded-lg max-w-[85%] sm:max-w-[75%] md:max-w-none ${
                         isOwn
                           ? 'bg-primary text-primary-foreground'
                           : 'bg-muted'
                       }`}
                     >
-                      <p className="text-sm whitespace-pre-wrap">
+                      <p className="text-xs md:text-sm whitespace-pre-wrap break-words">
                         {message.content}
                       </p>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-xs text-muted-foreground mt-1 whitespace-nowrap">
                       <RelativeTime date={message.createdAt} />
                     </p>
                   </div>
@@ -137,7 +137,7 @@ export function MessageView({ otherUser, messages: initialMessages, session: ini
           </div>
 
           {/* Input */}
-          <form onSubmit={handleSend} className="p-4 border-t">
+          <form onSubmit={handleSend} className="p-3 md:p-4 border-t">
             <div className="flex gap-2">
               <Textarea
                 value={messageContent}
@@ -145,9 +145,9 @@ export function MessageView({ otherUser, messages: initialMessages, session: ini
                 placeholder="Mesajınızı yazın..."
                 rows={2}
                 disabled={isSending}
-                className="resize-none"
+                className="resize-none flex-1 min-w-0"
               />
-              <Button type="submit" disabled={isSending || !messageContent.trim()}>
+              <Button type="submit" disabled={isSending || !messageContent.trim()} className="min-h-[44px] min-w-[44px] flex-shrink-0">
                 <Send className="h-4 w-4" />
               </Button>
             </div>

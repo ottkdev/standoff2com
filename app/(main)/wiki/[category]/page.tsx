@@ -216,22 +216,22 @@ export default async function WikiCategoryPage({ params, searchParams }: PagePro
             Wiki Ana Sayfa
           </Button>
         </Link>
-        <div className="flex items-center gap-4 mb-4">
-          <div className="text-4xl">{category.icon}</div>
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2 gradient-text">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+          <div className="text-3xl sm:text-4xl flex-shrink-0">{category.icon}</div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 gradient-text break-words">
               {category.name}
             </h1>
-            <p className="text-muted-foreground text-lg">{category.description}</p>
+            <p className="text-muted-foreground text-sm md:text-base lg:text-lg break-words">{category.description}</p>
           </div>
         </div>
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <BookOpen className="h-4 w-4" />
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 text-xs md:text-sm text-muted-foreground">
+          <div className="flex items-center gap-1 whitespace-nowrap">
+            <BookOpen className="h-4 w-4 flex-shrink-0" />
             <span>{total} makale</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Eye className="h-4 w-4" />
+          <div className="flex items-center gap-1 whitespace-nowrap">
+            <Eye className="h-4 w-4 flex-shrink-0" />
             <span>{stats._sum.viewCount?.toLocaleString() || 0} toplam görüntülenme</span>
           </div>
         </div>
@@ -273,11 +273,11 @@ export default async function WikiCategoryPage({ params, searchParams }: PagePro
                         <span>{article.viewCount}</span>
                       </div>
                     </div>
-                    <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">
+                    <CardTitle className="text-base md:text-lg line-clamp-2 group-hover:text-primary transition-colors break-words">
                       {article.title}
                     </CardTitle>
                     {article.excerpt && (
-                      <CardDescription className="line-clamp-2 mt-2">
+                      <CardDescription className="line-clamp-2 mt-2 break-words">
                         {article.excerpt}
                       </CardDescription>
                     )}

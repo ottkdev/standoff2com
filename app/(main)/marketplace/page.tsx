@@ -195,14 +195,14 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
               </div>
             </div>
 
-            <form id="filter-form" className="grid gap-3 md:grid-cols-5" action="/marketplace" method="get">
+            <form id="filter-form" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4" action="/marketplace" method="get">
               <Input
                 name="q"
                 placeholder="🔍 Arama: başlık veya açıklama"
                 defaultValue={q}
-                className="md:col-span-2"
+                className="sm:col-span-2 lg:col-span-2"
               />
-              <div className="flex gap-2 md:col-span-2">
+              <div className="flex gap-2 sm:col-span-2 lg:col-span-2">
                 <Input
                   name="minPrice"
                   type="number"
@@ -210,6 +210,7 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
                   step="0.01"
                   placeholder="Min ₺"
                   defaultValue={minPrice ?? ''}
+                  className="flex-1"
                 />
                 <Input
                   name="maxPrice"
@@ -218,12 +219,13 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
                   step="0.01"
                   placeholder="Max ₺"
                   defaultValue={maxPrice ?? ''}
+                  className="flex-1"
                 />
               </div>
               <select
                 name="sort"
                 defaultValue={sort}
-                className="h-10 rounded-md border border-border bg-background px-3 text-sm"
+                className="h-10 rounded-md border border-border bg-background px-3 text-sm sm:col-span-2 lg:col-span-1"
               >
                 <option value="newest">Yeni → Eski</option>
                 <option value="price-asc">Fiyat (Artan)</option>
@@ -231,10 +233,10 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
               </select>
             </form>
             <div className="flex justify-end">
-              <Button type="submit" form="filter-form" className="w-full md:w-auto">Filtrele</Button>
+              <Button type="submit" form="filter-form" className="w-full sm:w-auto min-h-[44px]">Filtrele</Button>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 break-words">
               {[
                 { key: 'ALL', label: 'Tümü' },
                 { key: 'ACTIVE', label: 'Aktif' },
@@ -266,7 +268,7 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
             </div>
 
             {/* Price quick ranges */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 break-words">
               {[
                 { label: '0 - 500₺', min: 0, max: 500 },
                 { label: '500 - 2000₺', min: 500, max: 2000 },

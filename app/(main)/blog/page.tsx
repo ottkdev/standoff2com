@@ -105,7 +105,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
   const totalPages = Math.ceil(total / limit)
 
   return (
-    <div className="container py-8 md:py-10 px-4 md:px-6">
+    <div className="container py-6 md:py-8 lg:py-10 px-4 md:px-6 w-full overflow-x-hidden">
       {/* Header */}
       <div className="mb-8 md:mb-12 text-center relative overflow-hidden rounded-3xl border border-border/70 bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-yellow-500/10 px-4 py-8 md:py-12">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(251,146,60,0.18),transparent_35%)]" />
@@ -118,7 +118,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 gradient-text">
             Blog & Haberler
           </h1>
-          <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto px-4">
+          <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto px-4 break-words">
             Standoff 2 için güncel duyurular, yamalar, turnuvalar ve topluluk rehberleri.
           </p>
         </div>

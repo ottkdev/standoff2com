@@ -74,20 +74,20 @@ export default function CreateListingPage() {
   }
 
   return (
-    <div className="container py-10 max-w-3xl">
-      <Link href="/marketplace" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-6">
+    <div className="container py-6 md:py-10 max-w-3xl px-4 md:px-6 w-full overflow-x-hidden">
+      <Link href="/marketplace" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 md:mb-6 text-sm md:text-base">
         <ArrowLeft className="h-4 w-4" />
-        Marketplace'e Dön
+        <span className="truncate">Marketplace'e Dön</span>
       </Link>
 
       <Card className="glass-effect">
-        <CardHeader>
-          <CardTitle className="text-3xl">Yeni İlan Oluştur</CardTitle>
-          <CardDescription>
+        <CardHeader className="px-4 md:px-6">
+          <CardTitle className="text-2xl md:text-3xl break-words">Yeni İlan Oluştur</CardTitle>
+          <CardDescription className="break-words">
             Standoff 2 ile ilgili eşya, hesap veya hizmet satışı yapabilirsiniz
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 md:px-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="title">Başlık *</Label>
@@ -133,7 +133,7 @@ export default function CreateListingPage() {
               <Label>Görseller (URL)</Label>
               <div className="space-y-2">
                 {formData.images.map((url, index) => (
-                  <div key={index} className="flex gap-2">
+                  <div key={index} className="flex flex-col sm:flex-row gap-2">
                     <Input
                       value={url}
                       onChange={(e) => {
@@ -143,10 +143,12 @@ export default function CreateListingPage() {
                       }}
                       placeholder="https://..."
                       disabled={isLoading}
+                      className="flex-1 min-w-0"
                     />
                     <Button
                       type="button"
                       variant="destructive"
+                      className="min-h-[44px] min-w-[44px]"
                       size="icon"
                       onClick={() => {
                         setFormData({

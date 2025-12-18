@@ -32,8 +32,11 @@
   * {
     @apply border-border;
   }
+  html {
+    @apply overflow-x-hidden;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
     background-image: 
       radial-gradient(at 0% 0%, rgba(251, 146, 60, 0.05) 0px, transparent 50%),
       radial-gradient(at 100% 100%, rgba(251, 191, 36, 0.05) 0px, transparent 50%);
@@ -86,5 +89,36 @@
 
   .animate-glow-pulse {
     animation: glow-pulse 2s ease-in-out infinite;
+  }
+
+  /* Mobile-first text breaking */
+  .break-words {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Ensure containers don't overflow */
+  .container {
+    @apply max-w-full px-4;
+  }
+
+  /* Mobile-first responsive utilities */
+  @media (max-width: 768px) {
+    /* Prevent horizontal scroll */
+    * {
+      max-width: 100%;
+    }
+    
+    /* Touch-friendly buttons */
+    button, a[role="button"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    
+    /* Break long words in user content */
+    p, span, div {
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
   }
 }

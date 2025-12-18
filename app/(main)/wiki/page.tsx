@@ -166,29 +166,29 @@ export default async function WikiPage() {
   }
 
   return (
-    <div className="container py-8 md:py-12 px-4 md:px-6">
+    <div className="container py-6 md:py-8 lg:py-12 px-4 md:px-6 w-full overflow-x-hidden">
       {/* Hero Section */}
       <div className="text-center mb-12">
         <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-4 py-2 mb-6">
           <BookOpen className="h-5 w-5" />
           <span className="font-medium">Standoff 2 Wiki</span>
         </div>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 gradient-text">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 gradient-text break-words px-4">
           Standoff 2 Kapsamlı Rehberi
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+        <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto mb-6 md:mb-8 break-words px-4">
           Oyunun tüm yönlerini keşfedin: silahlar, haritalar, taktikler, güncellemeler ve daha fazlası.
           Profesyonel oyuncular ve yeni başlayanlar için detaylı bilgiler.
         </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <Link href="/wiki/silahlar">
-            <Button size="lg" className="gap-2">
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 md:gap-4 px-4">
+          <Link href="/wiki/silahlar" className="w-full sm:w-auto">
+            <Button size="lg" className="gap-2 w-full sm:w-auto min-h-[44px]">
               <Swords className="h-5 w-5" />
               Silahları Keşfet
             </Button>
           </Link>
-          <Link href="/wiki/taktikler">
-            <Button variant="outline" size="lg" className="gap-2">
+          <Link href="/wiki/taktikler" className="w-full sm:w-auto">
+            <Button variant="outline" size="lg" className="gap-2 w-full sm:w-auto min-h-[44px]">
               <Lightbulb className="h-5 w-5" />
               Taktikler
             </Button>

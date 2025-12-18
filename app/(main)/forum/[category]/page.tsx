@@ -30,16 +30,16 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const { posts, total, pages } = await ForumService.getPostsByCategory(category.id, page)
 
   return (
-    <div className="container py-10">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">{category.name}</h1>
+    <div className="container py-4 sm:py-6 md:py-8 lg:py-10 px-4 md:px-6 w-full overflow-x-hidden">
+      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2 break-words">{category.name}</h1>
           {category.description && (
-            <p className="text-muted-foreground">{category.description}</p>
+            <p className="text-muted-foreground text-sm md:text-base break-words">{category.description}</p>
           )}
         </div>
-        <Link href={`/forum/${params.category}/create`}>
-          <Button>Yeni Konu Aç</Button>
+        <Link href={`/forum/${params.category}/create`} className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto min-h-[44px]">Yeni Konu Aç</Button>
         </Link>
       </div>
 
@@ -47,42 +47,42 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         {posts.map((post) => (
           <Card key={post.id} className="glass-effect hover:border-primary/50 transition-colors">
             <CardHeader>
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
                     {post.isPinned && (
-                      <Pin className="h-4 w-4 text-yellow-500" />
+                      <Pin className="h-4 w-4 text-yellow-500 flex-shrink-0" />
                     )}
                     {post.isLocked && (
-                      <Lock className="h-4 w-4 text-muted-foreground" />
+                      <Lock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                     )}
-                    <CardTitle className="text-lg">
+                    <CardTitle className="text-base md:text-lg break-words">
                       <Link
                         href={`/forum/topic/${post.id}`}
-                        className="hover:text-primary"
+                        className="hover:text-primary break-words"
                       >
                         {post.title}
                       </Link>
                     </CardTitle>
                   </div>
-                  <CardDescription className="flex items-center gap-4">
+                  <CardDescription className="flex flex-wrap items-center gap-2 text-xs md:text-sm">
                     <Link
                       href={`/profile/${post.author.username}`}
-                      className="hover:text-primary"
+                      className="hover:text-primary truncate"
                     >
                       {post.author.username}
                     </Link>
-                    <span>•</span>
-                    <span>{formatRelativeTime(post.createdAt)}</span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="whitespace-nowrap">{formatRelativeTime(post.createdAt)}</span>
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span>👁 {post.viewCount}</span>
-                <span>💬 {post._count.comments}</span>
-                <span>❤️ {post._count.likes}</span>
+              <div className="flex flex-wrap items-center gap-3 md:gap-4 text-xs md:text-sm text-muted-foreground">
+                <span className="whitespace-nowrap">👁 {post.viewCount.toLocaleString('tr-TR')}</span>
+                <span className="whitespace-nowrap">💬 {post._count.comments}</span>
+                <span className="whitespace-nowrap">❤️ {post._count.likes}</span>
               </div>
             </CardContent>
           </Card>

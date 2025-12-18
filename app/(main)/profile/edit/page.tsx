@@ -91,7 +91,7 @@ export default function EditProfilePage() {
 
   if (isLoadingData) {
     return (
-      <div className="container py-10 max-w-2xl">
+      <div className="container py-6 md:py-10 max-w-2xl px-4 md:px-6 w-full overflow-x-hidden">
         <Card className="glass-effect">
           <CardContent className="pt-12 pb-12 text-center">
             <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
@@ -102,7 +102,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="container py-10 max-w-2xl">
+    <div className="container py-6 md:py-10 max-w-2xl px-4 md:px-6 w-full overflow-x-hidden">
       <Link
         href={`/profile/${session.user.username}`}
         className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-6"

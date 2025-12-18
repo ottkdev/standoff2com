@@ -95,10 +95,10 @@ export default async function MessagesPage() {
   const stableNow = new Date()
 
   return (
-    <div className="container py-10 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Mesajlar</h1>
-        <p className="text-muted-foreground">Topluluk üyeleriyle mesajlaşın</p>
+    <div className="container py-6 md:py-10 max-w-4xl px-4 md:px-6 max-w-full overflow-x-hidden">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2 break-words">Mesajlar</h1>
+        <p className="text-sm md:text-base text-muted-foreground break-words">Topluluk üyeleriyle mesajlaşın</p>
       </div>
 
       {conversationList.length === 0 ? (
@@ -119,32 +119,32 @@ export default async function MessagesPage() {
                 <Link
                   key={conv.user.id}
                   href={`/messages/${conv.user.id}`}
-                  className="flex items-center gap-4 p-4 rounded-lg border hover:bg-muted/50 transition-colors"
+                  className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg border hover:bg-muted/50 transition-colors"
                 >
-                  <Avatar>
+                  <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0">
                     <AvatarImage src={conv.user.avatarUrl || ''} />
-                    <AvatarFallback>
+                    <AvatarFallback className="text-sm md:text-base">
                       {conv.user.username[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold truncate">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <span className="font-semibold text-sm md:text-base truncate">
                         {conv.user.username}
                       </span>
                       {conv.user.isVerified && (
                         <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
                       )}
                       {conv.unreadCount > 0 && (
-                        <Badge variant="default" className="ml-auto">
+                        <Badge variant="default" className="ml-auto text-xs">
                           {conv.unreadCount}
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground truncate">
+                    <p className="text-xs md:text-sm text-muted-foreground truncate break-words">
                       {conv.lastMessage.content}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-xs text-muted-foreground mt-1 whitespace-nowrap">
                       {formatRelativeTime(conv.lastMessage.createdAt, stableNow)}
                     </p>
                   </div>

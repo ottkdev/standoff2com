@@ -32,7 +32,7 @@ export function ForumRow({ post }: ForumRowProps) {
     <div className="rounded-lg border hover:bg-muted/50 hover:border-primary/50 transition-all group">
       <Link 
         href={`/forum/topic/${post.id}`}
-        className="flex items-center gap-4 p-4 cursor-pointer"
+        className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-4 cursor-pointer"
       >
         {/* Avatar */}
         <Avatar className="h-10 w-10 flex-shrink-0">
@@ -48,7 +48,7 @@ export function ForumRow({ post }: ForumRowProps) {
             {post.isPinned ? (
               <Pin className="h-4 w-4 text-yellow-500 flex-shrink-0" />
             ) : null}
-            <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
+            <h3 className="font-semibold break-words group-hover:text-primary transition-colors text-sm md:text-base">
               {post.title}
             </h3>
           </div>

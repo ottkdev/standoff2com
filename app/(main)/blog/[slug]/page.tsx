@@ -97,48 +97,48 @@ export default async function BlogPostPage({ params }: PageProps) {
   const isLiked = post.likes && post.likes.length > 0
 
   return (
-    <div className="container py-10 max-w-4xl">
-      <Link href="/blog" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-6">
+    <div className="container py-6 md:py-10 max-w-4xl px-4 md:px-6 max-w-full overflow-x-hidden">
+      <Link href="/blog" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 md:mb-6 text-sm md:text-base">
         <ArrowLeft className="h-4 w-4" />
-        Blog'a Dön
+        <span className="truncate">Blog'a Dön</span>
       </Link>
 
       <article>
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           {post.category && (
             <Link href={`/blog?category=${post.category.slug}`}>
-              <Badge variant="secondary" className="mb-4">
+              <Badge variant="secondary" className="mb-3 md:mb-4 text-xs md:text-sm">
                 {post.category.name}
               </Badge>
             </Link>
           )}
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 gradient-text break-words">
             {post.title}
           </h1>
           {post.excerpt && (
-            <p className="text-xl text-muted-foreground mb-6">{post.excerpt}</p>
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-4 md:mb-6 break-words">{post.excerpt}</p>
           )}
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 text-xs md:text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <Avatar className="h-8 w-8">
+              <Avatar className="h-8 w-8 flex-shrink-0">
                 <AvatarImage src={post.author.avatarUrl || ''} />
-                <AvatarFallback>{post.author.username[0].toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="text-xs">{post.author.username[0].toUpperCase()}</AvatarFallback>
               </Avatar>
-              <Link href={`/profile/${post.author.username}`} className="hover:text-primary flex items-center gap-1">
-                {post.author.username}
+              <Link href={`/profile/${post.author.username}`} className="hover:text-primary flex items-center gap-1 truncate">
+                <span className="truncate">{post.author.username}</span>
                 {post.author.isVerified && (
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
                 )}
               </Link>
             </div>
-            <div className="flex items-center gap-1">
-              <Calendar className="h-4 w-4" />
+            <div className="flex items-center gap-1 whitespace-nowrap">
+              <Calendar className="h-4 w-4 flex-shrink-0" />
               {formatDate(post.publishedAt || post.createdAt)}
             </div>
-            <div className="flex items-center gap-1">
-              <BookOpen className="h-4 w-4" />
-              {post.viewCount} görüntülenme
+            <div className="flex items-center gap-1 whitespace-nowrap">
+              <BookOpen className="h-4 w-4 flex-shrink-0" />
+              {post.viewCount.toLocaleString('tr-TR')} görüntülenme
             </div>
           </div>
         </div>

@@ -351,8 +351,8 @@ export default async function HomePage() {
       </div>
 
       {/* Main Content */}
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 md:pb-12">
-        <div className="space-y-8 md:space-y-12">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 md:pb-12 w-full overflow-x-hidden">
+        <div className="space-y-4 sm:space-y-6 md:space-y-8 lg:space-y-12">
           {/* Pinned Posts */}
           {pinnedPosts.length > 0 && (
             <div className="w-full">

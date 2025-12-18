@@ -152,24 +152,24 @@ function ListCard({ listing, statusBadges }: { listing: Listing; statusBadges: R
             </div>
 
             {/* Content */}
-            <div className="flex-1 flex flex-col justify-between p-4 md:p-6">
-              <div>
-                <CardTitle className="text-xl md:text-2xl mb-2 group-hover:text-primary transition-colors">
+            <div className="flex-1 flex flex-col justify-between p-4 md:p-6 min-w-0">
+              <div className="min-w-0">
+                <CardTitle className="text-lg md:text-xl lg:text-2xl mb-2 group-hover:text-primary transition-colors break-words">
                   {listing.title}
                 </CardTitle>
-                <div className="text-2xl md:text-3xl font-bold text-primary mb-4">
+                <div className="text-xl md:text-2xl lg:text-3xl font-bold text-primary mb-4 break-words">
                   {listing.price.toLocaleString('tr-TR')} ₺
                 </div>
               </div>
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs md:text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 min-w-0">
+                  <User className="h-4 w-4 flex-shrink-0" />
                   <ProfileLink
                     username={listing.seller.username}
-                    className="hover:text-primary"
+                    className="hover:text-primary truncate"
                   />
                 </div>
-                <span>{formatRelativeTime(listing.createdAt)}</span>
+                <span className="whitespace-nowrap">{formatRelativeTime(listing.createdAt)}</span>
               </div>
             </div>
           </div>

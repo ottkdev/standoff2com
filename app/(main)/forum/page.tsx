@@ -8,7 +8,7 @@ export default async function ForumPage() {
   const categories = await ForumService.getCategories()
 
   return (
-    <div className="container py-8 md:py-10 px-4 md:px-6">
+    <div className="container py-6 md:py-8 lg:py-10 px-4 md:px-6 w-full overflow-x-hidden">
       <div className="mb-6 md:mb-8 relative overflow-hidden rounded-3xl border border-border/70 bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-yellow-500/10 px-4 py-6 md:py-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(251,146,60,0.18),transparent_35%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(251,146,60,0.14),transparent_40%)]" />
@@ -23,14 +23,14 @@ export default async function ForumPage() {
               Tartış, soru sor, rehber paylaş; toplulukla etkileşime geç.
             </p>
           </div>
-          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 text-sm text-muted-foreground">
             <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-3 py-2 shadow-sm">
-              <Users className="h-4 w-4" />
-              <span>{categories.reduce((acc, c) => acc + c._count.posts, 0)} konu</span>
+              <Users className="h-4 w-4 flex-shrink-0" />
+              <span className="whitespace-nowrap">{categories.reduce((acc, c) => acc + c._count.posts, 0)} konu</span>
             </div>
             <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-3 py-2 shadow-sm">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <span>{categories.length} kategori</span>
+              <Sparkles className="h-4 w-4 text-primary flex-shrink-0" />
+              <span className="whitespace-nowrap">{categories.length} kategori</span>
             </div>
           </div>
         </div>

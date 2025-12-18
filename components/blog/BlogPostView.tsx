@@ -58,16 +58,16 @@ export function BlogPostView({ post, session: initialSession }: BlogPostViewProp
   }
 
   return (
-    <div className="mt-12">
-      <div className="flex items-center gap-2 mb-6">
-        <MessageSquare className="h-5 w-5 text-primary" />
-        <h2 className="text-2xl font-bold">Yorumlar ({comments.length})</h2>
+    <div className="mt-8 md:mt-12">
+      <div className="flex items-center gap-2 mb-4 md:mb-6">
+        <MessageSquare className="h-5 w-5 text-primary flex-shrink-0" />
+        <h2 className="text-xl md:text-2xl font-bold break-words">Yorumlar ({comments.length})</h2>
       </div>
 
       {/* Comment Form */}
       {session && (
         <Card className="glass-effect mb-6">
-          <CardContent className="pt-6">
+          <CardContent className="pt-4 md:pt-6 px-4 md:px-6">
             <form onSubmit={handleCommentSubmit} className="space-y-4">
               <Textarea
                 placeholder="Yorumunuzu yazın..."
@@ -75,9 +75,9 @@ export function BlogPostView({ post, session: initialSession }: BlogPostViewProp
                 onChange={(e) => setCommentContent(e.target.value)}
                 rows={4}
                 disabled={isSubmitting}
-                className="resize-none"
+                className="resize-none w-full"
               />
-              <Button type="submit" disabled={isSubmitting || !commentContent.trim()} className="gap-2">
+              <Button type="submit" disabled={isSubmitting || !commentContent.trim()} className="gap-2 w-full sm:w-auto min-h-[44px]">
                 <Send className="h-4 w-4" />
                 {isSubmitting ? 'Gönderiliyor...' : 'Yorum Yap'}
               </Button>
@@ -103,30 +103,30 @@ export function BlogPostView({ post, session: initialSession }: BlogPostViewProp
       <div className="space-y-4">
         {comments.map((comment: any) => (
           <Card key={comment.id} className="glass-effect">
-            <CardContent className="pt-6">
-              <div className="flex gap-4">
-                <Avatar>
+            <CardContent className="pt-4 md:pt-6 px-4 md:px-6">
+              <div className="flex gap-3 md:gap-4">
+                <Avatar className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0">
                   <AvatarImage src={comment.author.avatarUrl || ''} />
-                  <AvatarFallback>
+                  <AvatarFallback className="text-xs md:text-sm">
                     {comment.author.username[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
                     <Link
                       href={`/profile/${comment.author.username}`}
-                      className="font-semibold hover:text-primary flex items-center gap-1"
+                      className="font-semibold text-sm md:text-base hover:text-primary flex items-center gap-1 truncate"
                     >
-                      {comment.author.username}
+                      <span className="truncate">{comment.author.username}</span>
                       {comment.author.isVerified && (
-                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
                       )}
                     </Link>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-xs md:text-sm text-muted-foreground whitespace-nowrap">
                       {formatRelativeTime(comment.createdAt)}
                     </span>
                   </div>
-                  <p className="whitespace-pre-wrap">{comment.content}</p>
+                  <p className="whitespace-pre-wrap break-words text-sm md:text-base">{comment.content}</p>
                 </div>
               </div>
             </CardContent>

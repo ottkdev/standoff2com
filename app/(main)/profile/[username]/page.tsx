@@ -42,24 +42,24 @@ export default async function ProfilePage({ params }: PageProps) {
     : false
 
   return (
-    <div className="container py-10 max-w-5xl">
+    <div className="container py-4 sm:py-6 md:py-8 lg:py-10 max-w-5xl px-4 md:px-6 w-full overflow-x-hidden">
       <div className="relative mb-6">
         <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-orange-500/20 via-amber-500/10 to-yellow-500/20 blur-3xl opacity-70" />
         <Card className="relative overflow-hidden border border-border/70">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(251,146,60,0.18),transparent_35%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(251,146,60,0.14),transparent_40%)]" />
-          <CardHeader className="relative z-10 pb-4">
+          <CardHeader className="relative z-10 pb-4 px-4 md:px-6">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex items-start gap-4 md:gap-6">
-                <Avatar className="h-24 w-24 ring-2 ring-primary/30 shadow-lg shadow-orange-500/20">
+              <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
+                <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-2 ring-primary/30 shadow-lg shadow-orange-500/20 flex-shrink-0">
                   <AvatarImage src={user.avatarUrl || ''} />
-                  <AvatarFallback className="text-2xl">
+                  <AvatarFallback className="text-xl sm:text-2xl">
                     {user.username[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CardTitle className="text-3xl">{user.displayName || user.username}</CardTitle>
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <CardTitle className="text-2xl md:text-3xl break-words">{user.displayName || user.username}</CardTitle>
                     {user.isVerified && (
                       <Badge className="gap-1 bg-green-500/20 text-green-100 border-green-500/30">
                         <CheckCircle2 className="h-4 w-4" />
@@ -71,11 +71,11 @@ export default async function ProfilePage({ params }: PageProps) {
                       {user.role}
                     </Badge>
                   </div>
-                  <p className="text-muted-foreground mb-3">@{user.username}</p>
-                  <p className="text-sm text-foreground/90">
+                  <p className="text-muted-foreground mb-3 break-words">@{user.username}</p>
+                  <p className="text-sm text-foreground/90 break-words">
                     {user.bio || 'Henüz bio eklenmedi. Takip edip mesaj göndererek tanışın.'}
                   </p>
-                  <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                  <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs md:text-sm">
                     <StatPill icon={<Users className="h-4 w-4" />} label="Takipçi" value={user._count.followers} />
                     <StatPill icon={<User className="h-4 w-4" />} label="Takip" value={user._count.following} />
                     <StatPill icon={<MessageSquare className="h-4 w-4" />} label="Konu" value={user.postCount} />
@@ -83,17 +83,19 @@ export default async function ProfilePage({ params }: PageProps) {
                   </div>
                 </div>
               </div>
-              <div className="flex gap-2 flex-shrink-0">
+              <div className="flex flex-col sm:flex-row gap-2 flex-shrink-0 w-full sm:w-auto">
                 {isOwnProfile ? (
-                  <Link href="/profile/edit">
-                    <Button size="sm">Profili Düzenle</Button>
+                  <Link href="/profile/edit" className="w-full sm:w-auto">
+                    <Button size="sm" className="w-full sm:w-auto min-h-[44px]">Profili Düzenle</Button>
                   </Link>
                 ) : session?.user ? (
                   <>
-                    <Link href={`/messages/${user.id}`}>
-                      <Button variant="outline" size="sm">Mesaj Gönder</Button>
+                    <Link href={`/messages/${user.id}`} className="w-full sm:w-auto">
+                      <Button variant="outline" size="sm" className="w-full sm:w-auto min-h-[44px]">Mesaj Gönder</Button>
                     </Link>
-                    <FollowButton userId={user.id} isFollowing={isFollowing} />
+                    <div className="w-full sm:w-auto">
+                      <FollowButton userId={user.id} isFollowing={isFollowing} />
+                    </div>
                   </>
                 ) : null}
               </div>

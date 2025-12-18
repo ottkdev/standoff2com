@@ -97,10 +97,10 @@ export function PostContent({
   }
 
   return (
-    <div className="flex-1 bg-background p-4 md:p-6">
+    <div className="flex-1 bg-background p-3 sm:p-4 md:p-6 w-full min-w-0 overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-start justify-between mb-4 pb-4 border-b border-border">
-        <div className="flex-1">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-border">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             {isPinned ? (
               <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
@@ -126,20 +126,20 @@ export function PostContent({
             ) : null}
           </div>
           {title ? (
-            <h1 className="text-2xl font-bold mb-2">{title}</h1>
+            <h1 className="text-xl md:text-2xl font-bold mb-2 break-words">{title}</h1>
           ) : null}
-          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm text-muted-foreground">
             <RelativeTime date={createdAt} />
             {updatedAt && updatedAt !== createdAt ? (
               <>
-                <span>•</span>
-                <span className="text-xs">Düzenlendi: <RelativeTime date={updatedAt} /></span>
+                <span className="hidden sm:inline">•</span>
+                <span className="text-xs whitespace-nowrap">Düzenlendi: <RelativeTime date={updatedAt} /></span>
               </>
             ) : null}
             {viewCount !== undefined ? (
               <>
-                <span>•</span>
-                <span>{viewCount.toLocaleString('tr-TR')} görüntülenme</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="whitespace-nowrap">{viewCount.toLocaleString('tr-TR')} görüntülenme</span>
               </>
             ) : null}
           </div>
@@ -147,7 +147,7 @@ export function PostContent({
         {(isOwner || isAdmin) ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-9 w-9 md:h-8 md:w-8 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 flex-shrink-0">
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -173,8 +173,8 @@ export function PostContent({
       </div>
 
       {/* Content */}
-      <div className="prose prose-invert max-w-none mb-6">
-        <div className="whitespace-pre-wrap text-foreground">{content}</div>
+      <div className="prose prose-invert max-w-none mb-6 break-words">
+        <div className="whitespace-pre-wrap text-foreground break-words">{content}</div>
       </div>
 
       {/* Images */}
@@ -197,31 +197,33 @@ export function PostContent({
       ) : null}
 
       {/* Footer Actions */}
-      <div className="flex items-center justify-between pt-4 border-t border-border">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-4 border-t border-border">
+        <div className="flex flex-wrap items-center gap-2 md:gap-3">
           {onLike ? (
             <Button
               variant={isLiked ? 'default' : 'outline'}
               size="sm"
               onClick={onLike}
               disabled={!currentUserId}
+              className="min-h-[44px]"
             >
               <Heart className={`h-4 w-4 mr-2 ${isLiked ? 'fill-current' : ''}`} />
               {likeCount}
             </Button>
           ) : null}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
             <MessageSquare className="h-4 w-4" />
             {commentCount} yorum
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {onQuote ? (
             <Button
               variant="ghost"
               size="sm"
               onClick={handleQuote}
               disabled={!currentUserId}
+              className="min-h-[44px] flex-1 sm:flex-initial"
             >
               <Quote className="h-4 w-4 mr-2" />
               Alıntıla
@@ -233,6 +235,7 @@ export function PostContent({
               size="sm"
               onClick={handleReply}
               disabled={!currentUserId}
+              className="min-h-[44px] flex-1 sm:flex-initial"
             >
               <Reply className="h-4 w-4 mr-2" />
               Cevapla

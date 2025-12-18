@@ -51,14 +51,14 @@ export function PostAuthorPanel({ author, postNumber }: PostAuthorPanelProps) {
   const totalPosts = (author.postCount || 0) + (author.commentCount || 0)
 
   return (
-    <div className="w-full md:w-64 flex-shrink-0 bg-muted/30 md:border-r border-b md:border-b-0 border-border p-4">
-      <div className="flex flex-row md:flex-col items-center md:text-center space-y-0 md:space-y-3 gap-4 md:gap-0">
+    <div className="w-full md:w-64 flex-shrink-0 bg-muted/30 md:border-r border-b md:border-b-0 border-border p-3 md:p-4">
+      <div className="flex flex-row md:flex-col items-center md:text-center space-y-0 md:space-y-3 gap-3 md:gap-0">
         {/* Avatar */}
-        <div>
+        <div className="flex-shrink-0">
           <Link href={`/profile/${author.username}`} className="block">
-            <Avatar className="h-20 w-20 border-2 border-primary/20 hover:border-primary/50 transition-colors cursor-pointer">
+            <Avatar className="h-16 w-16 md:h-20 md:w-20 border-2 border-primary/20 hover:border-primary/50 transition-colors cursor-pointer">
               <AvatarImage src={author.avatarUrl || ''} />
-              <AvatarFallback className="text-2xl">
+              <AvatarFallback className="text-xl md:text-2xl">
                 {author.username[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -66,14 +66,14 @@ export function PostAuthorPanel({ author, postNumber }: PostAuthorPanelProps) {
         </div>
 
         {/* Username */}
-        <div className="flex-1 md:w-full">
+        <div className="flex-1 md:w-full min-w-0">
           <Link
             href={`/profile/${author.username}`}
-            className="font-semibold text-base md:text-lg hover:text-primary transition-colors flex items-center justify-center gap-1"
+            className="font-semibold text-sm md:text-base lg:text-lg hover:text-primary transition-colors flex items-center justify-center gap-1 break-words"
           >
-            <span>{author.displayName || author.username}</span>
+            <span className="truncate">{author.displayName || author.username}</span>
             {author.isVerified ? (
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
+              <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
             ) : null}
           </Link>
         </div>

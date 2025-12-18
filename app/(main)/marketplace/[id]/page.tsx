@@ -55,13 +55,13 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
   }
 
   return (
-    <div className="container py-10 max-w-6xl">
-      <Link href="/marketplace" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-6">
+    <div className="container py-6 md:py-10 max-w-6xl px-4 md:px-6">
+      <Link href="/marketplace" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 md:mb-6 text-sm md:text-base">
         <ArrowLeft className="h-4 w-4" />
-        Marketplace'e Dön
+        <span className="truncate">Marketplace'e Dön</span>
       </Link>
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 md:grid-cols-2">
         {/* Images */}
         <div>
           {listing.images.length > 0 ? (
@@ -100,8 +100,8 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
                 </div>
               )}
             </div>
-            <h1 className="text-4xl font-bold mb-4 gradient-text">{listing.title}</h1>
-            <div className="text-4xl font-bold text-primary mb-6">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 gradient-text break-words">{listing.title}</h1>
+            <div className="text-3xl md:text-4xl font-bold text-primary mb-6 break-words">
               {listing.price.toLocaleString('tr-TR')} ₺
             </div>
           </div>
@@ -111,7 +111,7 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
               <CardTitle className="text-lg">Açıklama</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="whitespace-pre-wrap text-muted-foreground">
+              <p className="whitespace-pre-wrap text-muted-foreground break-words">
                 {listing.description}
               </p>
             </CardContent>

@@ -73,9 +73,9 @@ export function WikiArticleView({ content }: WikiArticleViewProps) {
   const flushList = () => {
     if (currentList.length > 0) {
       elements.push(
-        <ul key={`list-${elements.length}`} className="list-disc ml-6 mb-4 space-y-2">
+        <ul key={`list-${elements.length}`} className="list-disc ml-4 md:ml-6 mb-4 space-y-2 break-words">
           {currentList.map((item, idx) => (
-            <li key={idx}>{processInline(item)}</li>
+            <li key={idx} className="break-words">{processInline(item)}</li>
           ))}
         </ul>
       )

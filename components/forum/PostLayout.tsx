@@ -71,7 +71,7 @@ export function PostLayout({
 }: PostLayoutProps) {
   return (
     <div className="border border-border rounded-lg overflow-hidden bg-card hover:border-primary/20 transition-colors">
-      <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col md:flex-row w-full overflow-x-hidden">
         {/* Left Panel - Author Info */}
         <PostAuthorPanel author={author} postNumber={postNumber} />
 

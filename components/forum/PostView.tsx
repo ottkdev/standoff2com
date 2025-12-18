@@ -238,9 +238,9 @@ export function PostView({ post, session }: PostViewProps) {
   let postNumber = 1
 
   return (
-    <div className="container py-10">
+    <div className="container py-6 md:py-10 px-4 md:px-6 max-w-full overflow-x-hidden">
       {/* Main Post */}
-      <div className="mb-6">
+      <div className="mb-4 md:mb-6">
         <PostLayout
           author={postState.author}
           id={postState.id}
@@ -267,9 +267,9 @@ export function PostView({ post, session }: PostViewProps) {
 
       {/* Comments Section */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2 mb-6">
-          <MessageSquare className="h-5 w-5 text-primary" />
-          <h2 className="text-2xl font-bold">
+        <div className="flex items-center gap-2 mb-4 md:mb-6">
+          <MessageSquare className="h-5 w-5 text-primary flex-shrink-0" />
+          <h2 className="text-xl md:text-2xl font-bold break-words">
             Yorumlar ({postState.commentCount})
           </h2>
         </div>
@@ -277,17 +277,17 @@ export function PostView({ post, session }: PostViewProps) {
         {/* Comment Form */}
         {sessionData && !postState.isLocked && (
           <Card className="mb-6">
-            <CardContent className="pt-6">
+            <CardContent className="pt-4 md:pt-6 px-4 md:px-6">
               <form onSubmit={handleCommentSubmit} className="space-y-4">
                 {quoteContent && (
-                  <div className="p-3 bg-muted rounded-lg border-l-4 border-primary">
-                    <div className="text-sm text-muted-foreground mb-1">Alıntı:</div>
-                    <div className="text-sm whitespace-pre-wrap">{quoteContent}</div>
+                  <div className="p-3 bg-muted rounded-lg border-l-4 border-primary break-words">
+                    <div className="text-xs md:text-sm text-muted-foreground mb-1">Alıntı:</div>
+                    <div className="text-xs md:text-sm whitespace-pre-wrap break-words">{quoteContent}</div>
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="mt-2"
+                      className="mt-2 min-h-[44px]"
                       onClick={() => {
                         setQuoteContent(null)
                         setCommentContent('')
@@ -298,8 +298,8 @@ export function PostView({ post, session }: PostViewProps) {
                   </div>
                 )}
                 {replyToId && (
-                  <div className="p-3 bg-muted rounded-lg">
-                    <div className="text-sm text-muted-foreground">
+                  <div className="p-3 bg-muted rounded-lg break-words">
+                    <div className="text-xs md:text-sm text-muted-foreground break-words">
                       {(postState.comments || []).find((c: NonNullable<PostWithDetails['comments']>[number]) => c.id === replyToId)?.author.username}
                       {' '}kullanıcısına cevap veriyorsunuz
                     </div>
@@ -307,7 +307,7 @@ export function PostView({ post, session }: PostViewProps) {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="mt-2"
+                      className="mt-2 min-h-[44px]"
                       onClick={() => {
                         setReplyToId(null)
                         setCommentContent('')
@@ -323,8 +323,9 @@ export function PostView({ post, session }: PostViewProps) {
                   onChange={(e) => setCommentContent(e.target.value)}
                   rows={6}
                   disabled={isSubmitting}
+                  className="w-full resize-none"
                 />
-                <Button type="submit" disabled={isSubmitting || !commentContent.trim()}>
+                <Button type="submit" disabled={isSubmitting || !commentContent.trim()} className="w-full sm:w-auto min-h-[44px]">
                   {isSubmitting ? 'Gönderiliyor...' : 'Yorum Yap'}
                 </Button>
               </form>
@@ -381,17 +382,19 @@ export function PostView({ post, session }: PostViewProps) {
                 />
                 {isEditing && (
                   <Card className="mt-2 ml-0 md:ml-64">
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-4 md:pt-6 px-4 md:px-6">
                       <div className="space-y-2">
                         <Textarea
                           value={editingCommentContent}
                           onChange={(e) => setEditingCommentContent(e.target.value)}
                           rows={4}
+                          className="w-full resize-none"
                         />
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                           <Button
                             size="sm"
                             onClick={() => handleEditComment(comment.id)}
+                            className="min-h-[44px] flex-1 sm:flex-initial"
                           >
                             Kaydet
                           </Button>
