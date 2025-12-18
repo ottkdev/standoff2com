@@ -34,7 +34,7 @@ Bu rehber, Standoff 2 Topluluk sitesini Vercel'e deploy etmek için adım adım 
 git init
 git add .
 git commit -m "Initial commit"
-git remote add origin https://github.com/yourusername/standoff2-community.git
+git remote add origin https://github.com/ottkdev/standoff2com.git
 git push -u origin main
 ```
 
