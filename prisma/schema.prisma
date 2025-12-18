@@ -1,0 +1,457 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum MarketplaceStatus {
+  PENDING
+  ACTIVE
+  SOLD
+  REJECTED
+}
+
+model User {
+  id          String    @id @default(cuid())
+  username    String    @unique
+  email       String    @unique
+  password    String
+  displayName String?
+  bio         String?   @db.Text
+  avatarUrl   String?
+  role        UserRole  @default(USER)
+  isVerified  Boolean   @default(false)
+  isBanned    Boolean   @default(false)
+  bannedUntil DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Forum stats
+  postCount    Int @default(0)
+  commentCount Int @default(0)
+
+  // Relations
+  posts            Post[]
+  comments         Comment[]
+  blogPosts        BlogPost[]
+  blogComments     BlogComment[]
+  listings         MarketplaceListing[] @relation("Seller")
+  sentMessages     Message[]            @relation("MessageSender")
+  receivedMessages Message[]            @relation("MessageReceiver")
+
+  // Follow system
+  followers Follow[] @relation("Follower")
+  following Follow[] @relation("Following")
+
+  // Badges
+  badges UserBadge[]
+
+  // Notifications
+  notifications Notification[]
+
+  // Likes
+  likedPosts     PostLike[]
+  likedComments  CommentLike[]
+  likedBlogPosts BlogLike[]
+
+  // Admin actions
+  approvedListings MarketplaceListing[] @relation("Approver")
+
+  // Wiki
+  wikiArticles WikiArticle[]
+  wikiComments WikiComment[]
+  wikiLikes    WikiLike[]
+
+  // Block system
+  blockedUsers Block[] @relation("Blocker")
+  blockedBy    Block[] @relation("Blocked")
+
+  @@map("users")
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?  @db.Text
+  iconUrl     String?
+  color       String?
+  createdAt   DateTime @default(now())
+
+  users UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?  @db.Text
+  icon        String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  posts     Post[]
+  blogPosts BlogPost[]
+
+  @@map("categories")
+}
+
+model Post {
+  id           String   @id @default(cuid())
+  title        String
+  content      String   @db.Text
+  slug         String   @unique
+  isPinned     Boolean  @default(false)
+  isLocked     Boolean  @default(false)
+  authorId     String
+  categoryId   String
+  viewCount    Int      @default(0)
+  likeCount    Int      @default(0)
+  commentCount Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  author   User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  comments Comment[]
+  images   PostImage[]
+  likes    PostLike[]
+
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([createdAt])
+  @@map("posts")
+}
+
+model PostImage {
+  id        String   @id @default(cuid())
+  url       String
+  postId    String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@map("post_images")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  postId    String
+  authorId  String
+  parentId  String?
+  likeCount Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author  User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post    Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent  Comment?      @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[]     @relation("CommentReplies")
+  likes   CommentLike[]
+
+  @@index([postId])
+  @@index([authorId])
+  @@index([parentId])
+  @@map("comments")
+}
+
+model PostLike {
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@map("post_likes")
+}
+
+model CommentLike {
+  userId    String
+  commentId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
+  @@map("comment_likes")
+}
+
+model BlogPost {
+  id           String    @id @default(cuid())
+  title        String
+  content      String    @db.Text
+  excerpt      String?   @db.Text
+  slug         String    @unique
+  coverImage   String?
+  categoryId   String?
+  authorId     String
+  isPublished  Boolean   @default(false)
+  publishedAt  DateTime?
+  viewCount    Int       @default(0)
+  likeCount    Int       @default(0)
+  commentCount Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  author   User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  comments BlogComment[]
+  likes    BlogLike[]
+
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([isPublished, publishedAt])
+  @@index([slug])
+  @@map("blog_posts")
+}
+
+model BlogComment {
+  id         String   @id @default(cuid())
+  content    String   @db.Text
+  blogPostId String
+  authorId   String
+  parentId   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  author   User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  blogPost BlogPost      @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+  parent   BlogComment?  @relation("BlogCommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  BlogComment[] @relation("BlogCommentReplies")
+
+  @@index([blogPostId])
+  @@index([authorId])
+  @@map("blog_comments")
+}
+
+model BlogLike {
+  userId     String
+  blogPostId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blogPost BlogPost @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, blogPostId])
+  @@map("blog_likes")
+}
+
+model Message {
+  id         String    @id @default(cuid())
+  content    String    @db.Text
+  senderId   String
+  receiverId String
+  isRead     Boolean   @default(false)
+  readAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  sender   User @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId, receiverId])
+  @@index([receiverId, isRead])
+  @@map("messages")
+}
+
+model MarketplaceListing {
+  id             String            @id @default(cuid())
+  title          String
+  description    String            @db.Text
+  price          Float
+  status         MarketplaceStatus @default(PENDING)
+  sellerId       String
+  approvedById   String?
+  rejectedReason String?           @db.Text
+  approvedAt     DateTime?
+  rejectedAt     DateTime?
+  deletedAt      DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  seller   User               @relation("Seller", fields: [sellerId], references: [id], onDelete: Cascade)
+  approver User?              @relation("Approver", fields: [approvedById], references: [id], onDelete: SetNull)
+  images   MarketplaceImage[]
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@map("marketplace_listings")
+}
+
+model MarketplaceImage {
+  id        String   @id @default(cuid())
+  url       String
+  listingId String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  listing MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@map("marketplace_images")
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+model Block {
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+
+  blocker User @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked User @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@id([blockerId, blockedId])
+  @@map("blocks")
+}
+
+model SiteSettings {
+  id               String   @id @default("site-settings")
+  siteName         String   @default("Standoff 2 Topluluk")
+  siteDescription  String?  @db.Text
+  logoUrl          String?
+  footerText       String?  @db.Text
+  registrationOpen Boolean  @default(true)
+  guestViewing     Boolean  @default(true)
+  emailFromName    String?  @default("Standoff 2 Topluluk")
+  emailFromEmail   String?
+  updatedAt        DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  title     String
+  content   String    @db.Text
+  type      String    @default("info") // info, warning, success, error
+  userId    String? // null = tüm kullanıcılara
+  isRead    Boolean   @default(false)
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+enum WikiCategory {
+  SILAHLAR
+  HARITALAR
+  OYUN_MODLARI
+  RUTBELER
+  GUNCELLEMELER
+  SKINLER
+  EKONOMI
+  TAKTIKLER
+  SSS
+}
+
+model WikiArticle {
+  id              String       @id @default(cuid())
+  title           String
+  slug            String       @unique
+  content         String       @db.Text
+  excerpt         String?      @db.Text
+  category        WikiCategory
+  authorId        String
+  isPublished     Boolean      @default(true)
+  viewCount       Int          @default(0)
+  likeCount       Int          @default(0)
+  commentCount    Int          @default(0)
+  featuredImage   String?
+  metaTitle       String?
+  metaDescription String?      @db.Text
+  keywords        String?      @db.Text
+  relatedArticles String?      @db.Text // JSON array of article IDs
+  tableOfContents String?      @db.Text // Auto-generated TOC
+  publishedAt     DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  createdAt       DateTime     @default(now())
+
+  author   User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments WikiComment[]
+  likes    WikiLike[]
+
+  @@index([category])
+  @@index([slug])
+  @@index([isPublished, publishedAt])
+  @@index([authorId])
+  @@map("wiki_articles")
+}
+
+model WikiComment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  articleId String
+  authorId  String
+  parentId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author  User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  article WikiArticle   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  parent  WikiComment?  @relation("WikiCommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies WikiComment[] @relation("WikiCommentReplies")
+
+  @@index([articleId])
+  @@index([authorId])
+  @@map("wiki_comments")
+}
+
+model WikiLike {
+  userId    String
+  articleId String
+  createdAt DateTime @default(now())
+
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article WikiArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId])
+  @@map("wiki_likes")
+}
