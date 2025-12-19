@@ -254,27 +254,28 @@ export async function POST(request: Request) {
       paytrTestModeEnv: paytrTestMode,
     })
 
-    // Call PayTR API to get token - ALL values MUST be strings
-    const paytrFormData = new FormData()
-    paytrFormData.append('merchant_id', String(validatedMerchantId).trim())
-    paytrFormData.append('merchant_key', String(validatedMerchantKey).trim())
-    paytrFormData.append('merchant_salt', String(validatedMerchantSalt).trim())
-    paytrFormData.append('merchant_oid', String(merchantOid))
-    paytrFormData.append('email', String(user.email).trim())
-    paytrFormData.append('payment_amount', String(deposit.grossAmount)) // In kuruş, as string
-    paytrFormData.append('paytr_token', String(hash))
-    paytrFormData.append('user_ip', String(userIp))
-    paytrFormData.append('merchant_ok_url', String(merchantOkUrl))
-    paytrFormData.append('merchant_fail_url', String(merchantFailUrl))
-    paytrFormData.append('callback_url', String(callbackUrl)) // PayTR callback URL
-    paytrFormData.append('test_mode', String(testMode)) // Must be '0' or '1' as string
-    paytrFormData.append('currency', 'TL')
-    paytrFormData.append('installment', '0')
-    paytrFormData.append('lang', 'tr')
-    paytrFormData.append('timeout_limit', '30')
+    // Call PayTR API to get token - use URLSearchParams for application/x-www-form-urlencoded
+    // ALL values MUST be strings
+    const paytrParams = new URLSearchParams()
+    paytrParams.append('merchant_id', String(validatedMerchantId).trim())
+    paytrParams.append('merchant_key', String(validatedMerchantKey).trim())
+    paytrParams.append('merchant_salt', String(validatedMerchantSalt).trim())
+    paytrParams.append('merchant_oid', String(merchantOid))
+    paytrParams.append('email', String(user.email).trim())
+    paytrParams.append('payment_amount', String(deposit.grossAmount)) // In kuruş, as string
+    paytrParams.append('paytr_token', String(hash))
+    paytrParams.append('user_ip', String(userIp))
+    paytrParams.append('merchant_ok_url', String(merchantOkUrl))
+    paytrParams.append('merchant_fail_url', String(merchantFailUrl))
+    paytrParams.append('callback_url', String(callbackUrl)) // PayTR callback URL
+    paytrParams.append('test_mode', String(testMode)) // Must be '0' or '1' as string
+    paytrParams.append('currency', 'TL')
+    paytrParams.append('installment', '0')
+    paytrParams.append('lang', 'tr')
+    paytrParams.append('timeout_limit', '30')
 
-    // Log FormData values for debugging (without sensitive data)
-    console.log('PayTR FormData values:', {
+    // Log request parameters for debugging (without sensitive data)
+    console.log('PayTR request parameters (URLSearchParams):', {
       merchant_id: String(validatedMerchantId).substring(0, 5) + '...',
       merchant_oid: String(merchantOid),
       email: String(user.email).trim(),
@@ -284,24 +285,43 @@ export async function POST(request: Request) {
       callback_url: String(callbackUrl),
       merchant_ok_url: String(merchantOkUrl),
       merchant_fail_url: String(merchantFailUrl),
+      currency: 'TL',
     })
 
-    // Call PayTR API
+    // Call PayTR API with application/x-www-form-urlencoded
     let paytrResponse: Response
     let paytrResult: string
+    let parsedResponse: any = null
     
     try {
       console.log('Calling PayTR API: https://www.paytr.com/odeme/api/get-token')
+      console.log('Request Content-Type: application/x-www-form-urlencoded')
+      console.log('Request body length:', paytrParams.toString().length)
+      
       paytrResponse = await fetch('https://www.paytr.com/odeme/api/get-token', {
         method: 'POST',
-        body: paytrFormData,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: paytrParams.toString(), // URLSearchParams.toString() creates the encoded string
       })
 
       paytrResult = await paytrResponse.text()
+      
+      // Log response details
       console.log('PayTR API response status:', paytrResponse.status)
       console.log('PayTR API response statusText:', paytrResponse.statusText)
-      console.log('PayTR API response body (full):', paytrResult)
+      console.log('PayTR API response body (raw text):', paytrResult)
       console.log('PayTR API response body length:', paytrResult.length)
+      
+      // Try to parse response as JSON if possible (for error responses)
+      try {
+        parsedResponse = JSON.parse(paytrResult)
+        console.log('PayTR API response body (parsed JSON):', parsedResponse)
+      } catch (e) {
+        // Not JSON, that's fine - PayTR returns plain text
+        console.log('PayTR API response is not JSON (expected for success)')
+      }
       
       // Log response headers for debugging
       const responseHeaders: Record<string, string> = {}
@@ -338,17 +358,38 @@ export async function POST(request: Request) {
         iframeUrl: `https://www.paytr.com/odeme/guvenli/${token}`,
       })
     } else {
-      // PayTR returned an error - log it and return to client
+      // PayTR returned an error - extract real error message
+      let errorMessage = paytrResult || 'PayTR ödeme başlatılamadı'
+      
+      // Try to extract error from parsed JSON response
+      if (parsedResponse) {
+        if (parsedResponse.reason) {
+          errorMessage = parsedResponse.reason
+        } else if (parsedResponse.error) {
+          errorMessage = parsedResponse.error
+        } else if (parsedResponse.message) {
+          errorMessage = parsedResponse.message
+        } else if (typeof parsedResponse === 'string') {
+          errorMessage = parsedResponse
+        }
+      }
+      
+      // Log error details
       console.error('PayTR API error response:', {
         status: paytrResponse.status,
         statusText: paytrResponse.statusText,
         body: paytrResult,
+        parsedResponse,
+        extractedError: errorMessage,
         merchantOid,
       })
+      
+      // Return PayTR's actual error message to client
       return NextResponse.json(
         { 
-          error: paytrResult || 'PayTR ödeme başlatılamadı',
-          paytrError: paytrResult, // Include raw error for debugging
+          error: errorMessage, // PayTR'nin gerçek hatası
+          paytrError: paytrResult, // Raw error for debugging
+          paytrParsedError: parsedResponse, // Parsed error if available
         },
         { status: 400 }
       )
