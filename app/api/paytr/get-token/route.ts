@@ -210,13 +210,15 @@ export async function POST(request: Request) {
     const paymentAmountStr = String(deposit.grossAmount) // kuruş as string
     const paymentType = 'card'
     const installmentCount = '0'
+    const maxInstallment = '0'
+    const noInstallment = '1'
     const non3d = '0'
     const currency = 'TL'
     const timeoutLimit = '30'
     const debugOn = '1'
     const clientLang = 'tr'
     const testModeString = String(testModeValue)
-    const hashStr = `${validatedMerchantId.trim()}${userIp}${merchantOidForPaytr}${user.email.trim()}${paymentAmountStr}${paymentType}${installmentCount}${currency}${testModeString}${non3d}${validatedMerchantSalt.trim()}`
+    const hashStr = `${validatedMerchantId.trim()}${userIp}${merchantOidForPaytr}${user.email.trim()}${paymentAmountStr}${paymentType}${installmentCount}${maxInstallment}${currency}${testModeString}${non3d}${validatedMerchantSalt.trim()}`
     const paytrToken = crypto
       .createHmac('sha256', validatedMerchantKey.trim())
       .update(hashStr)
@@ -313,6 +315,8 @@ export async function POST(request: Request) {
     if (!merchantOkUrl) missingPaytrFields.push('merchant_ok_url')
     if (!merchantFailUrl) missingPaytrFields.push('merchant_fail_url')
     if (!userBasketBase64) missingPaytrFields.push('user_basket')
+    if (!maxInstallment) missingPaytrFields.push('max_installment')
+    if (!noInstallment) missingPaytrFields.push('no_installment')
     if (missingPaytrFields.length > 0) {
       console.error('Missing required PayTR fields:', missingPaytrFields)
       return NextResponse.json(
@@ -326,15 +330,16 @@ export async function POST(request: Request) {
     const paytrParams = new URLSearchParams()
     paytrParams.append('merchant_id', String(validatedMerchantId).trim())
     paytrParams.append('user_ip', String(userIp))
-    paytrParams.append('merchant_oid', String(merchantOid))
+    paytrParams.append('merchant_oid', String(merchantOidForPaytr))
     paytrParams.append('email', String(user.email).trim())
     paytrParams.append('payment_amount', paymentAmountStr) // In kuruş, as string
     paytrParams.append('payment_type', paymentType)
     paytrParams.append('installment_count', installmentCount)
+    paytrParams.append('max_installment', maxInstallment)
+    paytrParams.append('no_installment', noInstallment)
     paytrParams.append('currency', currency)
     paytrParams.append('test_mode', String(testMode)) // Must be '0' or '1' as string
     paytrParams.append('non_3d', non3d)
-    paytrParams.append('no_installment', '1')
     paytrParams.append('timeout_limit', timeoutLimit)
     paytrParams.append('debug_on', debugOn)
     paytrParams.append('client_lang', clientLang)
@@ -347,7 +352,7 @@ export async function POST(request: Request) {
     // Log request parameters for debugging (without sensitive data)
     console.log('PayTR request parameters (URLSearchParams):', {
       merchant_id: String(validatedMerchantId).substring(0, 5) + '...',
-      merchant_oid: String(merchantOid),
+      merchant_oid: String(merchantOidForPaytr),
       email: String(user.email).trim(),
       payment_amount: String(deposit.grossAmount),
       user_ip: String(userIp),
@@ -357,6 +362,8 @@ export async function POST(request: Request) {
       merchant_fail_url: String(merchantFailUrl),
       currency: 'TL',
       user_basket: userBasketBase64,
+      max_installment: maxInstallment,
+      no_installment: noInstallment,
       timeout_limit: timeoutLimit,
       debug_on: debugOn,
       client_lang: clientLang,
@@ -472,7 +479,7 @@ export async function POST(request: Request) {
         body: paytrResult,
         parsedResponse,
         extractedError: errorMessage,
-        merchantOid,
+        merchantOid: merchantOidForPaytr,
       })
     
     // Return PayTR's actual error message to client
