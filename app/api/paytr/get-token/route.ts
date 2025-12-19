@@ -110,15 +110,15 @@ export async function POST(request: Request) {
     }
 
     // Get user IP - properly handle Vercel x-forwarded-for header
-    let userIp = '127.0.0.1'
+    let userIp = '8.8.8.8'
     const forwardedFor = request.headers.get('x-forwarded-for')
     if (forwardedFor) {
-      const ips = forwardedFor.split(',').map(ip => ip.trim())
-      userIp = ips[0] || request.headers.get('x-real-ip') || '127.0.0.1'
+      const ips = forwardedFor.split(',').map(ip => ip.trim()).filter(Boolean)
+      userIp = ips[0] || request.headers.get('x-real-ip') || '8.8.8.8'
     } else {
-      userIp = request.headers.get('x-real-ip') || '127.0.0.1'
+      userIp = request.headers.get('x-real-ip') || '8.8.8.8'
     }
-    userIp = userIp.trim()
+    userIp = userIp.trim() || '8.8.8.8'
 
     // Validate payment amount is in kuruş (integer)
     if (!Number.isInteger(deposit.grossAmount) || deposit.grossAmount <= 0) {
@@ -195,18 +195,18 @@ export async function POST(request: Request) {
     const testMode = String(testModeValue) // Convert to string: '0' or '1'
 
     // Validate all required fields before sending to PayTR
-    if (!validatedMerchantId || !validatedMerchantKey || !validatedMerchantSalt || !merchantOid || !user.email || !hash || !userIp) {
-      console.error('Missing required PayTR fields:', {
-        hasMerchantId: !!validatedMerchantId,
-        hasMerchantKey: !!validatedMerchantKey,
-        hasMerchantSalt: !!validatedMerchantSalt,
-        hasMerchantOid: !!merchantOid,
-        hasEmail: !!user.email,
-        hasHash: !!hash,
-        hasUserIp: !!userIp,
-      })
+    const missingPaytrFields: string[] = []
+    if (!validatedMerchantId) missingPaytrFields.push('merchant_id')
+    if (!validatedMerchantKey) missingPaytrFields.push('merchant_key')
+    if (!validatedMerchantSalt) missingPaytrFields.push('merchant_salt')
+    if (!merchantOid) missingPaytrFields.push('merchant_oid')
+    if (!user.email) missingPaytrFields.push('email')
+    if (!hash) missingPaytrFields.push('hash')
+    if (!userIp) missingPaytrFields.push('user_ip')
+    if (missingPaytrFields.length > 0) {
+      console.error('Missing required PayTR fields:', missingPaytrFields)
       return NextResponse.json(
-        { error: 'PayTR için gerekli alanlar eksik' },
+        { error: `Eksik PayTR alanları: ${missingPaytrFields.join(', ')}` },
         { status: 400 }
       )
     }
@@ -402,14 +402,15 @@ export async function POST(request: Request) {
     }
 
     // Log error details
-    console.error('PayTR API error response:', {
-      status: paytrResponse.status,
-      statusText: paytrResponse.statusText,
-      body: paytrResult,
-      parsedResponse,
-      extractedError: errorMessage,
-      merchantOid,
-    })
+      console.log('PayTR API raw error response:', paytrResult)
+      console.error('PayTR API error response:', {
+        status: paytrResponse.status,
+        statusText: paytrResponse.statusText,
+        body: paytrResult,
+        parsedResponse,
+        extractedError: errorMessage,
+        merchantOid,
+      })
     
     // Return PayTR's actual error message to client
     return NextResponse.json(
