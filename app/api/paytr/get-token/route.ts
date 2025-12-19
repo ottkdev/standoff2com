@@ -208,11 +208,8 @@ export async function POST(request: Request) {
 
     // Generate PayTR token/hash using documented order
     const paymentAmountStr = String(deposit.grossAmount) // kuruş as string
-    const paymentType = 'card'
-    const installmentCount = '0'
-    const maxInstallment = '1'
-    const noInstallment = '1'
-    const non3d = '0'
+    const maxInstallment = '0'
+    const noInstallment = '0'
     const currency = 'TL'
     const timeoutLimit = '30'
     const debugOn = '1'
@@ -224,15 +221,14 @@ export async function POST(request: Request) {
     const userAddress = String('Türkiye')
     const userPhone = String('5000000000')
     
-    // Build user_basket (NOT included in hash)
+    // Build user_basket (INCLUDED in hash)
     const amountTlString = (deposit.grossAmount / 100).toFixed(2)
     const userBasketPayload = [['Cüzdan Yükleme', amountTlString, 1]]
     const userBasketJson = JSON.stringify(userBasketPayload)
     const userBasketBase64 = Buffer.from(userBasketJson).toString('base64')
     
-    // PayTR hash order (ONLY documented fields, NO user_* fields, NO user_basket, NO no_installment, NO max_installment):
-    // merchant_id + user_ip + merchant_oid + email + payment_amount + payment_type + installment_count + currency + test_mode + non_3d + merchant_salt
-    const hashStr = `${validatedMerchantId.trim()}${userIp}${merchantOidForPaytr}${user.email.trim()}${paymentAmountStr}${paymentType}${installmentCount}${currency}${testModeString}${non3d}${validatedMerchantSalt.trim()}`
+    // PayTR hash order: merchant_id + user_ip + merchant_oid + email + payment_amount + user_basket + no_installment + max_installment + currency + test_mode + merchant_salt
+    const hashStr = `${validatedMerchantId.trim()}${userIp}${merchantOidForPaytr}${user.email.trim()}${paymentAmountStr}${userBasketBase64}${noInstallment}${maxInstallment}${currency}${testModeString}${validatedMerchantSalt.trim()}`
     const paytrToken = crypto
       .createHmac('sha256', validatedMerchantKey.trim())
       .update(hashStr)
@@ -342,13 +338,10 @@ export async function POST(request: Request) {
     paytrParams.append('user_name', userName)
     paytrParams.append('user_address', userAddress)
     paytrParams.append('user_phone', userPhone)
-    paytrParams.append('payment_type', paymentType)
-    paytrParams.append('installment_count', installmentCount)
     paytrParams.append('max_installment', maxInstallment)
     paytrParams.append('no_installment', noInstallment)
     paytrParams.append('currency', currency)
     paytrParams.append('test_mode', String(testMode)) // Must be '0' or '1' as string
-    paytrParams.append('non_3d', non3d)
     paytrParams.append('timeout_limit', timeoutLimit)
     paytrParams.append('debug_on', debugOn)
     paytrParams.append('client_lang', clientLang)
