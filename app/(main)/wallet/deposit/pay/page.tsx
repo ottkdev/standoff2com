@@ -53,6 +53,7 @@ export default function PayTRPaymentPage() {
         }
 
         // Call server-side proxy to get PayTR token (avoids CORS issues)
+        console.log('Requesting PayTR token for merchantOid:', data.merchantOid)
         const tokenResponse = await fetch('/api/paytr/get-token', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -61,16 +62,25 @@ export default function PayTRPaymentPage() {
 
         if (!tokenResponse.ok) {
           const errorData = await tokenResponse.json()
-          throw new Error(errorData.error || 'PayTR token alınamadı')
+          console.error('PayTR get-token failed:', {
+            status: tokenResponse.status,
+            error: errorData.error,
+            paytrError: errorData.paytrError,
+          })
+          // DO NOT redirect to success - show error instead
+          throw new Error(errorData.paytrError || errorData.error || 'PayTR token alınamadı')
         }
 
         const tokenData = await tokenResponse.json()
         
         if (!tokenData.success || !tokenData.iframeUrl) {
+          console.error('Invalid PayTR token response:', tokenData)
           throw new Error('PayTR iframe URL alınamadı')
         }
 
+        console.log('PayTR iframe URL received, redirecting...')
         // Redirect to PayTR iframe - user will see PayTR payment screen
+        // PayTR will handle payment and redirect to success/fail URLs
         window.location.href = tokenData.iframeUrl
       } catch (err: any) {
         console.error('PayTR init error:', err)

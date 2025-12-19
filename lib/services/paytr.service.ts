@@ -34,6 +34,8 @@ interface PayTRCallbackData {
 export class PayTRService {
   /**
    * Generate PayTR token/hash for payment initialization
+   * Hash order (exact PayTR documentation order):
+   * merchant_id + merchant_salt + merchant_oid + user_ip + email + payment_amount + test_mode + timeout_limit + currency + installment + language
    */
   static generateToken(params: PayTRInitParams): string {
     const {
@@ -55,8 +57,21 @@ export class PayTRService {
       language = 'tr',
     } = params
 
-    // PayTR hash calculation
-    const hashStr = `${merchantId}${merchantSalt}${merchantOid}${userIp}${email}${paymentAmount}${testMode}${timeoutLimit}${currency}${installment}${language}`
+    // Validate required fields
+    if (!merchantId || !merchantKey || !merchantSalt) {
+      throw new Error('PayTR credentials are required')
+    }
+    if (!merchantOid || !email || !userIp) {
+      throw new Error('merchantOid, email, and userIp are required')
+    }
+    if (!paymentAmount || paymentAmount <= 0) {
+      throw new Error('paymentAmount must be greater than 0')
+    }
+
+    // Ensure all values are strings for hash calculation (PayTR expects exact string concatenation)
+    // PayTR hash calculation - exact order as per documentation
+    const hashStr = `${String(merchantId)}${String(merchantSalt)}${String(merchantOid)}${String(userIp).trim()}${String(email).trim()}${String(paymentAmount)}${String(testMode)}${String(timeoutLimit)}${String(currency)}${String(installment)}${String(language)}`
+    
     const hash = crypto
       .createHmac('sha256', merchantKey)
       .update(hashStr)

@@ -27,53 +27,55 @@ export default function DepositSuccessPage() {
       }
 
       try {
+        console.log('Verifying payment status for merchantOid:', merchantOid)
+        
         // Poll deposit status until it's confirmed or failed
-        const checkStatus = async (): Promise<boolean> => {
+        const checkStatus = async (): Promise<'SUCCESS' | 'FAILED' | 'PENDING'> => {
           const response = await fetch(`/api/deposits?merchantOid=${merchantOid}`)
           if (!response.ok) {
             throw new Error('Deposit bulunamadı')
           }
 
           const deposit = await response.json()
+          console.log('Deposit status check:', { status: deposit.status, merchantOid })
           
-          if (deposit.status === 'SUCCESS') {
-            return true
-          } else if (deposit.status === 'FAILED') {
-            return false
-          } else {
-            // Still pending, wait and retry
-            return new Promise((resolve) => {
-              setTimeout(async () => {
-                const result = await checkStatus()
-                resolve(result)
-              }, 2000) // Check every 2 seconds
-            })
-          }
+          return deposit.status as 'SUCCESS' | 'FAILED' | 'PENDING'
         }
 
         // Wait up to 30 seconds for callback to process
         const maxWait = 30000
         const startTime = Date.now()
+        const pollInterval = 2000 // Check every 2 seconds
         
         const verify = async () => {
           while (Date.now() - startTime < maxWait) {
-            const result = await checkStatus()
-            if (result !== null) {
-              setIsValid(result)
+            const status = await checkStatus()
+            
+            if (status === 'SUCCESS') {
+              console.log('Payment verified as SUCCESS')
+              setIsValid(true)
+              setIsVerifying(false)
+              return
+            } else if (status === 'FAILED') {
+              console.log('Payment verified as FAILED')
+              setIsValid(false)
+              setError('Ödeme işlemi başarısız olmuş')
               setIsVerifying(false)
               return
             }
-            await new Promise((resolve) => setTimeout(resolve, 2000))
+            
+            // Still pending, wait and retry
+            await new Promise((resolve) => setTimeout(resolve, pollInterval))
           }
           
           // Timeout - check one more time
-          const finalCheck = await fetch(`/api/deposits?merchantOid=${merchantOid}`)
-          if (finalCheck.ok) {
-            const deposit = await finalCheck.json()
-            setIsValid(deposit.status === 'SUCCESS')
+          console.log('Payment verification timeout, checking final status')
+          const finalStatus = await checkStatus()
+          if (finalStatus === 'SUCCESS') {
+            setIsValid(true)
           } else {
             setIsValid(false)
-            setError('Ödeme durumu doğrulanamadı')
+            setError('Ödeme durumu doğrulanamadı. Lütfen cüzdanınızı kontrol edin.')
           }
           setIsVerifying(false)
         }
