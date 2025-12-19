@@ -49,6 +49,7 @@ interface Report {
   status: string
   reviewedById: string | null
   reviewedAt: Date | string | null
+  adminNote?: string | null
   createdAt: string | Date
   reporter: {
     id: string
@@ -102,7 +103,7 @@ export function ModerationPanel({
   const status = searchParams.get('status') || initialFilters.status || 'OPEN'
   const targetType = searchParams.get('targetType') || initialFilters.targetType || ''
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value?: string) => {
     const params = new URLSearchParams(searchParams.toString())
     if (value) {
       params.set(key, value)
