@@ -223,14 +223,6 @@ export async function POST(request: Request) {
       console.log('PayTR test mode: DISABLED (production)')
     }
 
-    // Log merchant_oid before sending to PayTR (CRITICAL for debugging)
-    console.log('PayTR merchant_oid generated:', {
-      merchantOid: finalMerchantOid,
-      length: finalMerchantOid.length,
-      isValid: /^[A-Za-z0-9]+$/.test(finalMerchantOid) && finalMerchantOid.length <= 32,
-      depositId: deposit.id,
-    })
-
     // Log init parameters (without sensitive data)
     console.log('PayTR init request:', {
       merchantOid: finalMerchantOid,
