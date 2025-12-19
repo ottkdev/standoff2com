@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { AvatarUpload } from '@/components/ui/avatar-upload'
 import { useToast } from '@/hooks/use-toast'
 import { updateProfileSchema } from '@/lib/validations/user.validation'
 import { ArrowLeft, Loader2 } from 'lucide-react'
@@ -102,22 +103,22 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="container py-6 md:py-10 max-w-2xl px-4 md:px-6 w-full overflow-x-hidden">
+    <div className="container py-4 sm:py-6 md:py-8 max-w-2xl px-3 sm:px-4 md:px-5 lg:px-6 w-full overflow-x-hidden">
       <Link
         href={`/profile/${session.user.username}`}
-        className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-6"
+        className="inline-flex items-center gap-1.5 sm:gap-2 text-muted-foreground hover:text-primary mb-3 sm:mb-4 text-xs sm:text-sm"
       >
-        <ArrowLeft className="h-4 w-4" />
-        Profile Dön
+        <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+        <span className="truncate">Profile Dön</span>
       </Link>
 
       <Card className="glass-effect">
         <CardHeader>
-          <CardTitle>Profili Düzenle</CardTitle>
-          <CardDescription>Profil bilgilerinizi güncelleyin</CardDescription>
+          <CardTitle className="text-xl sm:text-2xl break-words">Profili Düzenle</CardTitle>
+          <CardDescription className="text-xs sm:text-sm break-words">Profil bilgilerinizi güncelleyin</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
               <Label htmlFor="displayName">Görünen Ad</Label>
               <Input
@@ -144,17 +145,12 @@ export default function EditProfilePage() {
               </p>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="avatarUrl">Profil Fotoğrafı URL</Label>
-              <Input
-                id="avatarUrl"
-                type="url"
-                value={formData.avatarUrl}
-                onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })}
-                placeholder="https://..."
-                disabled={isLoading}
-              />
-            </div>
+            <AvatarUpload
+              value={formData.avatarUrl}
+              onChange={(url) => setFormData({ ...formData, avatarUrl: url })}
+              disabled={isLoading}
+              username={session?.user?.username || ''}
+            />
 
             <div className="flex gap-4">
               <Button type="submit" disabled={isLoading} className="flex-1">

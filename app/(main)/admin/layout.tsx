@@ -20,7 +20,8 @@ import {
   BarChart3,
   Banknote,
   AlertTriangle,
-  Package
+  Package,
+  HelpCircle
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -33,6 +34,7 @@ async function AdminNav() {
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/users', label: 'Kullanıcılar', icon: Users },
     { href: '/admin/moderation', label: 'Moderasyon', icon: Shield },
+    { href: '/admin/support', label: 'Destek Talepleri', icon: HelpCircle },
     { href: '/admin/withdrawals', label: 'Çekimler', icon: Banknote },
     { href: '/admin/forum', label: 'Forum', icon: MessageSquare },
     { href: '/admin/blog', label: 'Blog', icon: BookOpen },

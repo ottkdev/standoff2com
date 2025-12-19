@@ -126,26 +126,26 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
   }
 
   return (
-    <div className="container py-6 sm:py-8 md:py-10 px-4 md:px-6 w-full overflow-x-hidden">
-      {/* Header */}
-      <div className="mb-6 sm:mb-8 md:mb-12">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6">
+    <div className="container py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-5 lg:px-6 w-full overflow-x-hidden max-w-6xl">
+      {/* Header - Kompakt */}
+      <div className="mb-4 sm:mb-6 md:mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4">
           <div className="min-w-0 flex-1">
-            <div className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-primary/10 border border-primary/20 mb-2 sm:mb-3 md:mb-4 w-fit">
-              <ShoppingBag className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary flex-shrink-0" />
-              <span className="text-xs md:text-sm font-medium break-words">Alım-Satım</span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-1.5 sm:mb-2 w-fit">
+              <ShoppingBag className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary flex-shrink-0" />
+              <span className="text-[10px] sm:text-xs font-medium break-words">Alım-Satım</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 gradient-text break-words">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-1.5 sm:mb-2 gradient-text break-words">
               Marketplace
             </h1>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground break-words">
+            <p className="text-xs sm:text-sm md:text-base text-muted-foreground break-words">
               Standoff 2 oyun içi eşyaları, hesaplar ve daha fazlası
             </p>
           </div>
           {session && (
             <Link href="/marketplace/create" className="flex-shrink-0 w-full md:w-auto">
-              <Button size="lg" className="gap-2 w-full md:w-auto min-h-[44px]">
-                <Plus className="h-4 w-4 md:h-5 md:w-5" />
+              <Button size="lg" className="gap-1.5 w-full md:w-auto min-h-[44px] text-sm">
+                <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">İlan Oluştur</span>
                 <span className="sm:hidden">Yeni</span>
               </Button>
@@ -153,8 +153,8 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
           )}
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+        {/* Quick Stats - Kompakt */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2">
           {[
             { label: 'Toplam İlan', value: allCount, tone: 'primary' },
             { label: 'Aktif', value: activeCount, tone: 'emerald', extra: activeValueSum ? `${activeValueSum.toLocaleString('tr-TR')} ₺` : '' },
@@ -162,11 +162,11 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
             { label: 'Satıldı', value: soldCount, tone: 'slate' },
           ].map((stat) => (
             <Card key={stat.label} className="glass-effect border-border/60 overflow-hidden">
-              <CardContent className="py-3 sm:py-4 px-3 sm:px-4">
-                <p className="text-xs text-muted-foreground break-words">{stat.label}</p>
-                <div className="flex items-end gap-1 sm:gap-2 mt-1 flex-wrap">
-                  <span className="text-xl sm:text-2xl font-semibold break-words">{stat.value.toLocaleString('tr-TR')}</span>
-                  {stat.extra && <span className="text-[10px] sm:text-xs text-muted-foreground break-words">{stat.extra}</span>}
+              <CardContent className="py-2 sm:py-2.5 px-2 sm:px-3">
+                <p className="text-[10px] sm:text-xs text-muted-foreground break-words">{stat.label}</p>
+                <div className="flex items-end gap-1 mt-0.5 flex-wrap">
+                  <span className="text-lg sm:text-xl font-semibold break-words">{stat.value.toLocaleString('tr-TR')}</span>
+                  {stat.extra && <span className="text-[9px] sm:text-[10px] text-muted-foreground break-words">{stat.extra}</span>}
                 </div>
               </CardContent>
             </Card>
@@ -174,10 +174,10 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
         </div>
       </div>
 
-      {/* Advanced Filters */}
-      <Card className="glass-effect border-primary/20 mb-6 sm:mb-8 overflow-hidden">
-        <CardContent className="pt-4 sm:pt-6">
-          <div className="flex flex-col gap-3 sm:gap-4">
+      {/* Advanced Filters - Kompakt */}
+      <Card className="glass-effect border-primary/20 mb-4 sm:mb-6 overflow-hidden">
+        <CardContent className="pt-3 sm:pt-4">
+          <div className="flex flex-col gap-2 sm:gap-3">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2 min-w-0 flex-1">
                 <span className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">

@@ -161,6 +161,9 @@ model User {
   tradeConversationsAsSeller  TradeConversation[] @relation("Seller")
   tradeMessagesSent    TradeMessage[]    @relation("TradeMessageSender")
 
+  // Support Tickets
+  supportTickets SupportTicket[]
+
   @@map("users")
 }
 
@@ -805,4 +808,68 @@ model TradeMessage {
   @@index([senderId])
   @@index([createdAt])
   @@map("trade_messages")
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_USER
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TicketCategory {
+  PAYMENT
+  MARKETPLACE
+  ACCOUNT
+  TECHNICAL
+  OTHER
+}
+
+enum MessageSenderType {
+  USER
+  ADMIN
+}
+
+model SupportTicket {
+  id            String         @id @default(cuid())
+  userId        String
+  subject       String
+  category      TicketCategory
+  status        TicketStatus   @default(OPEN)
+  priority      TicketPriority @default(MEDIUM)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  lastMessageAt DateTime       @default(now())
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages SupportMessage[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([category])
+  @@index([priority])
+  @@index([lastMessageAt])
+  @@index([createdAt])
+  @@map("support_tickets")
+}
+
+model SupportMessage {
+  id          String           @id @default(cuid())
+  ticketId    String
+  senderType  MessageSenderType
+  senderId    String?
+  message     String           @db.Text
+  createdAt   DateTime         @default(now())
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+  @@index([createdAt])
+  @@map("support_messages")
 }

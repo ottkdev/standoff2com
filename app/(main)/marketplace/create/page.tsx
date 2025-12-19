@@ -8,9 +8,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ImageUpload } from '@/components/ui/image-upload'
 import { useToast } from '@/hooks/use-toast'
 import { createListingSchema } from '@/lib/validations/marketplace.validation'
-import { Loader2, ArrowLeft, Upload } from 'lucide-react'
+import { Loader2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default function CreateListingPage() {
@@ -74,21 +75,21 @@ export default function CreateListingPage() {
   }
 
   return (
-    <div className="container py-6 md:py-10 max-w-3xl px-4 md:px-6 w-full overflow-x-hidden">
-      <Link href="/marketplace" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 md:mb-6 text-sm md:text-base">
-        <ArrowLeft className="h-4 w-4" />
+    <div className="container py-4 sm:py-6 md:py-8 max-w-3xl px-3 sm:px-4 md:px-5 lg:px-6 w-full overflow-x-hidden">
+      <Link href="/marketplace" className="inline-flex items-center gap-1.5 sm:gap-2 text-muted-foreground hover:text-primary mb-3 sm:mb-4 text-xs sm:text-sm">
+        <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         <span className="truncate">Marketplace'e Dön</span>
       </Link>
 
       <Card className="glass-effect">
-        <CardHeader className="px-4 md:px-6">
-          <CardTitle className="text-2xl md:text-3xl break-words">Yeni İlan Oluştur</CardTitle>
-          <CardDescription className="break-words">
+        <CardHeader>
+          <CardTitle className="text-xl sm:text-2xl md:text-3xl break-words">Yeni İlan Oluştur</CardTitle>
+          <CardDescription className="text-xs sm:text-sm break-words">
             Standoff 2 ile ilgili eşya, hesap veya hizmet satışı yapabilirsiniz
           </CardDescription>
         </CardHeader>
-        <CardContent className="px-4 md:px-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
               <Label htmlFor="title">Başlık *</Label>
               <Input
@@ -129,59 +130,14 @@ export default function CreateListingPage() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label>Görseller (URL)</Label>
-              <div className="space-y-2">
-                {formData.images.map((url, index) => (
-                  <div key={index} className="flex flex-col sm:flex-row gap-2">
-                    <Input
-                      value={url}
-                      onChange={(e) => {
-                        const newImages = [...formData.images]
-                        newImages[index] = e.target.value
-                        setFormData({ ...formData, images: newImages })
-                      }}
-                      placeholder="https://..."
-                      disabled={isLoading}
-                      className="flex-1 min-w-0"
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      className="min-h-[44px] min-w-[44px]"
-                      size="icon"
-                      onClick={() => {
-                        setFormData({
-                          ...formData,
-                          images: formData.images.filter((_, i) => i !== index),
-                        })
-                      }}
-                    >
-                      ×
-                    </Button>
-                  </div>
-                ))}
-                {formData.images.length < 10 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setFormData({
-                        ...formData,
-                        images: [...formData.images, ''],
-                      })
-                    }}
-                    disabled={isLoading}
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    Görsel Ekle
-                  </Button>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                En az 1, en fazla 10 görsel ekleyebilirsiniz
-              </p>
-            </div>
+            <ImageUpload
+              value={formData.images}
+              onChange={(urls) => setFormData({ ...formData, images: urls })}
+              maxImages={10}
+              disabled={isLoading}
+              label="Görseller"
+              required
+            />
 
             <div className="flex gap-4">
               <Button type="submit" disabled={isLoading} className="flex-1">

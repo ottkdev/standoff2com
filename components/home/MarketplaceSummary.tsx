@@ -49,56 +49,57 @@ export function MarketplaceSummary({ listings }: MarketplaceSummaryProps) {
           </span>
         </Link>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 md:gap-3.5">
         {listings.map((listing) => (
-          <Card key={listing.id} className="hover:border-primary/50 hover:shadow-lg hover:shadow-orange-500/10 transition-all h-full flex flex-col overflow-hidden group">
-            <Link href={`/marketplace/${listing.id}`} className="contents">
-              {listing.images[0] ? (
-                <div className="aspect-video w-full overflow-hidden relative bg-muted">
-                  <img
-                    src={listing.images[0].url}
-                    alt={listing.title}
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/30 opacity-70" />
-                  <div className="absolute top-2 right-2">
-                    <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-xs shadow-sm shadow-emerald-500/10">
-                      Aktif
-                    </Badge>
+          <Card key={listing.id} className="group overflow-hidden border-border/60 bg-card hover:border-primary/40 hover:shadow-md transition-all duration-200 flex flex-col h-full">
+            <Link href={`/marketplace/${listing.id}`} className="contents flex flex-col h-full">
+              {/* Image - Fixed 4:3 aspect ratio */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted flex-shrink-0">
+                {listing.images[0] ? (
+                  <>
+                    <img
+                      src={listing.images[0].url}
+                      alt={listing.title}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 hidden sm:block" />
+                  </>
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center">
+                    <ShoppingBag className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/50" />
                   </div>
+                )}
+                <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 z-10">
+                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 h-auto font-medium shadow-sm">
+                    Aktif
+                  </Badge>
                 </div>
-              ) : (
-                <div className="aspect-video w-full bg-muted flex items-center justify-center">
-                  <ShoppingBag className="h-10 w-10 text-muted-foreground" />
-                </div>
-              )}
-              <CardHeader className="pb-2 flex-shrink-0">
-                <CardTitle className="text-sm md:text-base line-clamp-2 group-hover:text-primary transition-colors">
+              </div>
+
+              {/* Content - Compact */}
+              <div className="flex flex-col flex-1 p-2.5 sm:p-3 min-h-0">
+                <h3 className="text-xs sm:text-sm font-semibold leading-tight line-clamp-2 mb-1.5 sm:mb-2 group-hover:text-primary transition-colors duration-200 break-words">
                   {listing.title}
-                </CardTitle>
-                <div className="flex items-center justify-between">
-                  <div className="text-lg md:text-xl font-bold text-primary mt-2">
-                    {listing.price.toLocaleString('tr-TR')} ₺
-                  </div>
-                  <div className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-1 text-[11px] text-primary">
-                    <Shield className="h-3 w-3" />
-                    Onaylı Süreç
-                  </div>
+                </h3>
+                <div className="text-base sm:text-lg font-bold text-primary mb-2 sm:mb-2.5 break-words">
+                  {listing.price.toLocaleString('tr-TR')} ₺
                 </div>
-              </CardHeader>
-              <CardContent className="pt-0 flex-shrink-0">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <User className="h-3.5 w-3.5 flex-shrink-0" />
-                  <ProfileLink
-                    username={listing.seller.username}
-                    isVerified={listing.seller.isVerified}
-                    className="hover:text-primary truncate flex-1 min-w-0"
-                    noLink
-                  />
-                  <span>•</span>
-                  <span className="whitespace-nowrap">{formatRelativeTime(listing.createdAt)}</span>
+                <div className="flex items-center justify-between gap-1.5 sm:gap-2 mt-auto pt-1.5 sm:pt-2 border-t border-border/50">
+                  <div className="flex items-center gap-1 min-w-0 flex-1">
+                    <User className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground flex-shrink-0" />
+                    <ProfileLink
+                      username={listing.seller.username}
+                      isVerified={listing.seller.isVerified}
+                      className="text-[10px] sm:text-xs text-muted-foreground hover:text-primary truncate min-w-0 transition-colors"
+                      noLink
+                    />
+                  </div>
+                  <span className="text-[9px] sm:text-[10px] text-muted-foreground/80 flex-shrink-0 whitespace-nowrap">
+                    {formatRelativeTime(listing.createdAt)}
+                  </span>
                 </div>
-              </CardContent>
+              </div>
             </Link>
           </Card>
         ))}

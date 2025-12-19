@@ -76,28 +76,28 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
   }
 
   return (
-    <div className="container py-6 md:py-10 max-w-6xl px-4 md:px-6">
-      <Link href="/marketplace" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 md:mb-6 text-sm md:text-base">
-        <ArrowLeft className="h-4 w-4" />
+    <div className="container py-4 sm:py-6 md:py-8 max-w-6xl px-3 sm:px-4 md:px-5 lg:px-6">
+      <Link href="/marketplace" className="inline-flex items-center gap-1.5 sm:gap-2 text-muted-foreground hover:text-primary mb-3 sm:mb-4 text-xs sm:text-sm">
+        <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         <span className="truncate">Marketplace'e Dön</span>
       </Link>
 
-      <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 md:grid-cols-2">
-        {/* Images */}
-        <div>
+      <div className="grid gap-3 sm:gap-4 md:gap-6 grid-cols-1 lg:grid-cols-[42%_58%]">
+        {/* Images - %42 genişlik */}
+        <div className="lg:sticky lg:top-4 lg:self-start">
           {listing.images.length > 0 ? (
             <ListingImageGallery images={listing.images} title={listing.title} />
           ) : (
-            <div className="aspect-square rounded-lg bg-muted flex items-center justify-center">
-              <ShoppingBag className="h-24 w-24 text-muted-foreground" />
+            <div className="aspect-square rounded-lg bg-muted flex items-center justify-center max-h-[600px]">
+              <ShoppingBag className="h-16 w-16 sm:h-20 sm:w-20 text-muted-foreground" />
             </div>
           )}
         </div>
 
-        {/* Details */}
-        <div>
-          <div className="mb-4">
-            <div className="mb-4 space-y-2">
+        {/* Details - %58 genişlik */}
+        <div className="space-y-3 sm:space-y-4">
+          <div>
+            <div className="mb-2 sm:mb-3 space-y-1.5">
               <Badge
                 variant={
                   listing.status === 'ACTIVE'
@@ -108,6 +108,7 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
                     ? 'destructive'
                     : 'outline'
                 }
+                className="text-xs"
               >
                 {listing.status === 'ACTIVE' && 'Aktif'}
                 {listing.status === 'SOLD' && 'Satıldı'}
@@ -115,54 +116,54 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
                 {listing.status === 'REJECTED' && 'Reddedildi'}
               </Badge>
               {listing.status === 'REJECTED' && listing.rejectedReason && (
-                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-                  <p className="text-sm font-semibold text-destructive mb-1">Red Nedeni:</p>
-                  <p className="text-sm text-muted-foreground">{listing.rejectedReason}</p>
+                <div className="p-2 sm:p-2.5 rounded-lg bg-destructive/10 border border-destructive/20">
+                  <p className="text-xs sm:text-sm font-semibold text-destructive mb-0.5">Red Nedeni:</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground break-words">{listing.rejectedReason}</p>
                 </div>
               )}
             </div>
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 gradient-text break-words">{listing.title}</h1>
-            <div className="text-3xl md:text-4xl font-bold text-primary mb-6 break-words">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 gradient-text break-words">{listing.title}</h1>
+            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-3 sm:mb-4 break-words">
               {listing.price.toLocaleString('tr-TR')} ₺
             </div>
           </div>
 
-          <Card className="glass-effect mb-6">
+          <Card className="glass-effect">
             <CardHeader>
-              <CardTitle className="text-lg">Açıklama</CardTitle>
+              <CardTitle className="text-sm sm:text-base">Açıklama</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="whitespace-pre-wrap text-muted-foreground break-words">
+              <p className="whitespace-pre-wrap text-sm text-muted-foreground break-words leading-relaxed">
                 {listing.description}
               </p>
             </CardContent>
           </Card>
 
-          <Card className="glass-effect mb-6">
+          <Card className="glass-effect">
             <CardHeader>
-              <CardTitle className="text-lg">Satıcı Bilgileri</CardTitle>
+              <CardTitle className="text-sm sm:text-base">Satıcı Bilgileri</CardTitle>
             </CardHeader>
             <CardContent>
               <Link
                 href={`/profile/${listing.seller.username}`}
-                className="flex items-center gap-3 hover:text-primary transition-colors"
+                className="flex items-center gap-2 sm:gap-3 hover:text-primary transition-colors"
               >
-                <Avatar className="h-12 w-12">
+                <Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
                   <AvatarImage src={listing.seller.avatarUrl || ''} />
-                  <AvatarFallback>
+                  <AvatarFallback className="text-xs sm:text-sm">
                     {listing.seller.username[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">{listing.seller.username}</span>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <span className="font-semibold text-sm sm:text-base truncate">{listing.seller.username}</span>
                     {listing.seller.isVerified && (
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 flex-shrink-0" />
                     )}
                   </div>
-                  <div className="text-sm text-muted-foreground flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {formatRelativeTime(listing.createdAt)}
+                  <div className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1">
+                    <Calendar className="h-3 w-3 flex-shrink-0" />
+                    <span className="truncate">{formatRelativeTime(listing.createdAt)}</span>
                   </div>
                 </div>
               </Link>
@@ -171,15 +172,15 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
 
           {isOwner && (
             <Card className="glass-effect border-primary/50">
-              <CardContent className="pt-6">
-                <p className="text-sm text-muted-foreground mb-4">
+              <CardContent className="pt-4">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-3 break-words">
                   Bu ilan size ait
                 </p>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1.5 sm:gap-2">
                   {listing.status === 'ACTIVE' && (
                     <MarkSoldButton listingId={listing.id} />
                   )}
-                  <div className="flex gap-2">
+                  <div className="flex gap-1.5 sm:gap-2">
                     <ListingActions listingId={listing.id} status={listing.status} />
                   </div>
                 </div>
@@ -188,16 +189,16 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
           )}
 
           {!isOwner && listing.status === 'ACTIVE' && !hasActiveOrder && session?.user && (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               <BuyButton listingId={listing.id} price={listing.price} />
               <ReportButton targetType="LISTING" targetId={listing.id} variant="outline" className="w-full" />
             </div>
           )}
 
           {!isOwner && listing.status === 'ACTIVE' && hasActiveOrder && isBuyer && (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               <Link href={`/marketplace/orders/${listing.orders[0].id}`}>
-                <Button size="lg" className="w-full" variant="outline">
+                <Button size="lg" className="w-full min-h-[44px]" variant="outline">
                   Siparişi Görüntüle
                 </Button>
               </Link>

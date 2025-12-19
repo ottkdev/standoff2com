@@ -59,18 +59,18 @@ export function MarketplaceListings({ listings, statusBadges }: MarketplaceListi
   }
 
   return (
-    <div className="mb-8 md:mb-12">
-      {/* View Toggle */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-sm text-muted-foreground">
+    <div className="mb-4 sm:mb-6 md:mb-8">
+      {/* View Toggle - Kompakt */}
+      <div className="flex items-center justify-between mb-2 sm:mb-3">
+        <div className="text-xs sm:text-sm text-muted-foreground">
           {listings.length} ilan bulundu
         </div>
         {mounted && <ViewToggle view={view} onViewChange={handleViewChange} />}
       </div>
 
-      {/* Grid View */}
+      {/* Grid View - Compact & Optimized */}
       {displayView === 'grid' && (
-        <div className="grid gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 sm:gap-3 md:gap-3.5">
           {listings.map((listing) => (
             <MarketplaceCard
               key={listing.id}
@@ -81,9 +81,9 @@ export function MarketplaceListings({ listings, statusBadges }: MarketplaceListi
         </div>
       )}
 
-      {/* List View */}
+      {/* List View - Kompakt */}
       {displayView === 'list' && (
-        <div className="space-y-4">
+        <div className="space-y-2 sm:space-y-3">
           {listings.map((listing) => (
             <ListCard
               key={listing.id}
@@ -108,14 +108,29 @@ function ListCard({ listing, statusBadges }: { listing: Listing; statusBadges: R
     }
   }
 
+  const getStatusLabel = () => {
+    switch (listing.status) {
+      case 'ACTIVE':
+        return 'Aktif'
+      case 'PENDING':
+        return 'Bekliyor'
+      case 'SOLD':
+        return 'Satıldı'
+      case 'REJECTED':
+        return 'Reddedildi'
+      default:
+        return listing.status
+    }
+  }
+
   return (
     <>
-      <Card className="glass-effect hover:border-primary/50 hover:shadow-lg transition-all overflow-hidden group">
+      <Card className="hover:border-primary/40 hover:shadow-md transition-all duration-200 overflow-hidden group">
         <Link href={`/marketplace/${listing.id}`} className="contents">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Image */}
+          <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 p-2.5 sm:p-3">
+            {/* Image - Compact Square */}
             <div
-              className="w-full md:w-48 h-48 flex-shrink-0 rounded-lg overflow-hidden bg-muted relative cursor-pointer"
+              className="w-full sm:w-28 md:w-32 h-28 md:h-32 flex-shrink-0 rounded-md overflow-hidden bg-muted relative cursor-pointer aspect-square"
               onClick={handleImageClick}
             >
               {listing.images[0] ? (
@@ -123,54 +138,52 @@ function ListCard({ listing, statusBadges }: { listing: Listing; statusBadges: R
                   <img
                     src={listing.images[0].url}
                     alt={listing.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                    <ZoomIn className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 hidden sm:flex items-center justify-center">
+                    <ZoomIn className="h-4 w-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                   </div>
                 </>
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <User className="h-12 w-12 text-muted-foreground" />
+                  <User className="h-7 w-7 sm:h-8 sm:w-8 text-muted-foreground/50" />
                 </div>
               )}
-              <div className="absolute top-2 right-2 z-10">
-                <Badge className={`${statusBadges[listing.status] || 'bg-muted'} text-xs`}>
-                  {listing.status === 'ACTIVE' && 'Aktif'}
-                  {listing.status === 'PENDING' && 'Bekliyor'}
-                  {listing.status === 'SOLD' && 'Satıldı'}
-                  {listing.status === 'REJECTED' && 'Reddedildi'}
+              <div className="absolute top-1.5 right-1.5 z-10">
+                <Badge className={`${statusBadges[listing.status] || 'bg-muted'} text-[9px] px-1.5 py-0.5 h-auto font-medium border-0 shadow-sm`}>
+                  {getStatusLabel()}
                 </Badge>
               </div>
               {listing.images.length > 1 && (
-                <div className="absolute bottom-2 left-2 z-10">
-                  <Badge variant="secondary" className="text-xs bg-black/50 text-white border-0">
+                <div className="absolute bottom-1.5 left-1.5 z-10">
+                  <Badge variant="secondary" className="text-[9px] px-1.5 py-0.5 h-auto bg-black/60 text-white border-0 backdrop-blur-sm">
                     +{listing.images.length - 1}
                   </Badge>
                 </div>
               )}
             </div>
 
-            {/* Content */}
-            <div className="flex-1 flex flex-col justify-between p-4 md:p-6 min-w-0">
+            {/* Content - Compact */}
+            <div className="flex-1 flex flex-col justify-between min-w-0">
               <div className="min-w-0">
-                <CardTitle className="text-lg md:text-xl lg:text-2xl mb-2 group-hover:text-primary transition-colors break-words">
+                <h3 className="text-sm sm:text-base font-semibold mb-1.5 group-hover:text-primary transition-colors duration-200 line-clamp-2 break-words leading-tight">
                   {listing.title}
-                </CardTitle>
-                <div className="text-xl md:text-2xl lg:text-3xl font-bold text-primary mb-4 break-words">
+                </h3>
+                <div className="text-lg sm:text-xl font-bold text-primary mb-2 break-words">
                   {listing.price.toLocaleString('tr-TR')} ₺
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs md:text-sm text-muted-foreground">
-                <div className="flex items-center gap-2 min-w-0">
-                  <User className="h-4 w-4 flex-shrink-0" />
+              <div className="flex items-center justify-between gap-2 text-[10px] sm:text-xs text-muted-foreground pt-1.5 border-t border-border/50">
+                <div className="flex items-center gap-1 min-w-0 flex-1">
+                  <User className="h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0" />
                   <ProfileLink
                     username={listing.seller.username}
-                    className="hover:text-primary truncate"
+                    className="hover:text-primary truncate min-w-0 transition-colors"
                     noLink
                   />
                 </div>
-                <span className="whitespace-nowrap">{formatRelativeTime(listing.createdAt)}</span>
+                <span className="whitespace-nowrap flex-shrink-0">{formatRelativeTime(listing.createdAt)}</span>
               </div>
             </div>
           </div>

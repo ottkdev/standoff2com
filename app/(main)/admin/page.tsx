@@ -206,31 +206,31 @@ export default async function AdminDashboard() {
   ]
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-3 sm:space-y-4 md:space-y-6">
+      {/* Header - Kompakt */}
       <div>
-        <h1 className="text-4xl font-bold mb-2 gradient-text">Dashboard</h1>
-        <p className="text-muted-foreground">Site genel bakış ve istatistikler</p>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2 gradient-text break-words">Dashboard</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground break-words">Site genel bakış ve istatistikler</p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Stats Grid - Kompakt */}
+      <div className="grid gap-2 sm:gap-3 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => {
           const Icon = stat.icon
           return (
             <Link key={stat.title} href={stat.href}>
               <Card className="glass-effect hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all cursor-pointer group">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1.5 sm:pb-2">
+                  <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground break-words">
                     {stat.title}
                   </CardTitle>
-                  <div className={`p-2 rounded-lg ${stat.bg} group-hover:scale-110 transition-transform`}>
-                    <Icon className={`h-5 w-5 ${stat.color}`} />
+                  <div className={`p-1.5 sm:p-2 rounded-lg ${stat.bg} group-hover:scale-110 transition-transform flex-shrink-0`}>
+                    <Icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.color}`} />
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold mb-1">{stat.value}</div>
-                  <p className="text-xs text-muted-foreground">{stat.change}</p>
+                  <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-0.5 sm:mb-1 break-words">{stat.value}</div>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground break-words">{stat.change}</p>
                 </CardContent>
               </Card>
             </Link>
@@ -238,45 +238,45 @@ export default async function AdminDashboard() {
         })}
       </div>
 
-      {/* Recent Activity */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Recent Users */}
+      {/* Recent Activity - Kompakt */}
+      <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {/* Recent Users - Kompakt */}
         <Card className="glass-effect">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-lg">Yeni Kullanıcılar</CardTitle>
-                <CardDescription>Son kayıt olanlar</CardDescription>
+                <CardTitle className="text-sm sm:text-base">Yeni Kullanıcılar</CardTitle>
+                <CardDescription className="text-xs">Son kayıt olanlar</CardDescription>
               </div>
-              <Users className="h-5 w-5 text-muted-foreground" />
+              <Users className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground flex-shrink-0" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {recentUsers.map((user) => (
                 <Link
                   key={user.id}
                   href={`/admin/users/${user.id}`}
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
+                  className="flex items-center gap-2 p-1.5 sm:p-2 rounded-lg hover:bg-muted/50 transition-colors"
                 >
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                     {user.avatarUrl ? (
-                      <img src={user.avatarUrl} alt={user.username} className="h-10 w-10 rounded-full" />
+                      <img src={user.avatarUrl} alt={user.username} className="h-8 w-8 sm:h-9 sm:w-9 rounded-full" />
                     ) : (
-                      <span className="text-sm font-semibold">{user.username[0].toUpperCase()}</span>
+                      <span className="text-xs sm:text-sm font-semibold">{user.username[0].toUpperCase()}</span>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium truncate">{user.username}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs sm:text-sm font-medium truncate">{user.username}</p>
                       {user.isVerified && (
                         <CheckCircle2 className="h-3 w-3 text-green-500 flex-shrink-0" />
                       )}
                       {user.role === 'ADMIN' && (
-                        <Badge variant="destructive" className="text-xs">Admin</Badge>
+                        <Badge variant="destructive" className="text-[9px]">Admin</Badge>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground break-words">
                       {formatRelativeTime(user.createdAt)}
                     </p>
                   </div>
@@ -284,7 +284,7 @@ export default async function AdminDashboard() {
               ))}
             </div>
             <Link href="/admin/users">
-              <Button variant="outline" className="w-full mt-4" size="sm">
+              <Button variant="outline" className="w-full mt-2 sm:mt-3 text-xs sm:text-sm min-h-[44px]" size="sm">
                 Tümünü Gör
               </Button>
             </Link>
@@ -388,35 +388,35 @@ export default async function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Quick Actions */}
+      {/* Quick Actions - Kompakt */}
       <Card className="glass-effect">
         <CardHeader>
-          <CardTitle>Hızlı Aksiyonlar</CardTitle>
-          <CardDescription>Yaygın yönetim görevleri</CardDescription>
+          <CardTitle className="text-sm sm:text-base">Hızlı Aksiyonlar</CardTitle>
+          <CardDescription className="text-xs">Yaygın yönetim görevleri</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-2 sm:gap-3 md:grid-cols-2 lg:grid-cols-4">
             <Link href="/admin/users?filter=pending">
-              <Button variant="outline" className="w-full justify-start gap-2">
-                <Users className="h-4 w-4" />
+              <Button variant="outline" className="w-full justify-start gap-1.5 text-xs sm:text-sm min-h-[44px]">
+                <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 Kullanıcıları Yönet
               </Button>
             </Link>
             <Link href="/admin/marketplace?status=PENDING">
-              <Button variant="outline" className="w-full justify-start gap-2">
-                <ShoppingBag className="h-4 w-4" />
+              <Button variant="outline" className="w-full justify-start gap-1.5 text-xs sm:text-sm min-h-[44px]">
+                <ShoppingBag className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 İlanları Onayla
               </Button>
             </Link>
             <Link href="/admin/blog/create">
-              <Button variant="outline" className="w-full justify-start gap-2">
-                <BookOpen className="h-4 w-4" />
+              <Button variant="outline" className="w-full justify-start gap-1.5 text-xs sm:text-sm min-h-[44px]">
+                <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 Blog Yazısı Oluştur
               </Button>
             </Link>
             <Link href="/admin/badges">
-              <Button variant="outline" className="w-full justify-start gap-2">
-                <Activity className="h-4 w-4" />
+              <Button variant="outline" className="w-full justify-start gap-1.5 text-xs sm:text-sm min-h-[44px]">
+                <Activity className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 Rozet Yönetimi
               </Button>
             </Link>

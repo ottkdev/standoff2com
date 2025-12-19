@@ -22,48 +22,48 @@ export default async function ForumPage() {
   const totalPosts = categories.reduce((acc, c) => acc + c._count.posts, 0)
 
   return (
-    <div className="container py-6 md:py-8 lg:py-12 px-4 md:px-6 w-full overflow-x-hidden">
-      {/* Hero Section */}
-      <div className="text-center mb-8 sm:mb-10 md:mb-12">
-        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-3 sm:px-4 py-1.5 sm:py-2 mb-4 sm:mb-6">
-          <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-          <span className="font-medium text-xs sm:text-sm break-words">Topluluk Forumu</span>
+    <div className="container py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-5 lg:px-6 w-full overflow-x-hidden max-w-6xl">
+      {/* Hero Section - Kompakt */}
+      <div className="text-center mb-4 sm:mb-6 md:mb-8">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-2.5 sm:px-3 py-1 sm:py-1.5 mb-2 sm:mb-3">
+          <MessageSquare className="h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0" />
+          <span className="font-medium text-[10px] sm:text-xs break-words">Topluluk Forumu</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 gradient-text break-words px-2 sm:px-4">
+        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 gradient-text break-words px-2">
           Standoff 2 Forum
         </h1>
-        <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto mb-4 sm:mb-6 md:mb-8 break-words px-2 sm:px-4">
+        <p className="text-xs sm:text-sm md:text-base text-muted-foreground max-w-3xl mx-auto mb-3 sm:mb-4 break-words px-2">
           Toplulukla bir araya gelin, sorularınızı sorun, rehberler paylaşın ve oyun hakkında tartışın.
           Deneyimli oyuncular ve yeni başlayanlar için aktif bir topluluk platformu.
         </p>
-        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 px-2 sm:px-4">
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 px-2">
           <Link href="/forum" className="w-full sm:w-auto">
-            <Button size="lg" className="gap-2 w-full sm:w-auto min-h-[44px]">
-              <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
+            <Button size="lg" className="gap-1.5 w-full sm:w-auto min-h-[44px] text-sm">
+              <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               Forumu Keşfet
             </Button>
           </Link>
           <Link href="/forum?sort=trending" className="w-full sm:w-auto">
-            <Button variant="outline" size="lg" className="gap-2 w-full sm:w-auto min-h-[44px]">
-              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
+            <Button variant="outline" size="lg" className="gap-1.5 w-full sm:w-auto min-h-[44px] text-sm">
+              <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               Popüler Konular
             </Button>
           </Link>
         </div>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 mt-4 sm:mt-6 md:mt-8 px-2 sm:px-4">
-          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-3 sm:px-4 py-2 shadow-sm">
-            <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
-            <span className="text-xs sm:text-sm font-medium break-words">{totalPosts.toLocaleString('tr-TR')} konu</span>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mt-3 sm:mt-4 px-2">
+          <div className="flex items-center gap-1.5 rounded-lg border border-border/70 bg-background/70 px-2.5 sm:px-3 py-1.5 shadow-sm">
+            <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary flex-shrink-0" />
+            <span className="text-[10px] sm:text-xs font-medium break-words">{totalPosts.toLocaleString('tr-TR')} konu</span>
           </div>
-          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-3 sm:px-4 py-2 shadow-sm">
-            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
-            <span className="text-xs sm:text-sm font-medium break-words">{categories.length} kategori</span>
+          <div className="flex items-center gap-1.5 rounded-lg border border-border/70 bg-background/70 px-2.5 sm:px-3 py-1.5 shadow-sm">
+            <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary flex-shrink-0" />
+            <span className="text-[10px] sm:text-xs font-medium break-words">{categories.length} kategori</span>
           </div>
         </div>
       </div>
 
-      {/* Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10 md:mb-12">
+      {/* Categories Grid - Kompakt */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6 md:mb-8">
         {categories.map((category) => {
           // Assign icons based on category name or use default
           let Icon = MessageSquare

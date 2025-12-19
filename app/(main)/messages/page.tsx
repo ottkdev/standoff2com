@@ -95,56 +95,56 @@ export default async function MessagesPage() {
   const stableNow = new Date()
 
   return (
-    <div className="container py-6 md:py-10 max-w-4xl px-4 md:px-6 max-w-full overflow-x-hidden">
-      <div className="mb-6 md:mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold mb-2 break-words">Mesajlar</h1>
-        <p className="text-sm md:text-base text-muted-foreground break-words">Topluluk üyeleriyle mesajlaşın</p>
+    <div className="container py-4 sm:py-6 md:py-8 max-w-5xl px-3 sm:px-4 md:px-5 lg:px-6 max-w-full overflow-x-hidden">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 break-words">Mesajlar</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground break-words">Topluluk üyeleriyle mesajlaşın</p>
       </div>
 
       {conversationList.length === 0 ? (
         <Card className="glass-effect">
-          <CardContent className="pt-12 pb-12 text-center">
-            <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-muted-foreground">Henüz mesajınız yok</p>
+          <CardContent className="pt-8 sm:pt-10 pb-8 sm:pb-10 text-center">
+            <MessageSquare className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground break-words">Henüz mesajınız yok</p>
           </CardContent>
         </Card>
       ) : (
         <Card className="glass-effect">
           <CardHeader>
-            <CardTitle>Konuşmalar ({conversationList.length})</CardTitle>
+            <CardTitle className="text-base sm:text-lg">Konuşmalar ({conversationList.length})</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               {conversationList.map((conv) => (
                 <Link
                   key={conv.user.id}
                   href={`/messages/${conv.user.id}`}
-                  className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg border hover:bg-muted/50 transition-colors"
+                  className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border hover:bg-muted/50 transition-colors"
                 >
-                  <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0">
+                  <Avatar className="h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0">
                     <AvatarImage src={conv.user.avatarUrl || ''} />
-                    <AvatarFallback className="text-sm md:text-base">
+                    <AvatarFallback className="text-xs sm:text-sm">
                       {conv.user.username[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="font-semibold text-sm md:text-base truncate">
+                    <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1 flex-wrap">
+                      <span className="font-semibold text-xs sm:text-sm truncate">
                         {conv.user.username}
                       </span>
                       {conv.user.isVerified && (
-                        <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 flex-shrink-0" />
                       )}
                       {conv.unreadCount > 0 && (
-                        <Badge variant="default" className="ml-auto text-xs">
+                        <Badge variant="default" className="ml-auto text-[10px]">
                           {conv.unreadCount}
                         </Badge>
                       )}
                     </div>
-                    <p className="text-xs md:text-sm text-muted-foreground truncate break-words">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground truncate break-words line-clamp-1">
                       {conv.lastMessage.content}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1 whitespace-nowrap">
+                    <p className="text-[9px] sm:text-[10px] text-muted-foreground mt-0.5 whitespace-nowrap">
                       {formatRelativeTime(conv.lastMessage.createdAt, stableNow)}
                     </p>
                   </div>

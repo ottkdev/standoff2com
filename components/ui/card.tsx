@@ -25,7 +25,7 @@ const CardHeader = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex flex-col space-y-1.5 p-4 sm:p-6",
+      "flex flex-col space-y-1 p-3 sm:p-4",
       "overflow-hidden",
       className
     )}
@@ -41,7 +41,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-xl sm:text-2xl font-semibold leading-tight tracking-tight",
+      "text-base sm:text-lg md:text-xl font-semibold leading-tight tracking-tight",
       "break-words overflow-wrap-break-word",
       className
     )}
@@ -73,7 +73,7 @@ const CardContent = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "p-4 sm:p-6 pt-0",
+      "p-3 sm:p-4 pt-0",
       "overflow-hidden max-w-full",
       className
     )}
@@ -89,8 +89,8 @@ const CardFooter = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex items-center p-4 sm:p-6 pt-0",
-      "overflow-hidden max-w-full flex-wrap gap-2",
+      "flex items-center p-3 sm:p-4 pt-0",
+      "overflow-hidden max-w-full flex-wrap gap-1.5",
       className
     )}
     {...props}

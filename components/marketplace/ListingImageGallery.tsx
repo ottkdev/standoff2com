@@ -19,10 +19,10 @@ export function ListingImageGallery({ images, title }: ListingImageGalleryProps)
 
   return (
     <>
-      <div className="space-y-4">
-        {/* Main Image */}
+      <div className="space-y-2 sm:space-y-3">
+        {/* Main Image - Yükseklik sınırlandırıldı */}
         <div
-          className="aspect-square rounded-lg overflow-hidden bg-muted relative group cursor-pointer"
+          className="aspect-square rounded-lg overflow-hidden bg-muted relative group cursor-pointer max-h-[500px] sm:max-h-[600px]"
           onClick={() => setSelectedIndex(0)}
         >
           <Image
@@ -33,13 +33,13 @@ export function ListingImageGallery({ images, title }: ListingImageGalleryProps)
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-            <ZoomIn className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ZoomIn className="h-6 w-6 sm:h-8 sm:w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
         </div>
 
-        {/* Thumbnail Grid */}
+        {/* Thumbnail Grid - Kompakt */}
         {images.length > 1 && (
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
             {images.slice(1).map((image, index) => (
               <div
                 key={image.id}

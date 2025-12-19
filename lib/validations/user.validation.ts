@@ -22,7 +22,7 @@ export const loginSchema = z.object({
 export const updateProfileSchema = z.object({
   displayName: z.string().max(50).optional(),
   bio: z.string().max(500).optional(),
-  avatarUrl: z.string().url().optional().or(z.literal('')),
+  avatarUrl: z.string().url('Geçerli bir görsel URL\'si giriniz').optional().or(z.literal('')),
 })
 
 export type RegisterInput = z.infer<typeof registerSchema>

@@ -7,6 +7,8 @@ async function main() {
   console.log('🌱 Seeding database...')
 
   // Clear existing data
+  await prisma.supportMessage.deleteMany()
+  await prisma.supportTicket.deleteMany()
   await prisma.wikiLike.deleteMany()
   await prisma.wikiComment.deleteMany()
   await prisma.wikiArticle.deleteMany()
@@ -964,6 +966,92 @@ Skinler oyun içi kasa açma veya ticaret yoluyla elde edilebilir.`,
   }
 
   console.log('✅ Created additional comments')
+
+  // Create Support Tickets
+  const supportTickets = []
+  const ticketSubjects = [
+    'Ödeme işlemi tamamlanmadı',
+    'Marketplace ilanım onaylanmadı',
+    'Hesap giriş sorunu',
+    'Teknik destek gerekiyor',
+    'Para çekme işlemi beklemede',
+    'İlan görselleri yüklenmiyor',
+    'Profil fotoğrafı değişmiyor',
+    'Mesajlaşma çalışmıyor',
+  ]
+
+  for (let i = 0; i < ticketSubjects.length; i++) {
+    const user = users[Math.floor(Math.random() * Math.min(10, users.length))]
+    const categories: Array<'PAYMENT' | 'MARKETPLACE' | 'ACCOUNT' | 'TECHNICAL' | 'OTHER'> = [
+      'PAYMENT',
+      'MARKETPLACE',
+      'ACCOUNT',
+      'TECHNICAL',
+      'OTHER',
+    ]
+    const category = categories[i % categories.length]
+    const priorities: Array<'LOW' | 'MEDIUM' | 'HIGH'> = ['LOW', 'MEDIUM', 'HIGH']
+    const priority = priorities[Math.floor(Math.random() * priorities.length)]
+    const statuses: Array<'OPEN' | 'IN_PROGRESS' | 'WAITING_USER' | 'CLOSED'> = [
+      'OPEN',
+      'IN_PROGRESS',
+      'WAITING_USER',
+      'CLOSED',
+    ]
+    const status = i < 2 ? 'OPEN' : i < 4 ? 'IN_PROGRESS' : i < 6 ? 'WAITING_USER' : 'CLOSED'
+    
+    const createdAt = new Date()
+    createdAt.setDate(createdAt.getDate() - Math.floor(Math.random() * 7))
+
+    const ticket = await prisma.supportTicket.create({
+      data: {
+        userId: user.id,
+        subject: ticketSubjects[i],
+        category,
+        priority,
+        status,
+        createdAt,
+        lastMessageAt: createdAt,
+        messages: {
+          create: [
+            {
+              senderType: 'USER',
+              senderId: user.id,
+              message: `${ticketSubjects[i]} konusunda yardıma ihtiyacım var. Detaylı bilgi verebilir misiniz?`,
+              createdAt,
+            },
+            ...(status !== 'OPEN' && i % 2 === 0
+              ? [
+                  {
+                    senderType: 'ADMIN' as const,
+                    senderId: users[0].id,
+                    message: 'Merhaba, sorununuzu inceliyoruz. En kısa sürede size dönüş yapacağız.',
+                    createdAt: new Date(createdAt.getTime() + 3600000),
+                  },
+                ]
+              : []),
+          ],
+        },
+      },
+      include: {
+        messages: true,
+      },
+    })
+
+    // Update lastMessageAt if there are multiple messages
+    if (ticket.messages.length > 1) {
+      await prisma.supportTicket.update({
+        where: { id: ticket.id },
+        data: {
+          lastMessageAt: ticket.messages[ticket.messages.length - 1].createdAt,
+        },
+      })
+    }
+
+    supportTickets.push(ticket)
+  }
+
+  console.log(`✅ Created ${supportTickets.length} support tickets`)
 
   console.log('🎉 Seeding completed!')
   console.log('\n📝 Test Credentials:')

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ImageUpload } from '@/components/ui/image-upload'
 import { useToast } from '@/hooks/use-toast'
 import { updateListingSchema } from '@/lib/validations/marketplace.validation'
 import { Loader2, ArrowLeft } from 'lucide-react'
@@ -124,22 +125,22 @@ export default function EditListingPage() {
   }
 
   return (
-    <div className="container py-10 max-w-3xl">
+    <div className="container py-4 sm:py-6 md:py-8 max-w-3xl px-3 sm:px-4 md:px-5 lg:px-6 w-full overflow-x-hidden">
       <Link
         href={`/marketplace/${params.id}`}
-        className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-6"
+        className="inline-flex items-center gap-1.5 sm:gap-2 text-muted-foreground hover:text-primary mb-3 sm:mb-4 text-xs sm:text-sm"
       >
-        <ArrowLeft className="h-4 w-4" />
-        İlana Dön
+        <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+        <span className="truncate">İlana Dön</span>
       </Link>
 
       <Card className="glass-effect">
         <CardHeader>
-          <CardTitle>İlanı Düzenle</CardTitle>
-          <CardDescription>İlan bilgilerini güncelleyin</CardDescription>
+          <CardTitle className="text-xl sm:text-2xl break-words">İlanı Düzenle</CardTitle>
+          <CardDescription className="text-xs sm:text-sm break-words">İlan bilgilerini güncelleyin</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
               <Label htmlFor="title">Başlık *</Label>
               <Input
@@ -177,53 +178,14 @@ export default function EditListingPage() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label>Görseller (URL)</Label>
-              <div className="space-y-2">
-                {formData.images.map((url, index) => (
-                  <div key={index} className="flex gap-2">
-                    <Input
-                      value={url}
-                      onChange={(e) => {
-                        const newImages = [...formData.images]
-                        newImages[index] = e.target.value
-                        setFormData({ ...formData, images: newImages })
-                      }}
-                      placeholder="https://..."
-                      disabled={isLoading}
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      onClick={() => {
-                        setFormData({
-                          ...formData,
-                          images: formData.images.filter((_, i) => i !== index),
-                        })
-                      }}
-                    >
-                      ×
-                    </Button>
-                  </div>
-                ))}
-                {formData.images.length < 10 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setFormData({
-                        ...formData,
-                        images: [...formData.images, ''],
-                      })
-                    }}
-                    disabled={isLoading}
-                  >
-                    Görsel Ekle
-                  </Button>
-                )}
-              </div>
-            </div>
+            <ImageUpload
+              value={formData.images}
+              onChange={(urls) => setFormData({ ...formData, images: urls })}
+              maxImages={10}
+              disabled={isLoading}
+              label="Görseller"
+              required
+            />
 
             <div className="flex gap-4">
               <Button type="submit" disabled={isLoading} className="flex-1">

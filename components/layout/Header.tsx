@@ -21,6 +21,7 @@ import {
   Menu,
   Sparkles,
   BookMarked,
+  HelpCircle,
 } from 'lucide-react'
 import { NotificationBell } from '@/components/notifications/NotificationBell'
 
@@ -81,6 +82,12 @@ export function Header() {
           {session?.user ? (
             <>
               <NotificationBell />
+              <Link href="/support" className="hidden sm:block">
+                <Button variant="ghost" size="sm" className="h-9 md:h-10 min-h-[44px] text-xs md:text-sm">
+                  <HelpCircle className="h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5" />
+                  <span className="break-words">Destek</span>
+                </Button>
+              </Link>
               <Link href="/messages" className="hidden sm:block">
                 <Button variant="ghost" size="sm" className="h-9 md:h-10 min-h-[44px] text-xs md:text-sm">
                   <span className="break-words">Mesajlar</span>
@@ -181,6 +188,12 @@ export function Header() {
               <DropdownMenuSeparator />
               {session?.user ? (
                 <>
+                  <DropdownMenuItem asChild>
+                    <Link href="/support" className="min-h-[44px] flex items-center">
+                      <HelpCircle className="h-4 w-4 mr-2" />
+                      <span className="break-words">Destek</span>
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/messages" className="min-h-[44px] flex items-center">
                       <span className="break-words">Mesajlar</span>
