@@ -120,7 +120,7 @@ export async function POST(request: Request) {
       request.headers.get('x-real-ip') ||
       '127.0.0.1'
 
-    // Generate PayTR token
+    // Generate PayTR hash/token
     const hash = PayTRService.generateToken({
       merchantId,
       merchantKey,
@@ -129,22 +129,29 @@ export async function POST(request: Request) {
       paymentAmount: grossAmount,
       merchantOid,
       userIp,
-      merchantOkUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/wallet/deposit/success`,
-      merchantFailUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/wallet/deposit/fail`,
+      merchantOkUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/wallet/deposit/success?merchantOid=${merchantOid}`,
+      merchantFailUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/wallet/deposit/fail?merchantOid=${merchantOid}`,
       testMode: process.env.NODE_ENV === 'development' ? 1 : 0,
     })
 
-    // Return PayTR iframe URL and data
+    // Return PayTR form data (client will POST to PayTR API to get iframe token)
     return NextResponse.json({
       success: true,
       merchantOid,
-      iframeUrl: 'https://www.paytr.com/odeme/guvenli',
       hash,
       merchantId,
+      merchantKey,
+      merchantSalt,
       email: user.email,
       paymentAmount: grossAmount,
-      merchantOkUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/wallet/deposit/success`,
-      merchantFailUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/wallet/deposit/fail`,
+      userIp,
+      merchantOkUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/wallet/deposit/success?merchantOid=${merchantOid}`,
+      merchantFailUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/wallet/deposit/fail?merchantOid=${merchantOid}`,
+      testMode: process.env.NODE_ENV === 'development' ? 1 : 0,
+      currency: 'TL',
+      installment: 0,
+      language: 'tr',
+      timeoutLimit: 30,
     })
   } catch (error: any) {
     console.error('PayTR init error:', error)
