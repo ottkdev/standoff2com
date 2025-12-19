@@ -7,6 +7,14 @@ import { WalletService } from '@/lib/services/wallet.service'
 import { z } from 'zod'
 import crypto from 'crypto'
 
+const MERCHANT_OID_PREFIX = 'DEP'
+const MERCHANT_OID_REGEX = /^[A-Z0-9]+$/
+
+function generateMerchantOidCandidate() {
+  const random = crypto.randomBytes(8).toString('hex').toUpperCase() // 16 chars
+  return `${MERCHANT_OID_PREFIX}${random}` // 19 chars, within 32
+}
+
 const initDepositSchema = z.object({
   netCreditAmount: z.number().int().min(1000).max(5000000), // 10 TL - 50,000 TL in kuruş
 })
@@ -66,39 +74,33 @@ export async function POST(request: Request) {
     // Calculate amounts
     const { feeAmount, grossAmount } = PayTRService.calculateDepositAmounts(netCreditAmount)
 
-    // Create deposit record first (we'll generate merchantOid after to use deposit.id)
-    const deposit = await prisma.deposit.create({
+    // Generate unique, PayTR-compliant merchant OID (A-Z0-9, <=32, no underscore/dash)
+    async function generateUniqueMerchantOid(): Promise<string> {
+      for (let i = 0; i < 5; i++) {
+        const candidate = generateMerchantOidCandidate()
+        if (candidate.length <= 32 && MERCHANT_OID_REGEX.test(candidate)) {
+          const exists = await prisma.deposit.findUnique({
+            where: { paytrMerchantOid: candidate },
+            select: { id: true },
+          })
+          if (!exists) return candidate
+        }
+      }
+      throw new Error('Geçerli merchant_oid üretilemedi')
+    }
+
+    const merchantOid = await generateUniqueMerchantOid()
+
+    // Create deposit record with final merchantOid
+    const updatedDeposit = await prisma.deposit.create({
       data: {
         userId: session.user.id,
         grossAmount,
         netCreditAmount,
         feeAmount,
         status: 'PENDING',
-        paytrMerchantOid: `DEP${Date.now()}`, // Temporary, will be updated below
+        paytrMerchantOid: merchantOid,
       },
-    })
-
-    // Generate PayTR-compliant merchant OID
-    // MUST: only A-Z a-z 0-9, under 32 chars, NO underscores/hashes/random strings
-    // Use deposit.id to ensure uniqueness: DEP + deposit.id
-    let merchantOid = `DEP${deposit.id}`
-
-    // Validate merchant_oid format (PayTR requirements)
-    // If deposit.id makes it too long, use timestamp fallback
-    if (merchantOid.length > 32 || !/^[A-Za-z0-9]+$/.test(merchantOid)) {
-      console.warn('merchant_oid too long or invalid, using timestamp fallback:', merchantOid)
-      merchantOid = `DEP${Date.now()}`
-      
-      // Validate fallback
-      if (merchantOid.length > 32 || !/^[A-Za-z0-9]+$/.test(merchantOid)) {
-        throw new Error('Failed to generate valid merchant_oid')
-      }
-    }
-
-    // Update deposit with final merchantOid
-    const updatedDeposit = await prisma.deposit.update({
-      where: { id: deposit.id },
-      data: { paytrMerchantOid: merchantOid },
       select: {
         id: true,
         userId: true,
@@ -110,7 +112,6 @@ export async function POST(request: Request) {
       },
     })
 
-    // Use updated deposit
     const finalMerchantOid = updatedDeposit.paytrMerchantOid
 
     // Create pending transactions

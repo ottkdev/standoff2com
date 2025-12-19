@@ -4,6 +4,14 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import crypto from 'crypto'
 
+const MERCHANT_OID_PREFIX = 'DEP'
+const MERCHANT_OID_REGEX = /^[A-Z0-9]+$/
+
+function generateMerchantOidCandidate() {
+  const random = crypto.randomBytes(8).toString('hex').toUpperCase()
+  return `${MERCHANT_OID_PREFIX}${random}`
+}
+
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions)
@@ -34,6 +42,7 @@ export async function POST(request: Request) {
         grossAmount: true,
         netCreditAmount: true,
         status: true,
+        paytrMerchantOid: true,
       },
     })
 
@@ -56,6 +65,46 @@ export async function POST(request: Request) {
         { error: 'Bu deposit zaten işlenmiş' },
         { status: 400 }
       )
+    }
+
+    // Ensure merchant_oid is valid; regenerate for pending deposits if needed
+    let merchantOidForPaytr = (deposit.paytrMerchantOid || merchantOid || '').toUpperCase()
+    const oidIsValid = MERCHANT_OID_REGEX.test(merchantOidForPaytr) && merchantOidForPaytr.length <= 32
+
+    if (!oidIsValid) {
+      let newMerchantOid: string | null = null
+      for (let i = 0; i < 5; i++) {
+        const candidate = generateMerchantOidCandidate()
+        if (candidate.length <= 32 && MERCHANT_OID_REGEX.test(candidate)) {
+          const exists = await prisma.deposit.findUnique({
+            where: { paytrMerchantOid: candidate },
+            select: { id: true },
+          })
+          if (!exists) {
+            newMerchantOid = candidate
+            break
+          }
+        }
+      }
+
+      if (!newMerchantOid) {
+        return NextResponse.json(
+          { error: 'Geçerli merchant_oid üretilemedi' },
+          { status: 500 }
+        )
+      }
+
+      await prisma.deposit.update({
+        where: { id: deposit.id },
+        data: { paytrMerchantOid: newMerchantOid },
+      })
+
+      merchantOidForPaytr = newMerchantOid
+      console.log('merchant_oid regenerated for pending deposit:', {
+        depositId: deposit.id,
+        merchantOidOld: deposit.paytrMerchantOid,
+        merchantOidNew: merchantOidForPaytr,
+      })
     }
 
     // Get user and PayTR credentials
@@ -154,8 +203,8 @@ export async function POST(request: Request) {
 
     // Prepare callback URL (PayTR panel must match this) - generate ONLY ONCE
     const callbackUrl = `${validatedSiteUrl.trim()}/api/paytr/callback`
-    const merchantOkUrl = `${validatedSiteUrl.trim()}/wallet/deposit/success?merchantOid=${merchantOid}`
-    const merchantFailUrl = `${validatedSiteUrl.trim()}/wallet/deposit/fail?merchantOid=${merchantOid}`
+    const merchantOkUrl = `${validatedSiteUrl.trim()}/wallet/deposit/success?merchantOid=${merchantOidForPaytr}`
+    const merchantFailUrl = `${validatedSiteUrl.trim()}/wallet/deposit/fail?merchantOid=${merchantOidForPaytr}`
 
     // Generate PayTR token/hash using documented order
     const paymentAmountStr = String(deposit.grossAmount) // kuruş as string
@@ -167,7 +216,7 @@ export async function POST(request: Request) {
     const debugOn = '1'
     const clientLang = 'tr'
     const testModeString = String(testModeValue)
-    const hashStr = `${validatedMerchantId.trim()}${userIp}${merchantOid}${user.email.trim()}${paymentAmountStr}${paymentType}${installmentCount}${currency}${testModeString}${non3d}${validatedMerchantSalt.trim()}`
+    const hashStr = `${validatedMerchantId.trim()}${userIp}${merchantOidForPaytr}${user.email.trim()}${paymentAmountStr}${paymentType}${installmentCount}${currency}${testModeString}${non3d}${validatedMerchantSalt.trim()}`
     const paytrToken = crypto
       .createHmac('sha256', validatedMerchantKey.trim())
       .update(hashStr)
@@ -187,25 +236,25 @@ export async function POST(request: Request) {
 
     // Log merchant_oid before sending to PayTR (CRITICAL for debugging)
     console.log('PayTR merchant_oid validation:', {
-      merchantOid,
-      length: merchantOid.length,
-      isValid: /^[A-Za-z0-9]+$/.test(merchantOid) && merchantOid.length <= 32,
-      containsUnderscore: merchantOid.includes('_'),
-      containsHash: merchantOid.includes('#'),
-      containsDash: merchantOid.includes('-'),
+      merchantOid: merchantOidForPaytr,
+      length: merchantOidForPaytr.length,
+      isValid: /^[A-Za-z0-9]+$/.test(merchantOidForPaytr) && merchantOidForPaytr.length <= 32,
+      containsUnderscore: merchantOidForPaytr.includes('_'),
+      containsHash: merchantOidForPaytr.includes('#'),
+      containsDash: merchantOidForPaytr.includes('-'),
     })
 
     // Validate merchant_oid format (PayTR requirements)
-    if (!/^[A-Za-z0-9]+$/.test(merchantOid) || merchantOid.length > 32) {
+    if (!/^[A-Za-z0-9]+$/.test(merchantOidForPaytr) || merchantOidForPaytr.length > 32) {
       console.error('INVALID merchant_oid format detected:', {
-        merchantOid,
-        length: merchantOid.length,
-        pattern: /^[A-Za-z0-9]+$/.test(merchantOid),
+        merchantOid: merchantOidForPaytr,
+        length: merchantOidForPaytr.length,
+        pattern: /^[A-Za-z0-9]+$/.test(merchantOidForPaytr),
       })
       return NextResponse.json(
         { 
-          error: `Geçersiz merchant_oid formatı: ${merchantOid}. Sadece A-Z, a-z, 0-9 karakterleri kullanılabilir ve maksimum 32 karakter olmalıdır.`,
-          merchantOid,
+          error: `Geçersiz merchant_oid formatı: ${merchantOidForPaytr}. Sadece A-Z, a-z, 0-9 karakterleri kullanılabilir ve maksimum 32 karakter olmalıdır.`,
+          merchantOid: merchantOidForPaytr,
         },
         { status: 400 }
       )
@@ -214,7 +263,7 @@ export async function POST(request: Request) {
     // Log request parameters (without sensitive data)
     console.log('PayTR get-token request parameters:', {
       merchantId: validatedMerchantId,
-      merchantOid,
+      merchantOid: merchantOidForPaytr,
       email: user.email,
       paymentAmount: deposit.grossAmount,
       paymentAmountString: String(deposit.grossAmount),
@@ -255,7 +304,7 @@ export async function POST(request: Request) {
     if (!validatedMerchantId) missingPaytrFields.push('merchant_id')
     if (!validatedMerchantKey) missingPaytrFields.push('merchant_key')
     if (!validatedMerchantSalt) missingPaytrFields.push('merchant_salt')
-    if (!merchantOid) missingPaytrFields.push('merchant_oid')
+    if (!merchantOidForPaytr) missingPaytrFields.push('merchant_oid')
     if (!user.email) missingPaytrFields.push('email')
     if (!paytrToken) missingPaytrFields.push('paytr_token')
     if (!userIp) missingPaytrFields.push('user_ip')
@@ -285,6 +334,7 @@ export async function POST(request: Request) {
     paytrParams.append('currency', currency)
     paytrParams.append('test_mode', String(testMode)) // Must be '0' or '1' as string
     paytrParams.append('non_3d', non3d)
+    paytrParams.append('no_installment', '1')
     paytrParams.append('timeout_limit', timeoutLimit)
     paytrParams.append('debug_on', debugOn)
     paytrParams.append('client_lang', clientLang)
