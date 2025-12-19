@@ -77,7 +77,7 @@ export function OrderList({
     return labels[status] || status
   }
 
-  const handleStatusFilter = (status: string) => {
+  const handleStatusFilter = (status?: string) => {
     const params = new URLSearchParams()
     if (status && status !== 'all') params.set('status', status)
     params.set('page', '1')

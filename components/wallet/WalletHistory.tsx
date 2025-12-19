@@ -66,7 +66,7 @@ export function WalletHistory({
     return 'text-muted-foreground'
   }
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value?: string) => {
     const params = new URLSearchParams(searchParams.toString())
     if (value) {
       params.set(key, value)

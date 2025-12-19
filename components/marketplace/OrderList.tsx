@@ -81,9 +81,9 @@ export function OrderList({
     return 'outline'
   }
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value?: string) => {
     const params = new URLSearchParams()
-    if (key === 'role' && value !== 'all') params.set('role', value)
+    if (key === 'role' && value && value !== 'all') params.set('role', value)
     if (key === 'status' && value) params.set('status', value)
     params.set('page', '1')
     router.push(`/marketplace/orders?${params.toString()}`)
