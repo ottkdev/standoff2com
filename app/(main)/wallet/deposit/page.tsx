@@ -75,29 +75,29 @@ export default function DepositPage() {
   }
 
   return (
-    <div className="container py-6 md:py-10 px-4 md:px-6 max-w-2xl">
+    <div className="container py-6 md:py-10 px-4 md:px-6 max-w-2xl w-full overflow-x-hidden">
       <Link
         href="/wallet"
-        className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-6"
+        className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 sm:mb-6 text-sm sm:text-base"
       >
-        <ArrowLeft className="h-4 w-4" />
-        Cüzdana Dön
+        <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+        <span className="break-words">Cüzdana Dön</span>
       </Link>
 
-      <Card>
+      <Card className="overflow-hidden">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5" />
-            Para Yükle
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl break-words">
+            <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+            <span>Para Yükle</span>
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-xs sm:text-sm break-words">
             Cüzdanınıza para yüklemek için PayTR ile güvenli ödeme yapın
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="amount">Yüklenecek Tutar (TL)</Label>
+              <Label htmlFor="amount" className="text-sm sm:text-base">Yüklenecek Tutar (TL)</Label>
               <Input
                 id="amount"
                 type="number"
@@ -110,28 +110,28 @@ export default function DepositPage() {
                 disabled={isLoading}
                 required
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground break-words">
                 Minimum: 10 TL, Maksimum: 50,000 TL
               </p>
             </div>
 
             {amount && parseFloat(amount) >= 10 && (
-              <div className="p-4 bg-muted rounded-lg space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Cüzdana Yüklenecek:</span>
-                  <span className="font-semibold text-green-500">
+              <div className="p-3 sm:p-4 bg-muted rounded-lg space-y-2">
+                <div className="flex justify-between text-xs sm:text-sm gap-2">
+                  <span className="text-muted-foreground break-words">Cüzdana Yüklenecek:</span>
+                  <span className="font-semibold text-green-500 flex-shrink-0 break-words">
                     {netAmount > 0 ? (netAmount / 100).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'} ₺
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">İşlem Ücreti (%10):</span>
-                  <span className="font-semibold text-orange-500">
+                <div className="flex justify-between text-xs sm:text-sm gap-2">
+                  <span className="text-muted-foreground break-words">İşlem Ücreti (%10):</span>
+                  <span className="font-semibold text-orange-500 flex-shrink-0 break-words">
                     {feeAmount > 0 ? (feeAmount / 100).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'} ₺
                   </span>
                 </div>
-                <div className="flex justify-between text-base font-bold pt-2 border-t">
-                  <span>Toplam Ödenecek:</span>
-                  <span className="text-primary">
+                <div className="flex justify-between text-sm sm:text-base font-bold pt-2 border-t gap-2">
+                  <span className="break-words">Toplam Ödenecek:</span>
+                  <span className="text-primary flex-shrink-0 break-words">
                     {grossAmount > 0 ? (grossAmount / 100).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'} ₺
                   </span>
                 </div>
@@ -142,12 +142,12 @@ export default function DepositPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  İşleniyor...
+                  <span className="break-words">İşleniyor...</span>
                 </>
               ) : (
                 <>
                   <CreditCard className="mr-2 h-4 w-4" />
-                  Ödemeye Geç
+                  <span className="break-words">Ödemeye Geç</span>
                 </>
               )}
             </Button>

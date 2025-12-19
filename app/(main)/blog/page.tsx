@@ -119,40 +119,40 @@ export default async function BlogPage({ searchParams }: PageProps) {
   return (
     <div className="container py-6 md:py-8 lg:py-12 px-4 md:px-6 w-full overflow-x-hidden">
       {/* Hero Section */}
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-4 py-2 mb-6">
-          <BookOpen className="h-5 w-5" />
-          <span className="font-medium">Blog & Haberler</span>
+      <div className="text-center mb-8 sm:mb-10 md:mb-12">
+        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-3 sm:px-4 py-1.5 sm:py-2 mb-4 sm:mb-6">
+          <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+          <span className="font-medium text-xs sm:text-sm break-words">Blog & Haberler</span>
         </div>
-        <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 gradient-text break-words px-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 gradient-text break-words px-2 sm:px-4">
           Standoff 2 Blog
         </h1>
-        <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto mb-6 md:mb-8 break-words px-4">
+        <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto mb-4 sm:mb-6 md:mb-8 break-words px-2 sm:px-4">
           Oyunun en güncel haberleri, duyuruları, yamaları ve topluluk rehberleri. 
           Standoff 2 dünyasındaki son gelişmeleri buradan takip edin.
         </p>
-        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 md:gap-4 px-4">
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 px-2 sm:px-4">
           <Link href="/blog?sort=recent" className="w-full sm:w-auto">
             <Button size="lg" className="gap-2 w-full sm:w-auto min-h-[44px]">
-              <Newspaper className="h-5 w-5" />
+              <Newspaper className="h-4 w-4 sm:h-5 sm:w-5" />
               Son Yazılar
             </Button>
           </Link>
           <Link href="/blog?sort=popular" className="w-full sm:w-auto">
             <Button variant="outline" size="lg" className="gap-2 w-full sm:w-auto min-h-[44px]">
-              <Sparkles className="h-5 w-5" />
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
               Popüler İçerikler
             </Button>
           </Link>
         </div>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mt-6 md:mt-8 px-4">
-          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-4 py-2 shadow-sm">
-            <BookOpen className="h-4 w-4 text-primary flex-shrink-0" />
-            <span className="text-sm font-medium">{total.toLocaleString('tr-TR')} yazı</span>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 mt-4 sm:mt-6 md:mt-8 px-2 sm:px-4">
+          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-3 sm:px-4 py-2 shadow-sm">
+            <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+            <span className="text-xs sm:text-sm font-medium break-words">{total.toLocaleString('tr-TR')} yazı</span>
           </div>
-          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-4 py-2 shadow-sm">
-            <Sparkles className="h-4 w-4 text-primary flex-shrink-0" />
-            <span className="text-sm font-medium">{categories.length} kategori</span>
+          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-3 sm:px-4 py-2 shadow-sm">
+            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+            <span className="text-xs sm:text-sm font-medium break-words">{categories.length} kategori</span>
           </div>
         </div>
       </div>
@@ -172,20 +172,20 @@ export default async function BlogPage({ searchParams }: PageProps) {
               </Button>
             </Link>
           </div>
-          <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-            <Link href="/blog">
+          <div className="flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start">
+            <Link href="/blog" className="min-h-[44px] flex items-center">
               <Badge
                 variant={!searchParams.category ? 'default' : 'secondary'}
-                className="cursor-pointer hover:bg-primary/20 rounded-full px-4 py-2 text-sm shadow-sm min-h-[44px] flex items-center"
+                className="cursor-pointer hover:bg-primary/20 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm shadow-sm min-h-[44px] flex items-center"
               >
                 Tümü
               </Badge>
             </Link>
             {categories.map((category) => (
-              <Link key={category.id} href={`/blog?category=${category.slug}`}>
+              <Link key={category.id} href={`/blog?category=${category.slug}`} className="min-h-[44px] flex items-center">
                 <Badge
                   variant={searchParams.category === category.slug ? 'default' : 'secondary'}
-                  className="cursor-pointer hover:bg-primary/20 rounded-full px-4 py-2 text-sm shadow-sm min-h-[44px] flex items-center"
+                  className="cursor-pointer hover:bg-primary/20 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm shadow-sm min-h-[44px] flex items-center break-words"
                 >
                   {category.name} ({category._count.blogPosts})
                 </Badge>
@@ -204,7 +204,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
               <p className="text-muted-foreground">En çok okunan ve popüler blog yazıları</p>
             </div>
           </div>
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
             {pinned.map((post, idx) => (
               <Card
                 key={post.id}
@@ -280,7 +280,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
               <p className="text-muted-foreground">Blog yazılarının tam listesi</p>
             </div>
           </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
               <Card
                 key={post.id}
@@ -356,10 +356,10 @@ export default async function BlogPage({ searchParams }: PageProps) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mb-8 md:mb-12">
+        <div className="flex justify-center gap-1.5 sm:gap-2 mb-8 md:mb-12 flex-wrap">
           {page > 1 && (
             <Link href={`/blog?page=${page - 1}${searchParams.category ? `&category=${searchParams.category}` : ''}`}>
-              <Button variant="outline" className="min-h-[44px]">Önceki</Button>
+              <Button variant="outline" className="min-h-[44px] text-xs sm:text-sm">Önceki</Button>
             </Link>
           )}
           {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -370,7 +370,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                 key={pageNum}
                 href={`/blog?page=${pageNum}${searchParams.category ? `&category=${searchParams.category}` : ''}`}
               >
-                <Button variant={pageNum === page ? 'default' : 'outline'} className="min-h-[44px]">
+                <Button variant={pageNum === page ? 'default' : 'outline'} className="min-h-[44px] min-w-[44px] text-xs sm:text-sm">
                   {pageNum}
                 </Button>
               </Link>
@@ -378,7 +378,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
           })}
           {page < totalPages && (
             <Link href={`/blog?page=${page + 1}${searchParams.category ? `&category=${searchParams.category}` : ''}`}>
-              <Button variant="outline" className="min-h-[44px]">Sonraki</Button>
+              <Button variant="outline" className="min-h-[44px] text-xs sm:text-sm">Sonraki</Button>
             </Link>
           )}
         </div>

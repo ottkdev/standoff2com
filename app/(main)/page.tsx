@@ -200,9 +200,9 @@ export default async function HomePage() {
   const [userCount, postCount, listingCount] = stats
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-border/60">
+      <section className="relative overflow-hidden border-b border-border/60 w-full">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 via-amber-500/10 to-yellow-500/20 blur-3xl opacity-40" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(251,146,60,0.25),transparent_35%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(251,146,60,0.18),transparent_45%)]" />
@@ -211,97 +211,97 @@ export default async function HomePage() {
           style={{ backgroundImage: "url('/so2/banner_com.axlebolt.standoff2.jpg')" }}
         />
 
-        <div className="container relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
-          <div className="grid gap-10 lg:grid-cols-[1.2fr,1fr] items-center">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full bg-orange-500/15 text-orange-200 px-4 py-2 ring-1 ring-orange-500/30 w-fit">
-                <Sparkles className="h-4 w-4" />
-                <span className="text-sm font-medium">Yeni nesil topluluk deneyimi</span>
+        <div className="container relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-20 w-full">
+          <div className="grid gap-8 lg:gap-10 lg:grid-cols-[1.2fr,1fr] items-center">
+            <div className="space-y-4 sm:space-y-6 w-full min-w-0">
+              <div className="inline-flex items-center gap-2 rounded-full bg-orange-500/15 text-orange-200 px-3 sm:px-4 py-1.5 sm:py-2 ring-1 ring-orange-500/30 w-fit max-w-full">
+                <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                <span className="text-xs sm:text-sm font-medium break-words">Yeni nesil topluluk deneyimi</span>
               </div>
-              <div className="space-y-4">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
+              <div className="space-y-3 sm:space-y-4">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight break-words">
                   Standoff 2 Türkiye
                   <span className="block gradient-text">Forum · Blog · Marketplace</span>
                 </h1>
-                <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl">
+                <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl break-words">
                   Güvenli ticaret, aktif forum, rehberler ve duyurular tek platformda.
                   Katıl, paylaş, öğren ve toplulukla büyü.
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-3">
-                <Link href="/forum">
-                  <Button size="lg" className="gap-2 shadow-lg shadow-orange-500/10">
-                    <MessageSquare className="h-5 w-5" />
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                <Link href="/forum" className="w-full sm:w-auto">
+                  <Button size="lg" className="gap-2 shadow-lg shadow-orange-500/10 w-full sm:w-auto min-h-[44px]">
+                    <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
                     Foruma Git
                   </Button>
                 </Link>
                 {session ? (
-                  <Link href="/marketplace/create">
-                    <Button size="lg" variant="outline" className="gap-2 border-primary/40">
-                      <ShoppingBag className="h-5 w-5" />
+                  <Link href="/marketplace/create" className="w-full sm:w-auto">
+                    <Button size="lg" variant="outline" className="gap-2 border-primary/40 w-full sm:w-auto min-h-[44px]">
+                      <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5" />
                       İlan Oluştur
                     </Button>
                   </Link>
                 ) : (
-                  <Link href="/register">
-                    <Button size="lg" variant="outline" className="gap-2 border-primary/40">
-                      <Gamepad2 className="h-5 w-5" />
+                  <Link href="/register" className="w-full sm:w-auto">
+                    <Button size="lg" variant="outline" className="gap-2 border-primary/40 w-full sm:w-auto min-h-[44px]">
+                      <Gamepad2 className="h-4 w-4 sm:h-5 sm:w-5" />
                       Ücretsiz Katıl
                     </Button>
                   </Link>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="rounded-xl border border-border/70 bg-background/60 p-4 shadow-sm">
-                  <div className="text-sm text-muted-foreground">Toplam Üye</div>
-                  <div className="text-2xl font-semibold">{userCount.toLocaleString('tr-TR')}</div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+                <div className="rounded-xl border border-border/70 bg-background/60 p-3 sm:p-4 shadow-sm">
+                  <div className="text-xs sm:text-sm text-muted-foreground">Toplam Üye</div>
+                  <div className="text-xl sm:text-2xl font-semibold break-words">{userCount.toLocaleString('tr-TR')}</div>
                 </div>
-                <div className="rounded-xl border border-border/70 bg-background/60 p-4 shadow-sm">
-                  <div className="text-sm text-muted-foreground">Konu & Yorum</div>
-                  <div className="text-2xl font-semibold">{postCount.toLocaleString('tr-TR')}+</div>
+                <div className="rounded-xl border border-border/70 bg-background/60 p-3 sm:p-4 shadow-sm">
+                  <div className="text-xs sm:text-sm text-muted-foreground">Konu & Yorum</div>
+                  <div className="text-xl sm:text-2xl font-semibold break-words">{postCount.toLocaleString('tr-TR')}+</div>
                 </div>
-                <div className="rounded-xl border border-border/70 bg-background/60 p-4 shadow-sm">
-                  <div className="text-sm text-muted-foreground">Aktif İlan</div>
-                  <div className="text-2xl font-semibold">{listingCount.toLocaleString('tr-TR')}</div>
+                <div className="rounded-xl border border-border/70 bg-background/60 p-3 sm:p-4 shadow-sm">
+                  <div className="text-xs sm:text-sm text-muted-foreground">Aktif İlan</div>
+                  <div className="text-xl sm:text-2xl font-semibold break-words">{listingCount.toLocaleString('tr-TR')}</div>
                 </div>
               </div>
             </div>
 
-            <div className="relative">
-              <div className="absolute -inset-6 bg-gradient-to-br from-orange-500/20 via-amber-500/15 to-yellow-500/20 blur-2xl opacity-60" />
-              <div className="relative rounded-2xl border border-border/70 bg-background/70 backdrop-blur-lg shadow-xl shadow-orange-500/10 p-6 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <Shield className="h-6 w-6" />
+            <div className="relative w-full min-w-0">
+              <div className="absolute -inset-4 sm:-inset-6 bg-gradient-to-br from-orange-500/20 via-amber-500/15 to-yellow-500/20 blur-2xl opacity-60" />
+              <div className="relative rounded-2xl border border-border/70 bg-background/70 backdrop-blur-lg shadow-xl shadow-orange-500/10 p-4 sm:p-6 space-y-3 sm:space-y-4 w-full overflow-hidden">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="h-10 w-10 sm:h-12 sm:w-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary flex-shrink-0">
+                    <Shield className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Güvenli Topluluk</p>
-                    <p className="text-lg font-semibold">Moderatör onaylı içerik</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="rounded-xl border border-border/60 bg-muted/30 p-4">
-                    <p className="text-sm text-muted-foreground">Forum & Rehber</p>
-                    <p className="font-semibold mt-1">Sor, paylaş, öğren</p>
-                  </div>
-                  <div className="rounded-xl border border-border/60 bg-muted/30 p-4">
-                    <p className="text-sm text-muted-foreground">Marketplace</p>
-                    <p className="font-semibold mt-1">Onaylı ilan süreçleri</p>
-                  </div>
-                  <div className="rounded-xl border border-border/60 bg-muted/30 p-4">
-                    <p className="text-sm text-muted-foreground">DM & Takip</p>
-                    <p className="font-semibold mt-1">Doğrudan mesajlaşma</p>
-                  </div>
-                  <div className="rounded-xl border border-border/60 bg-muted/30 p-4">
-                    <p className="text-sm text-muted-foreground">Rozetler</p>
-                    <p className="font-semibold mt-1">Verified & statüler</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm text-muted-foreground break-words">Güvenli Topluluk</p>
+                    <p className="text-base sm:text-lg font-semibold break-words">Moderatör onaylı içerik</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Heart className="h-4 w-4 text-rose-400" />
-                  Topluluk güvenliği ve şeffaflığı önceliğimiz.
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  <div className="rounded-xl border border-border/60 bg-muted/30 p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm text-muted-foreground break-words">Forum & Rehber</p>
+                    <p className="font-semibold mt-1 text-sm sm:text-base break-words">Sor, paylaş, öğren</p>
+                  </div>
+                  <div className="rounded-xl border border-border/60 bg-muted/30 p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm text-muted-foreground break-words">Marketplace</p>
+                    <p className="font-semibold mt-1 text-sm sm:text-base break-words">Onaylı ilan süreçleri</p>
+                  </div>
+                  <div className="rounded-xl border border-border/60 bg-muted/30 p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm text-muted-foreground break-words">DM & Takip</p>
+                    <p className="font-semibold mt-1 text-sm sm:text-base break-words">Doğrudan mesajlaşma</p>
+                  </div>
+                  <div className="rounded-xl border border-border/60 bg-muted/30 p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm text-muted-foreground break-words">Rozetler</p>
+                    <p className="font-semibold mt-1 text-sm sm:text-base break-words">Verified & statüler</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                  <Heart className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-rose-400 flex-shrink-0" />
+                  <span className="break-words">Topluluk güvenliği ve şeffaflığı önceliğimiz.</span>
                 </div>
               </div>
             </div>
@@ -310,8 +310,8 @@ export default async function HomePage() {
       </section>
 
       {/* Quick Actions */}
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-        <div className="grid gap-4 md:grid-cols-3">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-10 w-full">
+        <div className="grid gap-3 sm:gap-4 md:grid-cols-3">
           {[
             {
               title: 'Foruma Katıl',
@@ -332,18 +332,18 @@ export default async function HomePage() {
               Icon: ShoppingBag,
             },
           ].map(({ title, href, description, Icon }) => (
-            <Link key={title} href={href} className="group">
-              <div className="rounded-xl border border-border/70 bg-muted/40 p-5 h-full transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-orange-500/10">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                      <Icon className="h-5 w-5" />
+            <Link key={title} href={href} className="group w-full">
+              <div className="rounded-xl border border-border/70 bg-muted/40 p-4 sm:p-5 h-full transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-orange-500/10 w-full overflow-hidden">
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <span className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                     </span>
-                    <h3 className="text-lg font-semibold">{title}</h3>
+                    <h3 className="text-base sm:text-lg font-semibold break-words">{title}</h3>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition" />
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition flex-shrink-0 ml-2" />
                 </div>
-                <p className="text-sm text-muted-foreground">{description}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground break-words">{description}</p>
               </div>
             </Link>
           ))}
@@ -351,8 +351,8 @@ export default async function HomePage() {
       </div>
 
       {/* Main Content */}
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 md:pb-12 w-full overflow-x-hidden">
-        <div className="space-y-4 sm:space-y-6 md:space-y-8 lg:space-y-12">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6 sm:pb-8 md:pb-12 w-full overflow-x-hidden">
+        <div className="space-y-4 sm:space-y-6 md:space-y-8 lg:space-y-10">
           {/* Pinned Posts */}
           {pinnedPosts.length > 0 && (
             <div className="w-full">
@@ -361,9 +361,9 @@ export default async function HomePage() {
           )}
 
           {/* Main Grid: Forum + Stats */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 w-full">
             {/* Forum Summary - Takes 2 columns on large screens */}
-            <div className="lg:col-span-2 w-full">
+            <div className="lg:col-span-2 w-full min-w-0">
               <ForumSummary
                 newPosts={newPosts}
                 mostCommented={mostCommented}
@@ -372,86 +372,86 @@ export default async function HomePage() {
             </div>
 
             {/* Stats Card - Takes 1 column on large screens */}
-            <div className="w-full">
+            <div className="w-full min-w-0">
               <Card className="h-full">
-                <CardContent className="relative pt-6 px-6 pb-6 space-y-5 overflow-hidden">
+                <CardContent className="relative pt-4 sm:pt-6 px-4 sm:px-6 pb-4 sm:pb-6 space-y-4 sm:space-y-5 overflow-hidden">
                   <div
-                    className="pointer-events-none absolute bottom-0 right-0 h-32 w-32 opacity-10"
+                    className="pointer-events-none absolute bottom-0 right-0 h-24 w-24 sm:h-32 sm:w-32 opacity-10"
                     style={{ backgroundImage: "url('/so2/Standoff_2_Logo.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'bottom right' }}
                   />
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                        <Sparkles className="h-4 w-4" />
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <span className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </span>
-                      <div>
-                        <h3 className="font-semibold text-sm md:text-base">Topluluk İstatistikleri</h3>
-                        <p className="text-xs text-muted-foreground">Güncel özet</p>
+                      <div className="min-w-0">
+                        <h3 className="font-semibold text-xs sm:text-sm md:text-base break-words">Topluluk İstatistikleri</h3>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground break-words">Güncel özet</p>
                       </div>
                     </div>
-                    <span className="text-[11px] px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/30">
+                    <span className="text-[10px] sm:text-[11px] px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/30 flex-shrink-0 whitespace-nowrap">
                       Canlı
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="rounded-xl border border-border/70 bg-muted/30 px-3 py-3">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                        <Users className="h-4 w-4" />
-                        Toplam Üye
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+                    <div className="rounded-xl border border-border/70 bg-muted/30 px-3 py-2 sm:py-3">
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-xs text-muted-foreground mb-1">
+                        <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                        <span className="break-words">Toplam Üye</span>
                       </div>
-                      <div className="text-2xl font-semibold">{userCount.toLocaleString('tr-TR')}</div>
+                      <div className="text-xl sm:text-2xl font-semibold break-words">{userCount.toLocaleString('tr-TR')}</div>
                     </div>
-                    <div className="rounded-xl border border-border/70 bg-muted/30 px-3 py-3">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                        <MessageSquare className="h-4 w-4" />
-                        Toplam Konu
+                    <div className="rounded-xl border border-border/70 bg-muted/30 px-3 py-2 sm:py-3">
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-xs text-muted-foreground mb-1">
+                        <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                        <span className="break-words">Toplam Konu</span>
                       </div>
-                      <div className="text-2xl font-semibold">{postCount.toLocaleString('tr-TR')}</div>
+                      <div className="text-xl sm:text-2xl font-semibold break-words">{postCount.toLocaleString('tr-TR')}</div>
                     </div>
-                    <div className="rounded-xl border border-border/70 bg-muted/30 px-3 py-3">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                        <ShoppingBag className="h-4 w-4" />
-                        Aktif İlan
+                    <div className="rounded-xl border border-border/70 bg-muted/30 px-3 py-2 sm:py-3">
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-xs text-muted-foreground mb-1">
+                        <ShoppingBag className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                        <span className="break-words">Aktif İlan</span>
                       </div>
-                      <div className="text-2xl font-semibold">{listingCount.toLocaleString('tr-TR')}</div>
+                      <div className="text-xl sm:text-2xl font-semibold break-words">{listingCount.toLocaleString('tr-TR')}</div>
                     </div>
                   </div>
 
                   {activeUsers.length > 0 && (
-                    <div className="border-t border-border/70 pt-4 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="h-7 w-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                            <Users className="h-4 w-4" />
+                    <div className="border-t border-border/70 pt-3 sm:pt-4 space-y-2 sm:space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="h-6 w-6 sm:h-7 sm:w-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                            <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                           </span>
-                          <p className="text-sm font-semibold">Aktif Kullanıcılar</p>
+                          <p className="text-xs sm:text-sm font-semibold break-words">Aktif Kullanıcılar</p>
                         </div>
-                        <span className="text-xs text-muted-foreground">İlk {activeUsers.length}</span>
+                        <span className="text-[10px] sm:text-xs text-muted-foreground flex-shrink-0 whitespace-nowrap">İlk {activeUsers.length}</span>
                       </div>
                       <div className="space-y-2">
                         {activeUsers.map((u, idx) => (
                           <div
                             key={u.id}
-                            className="flex items-center gap-3 rounded-lg border border-border/60 bg-background/60 px-3 py-2"
+                            className="flex items-center gap-2 sm:gap-3 rounded-lg border border-border/60 bg-background/60 px-2 sm:px-3 py-2 min-w-0"
                           >
-                            <span className="text-xs font-semibold text-muted-foreground w-5 text-center">
+                            <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground w-4 sm:w-5 text-center flex-shrink-0">
                               {idx + 1}.
                             </span>
-                            <Avatar className="h-8 w-8">
+                            <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0">
                               <AvatarImage src={u.avatarUrl || ''} />
-                              <AvatarFallback>{u.username[0].toUpperCase()}</AvatarFallback>
+                              <AvatarFallback className="text-xs">{u.username[0].toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-sm truncate">{u.displayName || u.username}</span>
+                              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                                <span className="font-medium text-xs sm:text-sm truncate">{u.displayName || u.username}</span>
                                 {u.isVerified && (
-                                  <span className="inline-flex items-center gap-1 rounded-full bg-green-500/15 text-green-400 px-2 py-[2px] text-[11px]">
+                                  <span className="inline-flex items-center gap-1 rounded-full bg-green-500/15 text-green-400 px-1.5 sm:px-2 py-[2px] text-[10px] sm:text-[11px] flex-shrink-0">
                                     Onaylı
                                   </span>
                                 )}
                               </div>
-                              <p className="text-xs text-muted-foreground">
+                              <p className="text-[10px] sm:text-xs text-muted-foreground break-words">
                                 {u.postCount} konu • {u.commentCount} yorum
                               </p>
                             </div>

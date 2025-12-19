@@ -24,46 +24,46 @@ export default async function ForumPage() {
   return (
     <div className="container py-6 md:py-8 lg:py-12 px-4 md:px-6 w-full overflow-x-hidden">
       {/* Hero Section */}
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-4 py-2 mb-6">
-          <MessageSquare className="h-5 w-5" />
-          <span className="font-medium">Topluluk Forumu</span>
+      <div className="text-center mb-8 sm:mb-10 md:mb-12">
+        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-3 sm:px-4 py-1.5 sm:py-2 mb-4 sm:mb-6">
+          <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+          <span className="font-medium text-xs sm:text-sm break-words">Topluluk Forumu</span>
         </div>
-        <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 gradient-text break-words px-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 gradient-text break-words px-2 sm:px-4">
           Standoff 2 Forum
         </h1>
-        <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto mb-6 md:mb-8 break-words px-4">
+        <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto mb-4 sm:mb-6 md:mb-8 break-words px-2 sm:px-4">
           Toplulukla bir araya gelin, sorularınızı sorun, rehberler paylaşın ve oyun hakkında tartışın.
           Deneyimli oyuncular ve yeni başlayanlar için aktif bir topluluk platformu.
         </p>
-        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 md:gap-4 px-4">
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 px-2 sm:px-4">
           <Link href="/forum" className="w-full sm:w-auto">
             <Button size="lg" className="gap-2 w-full sm:w-auto min-h-[44px]">
-              <MessageSquare className="h-5 w-5" />
+              <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
               Forumu Keşfet
             </Button>
           </Link>
           <Link href="/forum?sort=trending" className="w-full sm:w-auto">
             <Button variant="outline" size="lg" className="gap-2 w-full sm:w-auto min-h-[44px]">
-              <TrendingUp className="h-5 w-5" />
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
               Popüler Konular
             </Button>
           </Link>
         </div>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mt-6 md:mt-8 px-4">
-          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-4 py-2 shadow-sm">
-            <Users className="h-4 w-4 text-primary flex-shrink-0" />
-            <span className="text-sm font-medium">{totalPosts.toLocaleString('tr-TR')} konu</span>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 mt-4 sm:mt-6 md:mt-8 px-2 sm:px-4">
+          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-3 sm:px-4 py-2 shadow-sm">
+            <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+            <span className="text-xs sm:text-sm font-medium break-words">{totalPosts.toLocaleString('tr-TR')} konu</span>
           </div>
-          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-4 py-2 shadow-sm">
-            <Sparkles className="h-4 w-4 text-primary flex-shrink-0" />
-            <span className="text-sm font-medium">{categories.length} kategori</span>
+          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-3 sm:px-4 py-2 shadow-sm">
+            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+            <span className="text-xs sm:text-sm font-medium break-words">{categories.length} kategori</span>
           </div>
         </div>
       </div>
 
       {/* Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10 md:mb-12">
         {categories.map((category) => {
           // Assign icons based on category name or use default
           let Icon = MessageSquare
@@ -89,30 +89,30 @@ export default async function ForumPage() {
           }
 
           return (
-            <Card key={category.id} className="glass-effect hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all h-full group">
-              <Link href={`/forum/${category.slug}`} className="contents">
+            <Card key={category.id} className="glass-effect hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all h-full group overflow-hidden">
+              <Link href={`/forum/${category.slug}`} className="contents h-full flex flex-col">
                 <CardHeader>
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`p-3 rounded-lg ${bg} ${border} border group-hover:scale-110 transition-transform`}>
-                      <Icon className={`h-6 w-6 ${color}`} />
+                  <div className="flex items-start justify-between mb-3 sm:mb-4">
+                    <div className={`p-2.5 sm:p-3 rounded-lg ${bg} ${border} border group-hover:scale-110 transition-transform flex-shrink-0`}>
+                      <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${color}`} />
                     </div>
                     {category._count.posts > 0 && (
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-[10px] sm:text-xs flex-shrink-0">
                         {category._count.posts} konu
                       </Badge>
                     )}
                   </div>
-                  <CardTitle className="text-xl mb-2 group-hover:text-primary transition-colors">
+                  <CardTitle className="text-lg sm:text-xl mb-2 group-hover:text-primary transition-colors break-words">
                     {category.name}
                   </CardTitle>
-                  <CardDescription className="text-sm leading-relaxed">
+                  <CardDescription className="text-xs sm:text-sm leading-relaxed break-words">
                     {category.description || 'Topluluk tartışmaları ve paylaşımlar için kategori'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-2 text-primary text-sm font-medium group-hover:gap-3 transition-all">
-                    <span>Keşfet</span>
-                    <ArrowRight className="h-4 w-4" />
+                  <div className="flex items-center gap-2 text-primary text-xs sm:text-sm font-medium group-hover:gap-3 transition-all">
+                    <span className="break-words">Keşfet</span>
+                    <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
                   </div>
                 </CardContent>
               </Link>

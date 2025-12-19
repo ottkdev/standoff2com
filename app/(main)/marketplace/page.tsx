@@ -126,25 +126,25 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
   }
 
   return (
-    <div className="container py-8 md:py-10 px-4 md:px-6">
+    <div className="container py-6 sm:py-8 md:py-10 px-4 md:px-6 w-full overflow-x-hidden">
       {/* Header */}
-      <div className="mb-8 md:mb-12">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6 mb-6">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-primary/10 border border-primary/20 mb-3 md:mb-4">
-              <ShoppingBag className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary" />
-              <span className="text-xs md:text-sm font-medium">Alım-Satım</span>
+      <div className="mb-6 sm:mb-8 md:mb-12">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6">
+          <div className="min-w-0 flex-1">
+            <div className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-primary/10 border border-primary/20 mb-2 sm:mb-3 md:mb-4 w-fit">
+              <ShoppingBag className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary flex-shrink-0" />
+              <span className="text-xs md:text-sm font-medium break-words">Alım-Satım</span>
             </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 gradient-text">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 gradient-text break-words">
               Marketplace
             </h1>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground break-words">
               Standoff 2 oyun içi eşyaları, hesaplar ve daha fazlası
             </p>
           </div>
           {session && (
-            <Link href="/marketplace/create" className="flex-shrink-0">
-              <Button size="lg" className="gap-2 w-full md:w-auto">
+            <Link href="/marketplace/create" className="flex-shrink-0 w-full md:w-auto">
+              <Button size="lg" className="gap-2 w-full md:w-auto min-h-[44px]">
                 <Plus className="h-4 w-4 md:h-5 md:w-5" />
                 <span className="hidden sm:inline">İlan Oluştur</span>
                 <span className="sm:hidden">Yeni</span>
@@ -154,19 +154,19 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
           {[
             { label: 'Toplam İlan', value: allCount, tone: 'primary' },
             { label: 'Aktif', value: activeCount, tone: 'emerald', extra: activeValueSum ? `${activeValueSum.toLocaleString('tr-TR')} ₺` : '' },
             { label: 'Onay Bekliyor', value: pendingCount, tone: 'amber' },
             { label: 'Satıldı', value: soldCount, tone: 'slate' },
           ].map((stat) => (
-            <Card key={stat.label} className="glass-effect border-border/60">
-              <CardContent className="py-4 px-4">
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
-                <div className="flex items-end gap-2 mt-1">
-                  <span className="text-2xl font-semibold">{stat.value.toLocaleString('tr-TR')}</span>
-                  {stat.extra && <span className="text-xs text-muted-foreground">{stat.extra}</span>}
+            <Card key={stat.label} className="glass-effect border-border/60 overflow-hidden">
+              <CardContent className="py-3 sm:py-4 px-3 sm:px-4">
+                <p className="text-xs text-muted-foreground break-words">{stat.label}</p>
+                <div className="flex items-end gap-1 sm:gap-2 mt-1 flex-wrap">
+                  <span className="text-xl sm:text-2xl font-semibold break-words">{stat.value.toLocaleString('tr-TR')}</span>
+                  {stat.extra && <span className="text-[10px] sm:text-xs text-muted-foreground break-words">{stat.extra}</span>}
                 </div>
               </CardContent>
             </Card>
@@ -175,27 +175,27 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
       </div>
 
       {/* Advanced Filters */}
-      <Card className="glass-effect border-primary/20 mb-8">
-        <CardContent className="pt-6">
-          <div className="flex flex-col gap-4">
+      <Card className="glass-effect border-primary/20 mb-6 sm:mb-8 overflow-hidden">
+        <CardContent className="pt-4 sm:pt-6">
+          <div className="flex flex-col gap-3 sm:gap-4">
             <div className="flex items-center justify-between flex-wrap gap-2">
-              <div className="flex items-center gap-2">
-                <span className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                  <Filter className="h-4 w-4" />
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <span className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                  <Filter className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </span>
-                <div>
-                  <p className="font-semibold text-sm">Gelişmiş Filtreler</p>
-                  <p className="text-xs text-muted-foreground">Arama, fiyat aralığı, durum ve sıralama</p>
+                <div className="min-w-0">
+                  <p className="font-semibold text-xs sm:text-sm break-words">Gelişmiş Filtreler</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground break-words">Arama, fiyat aralığı, durum ve sıralama</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <Link href="/marketplace">
-                  <Button variant="ghost" size="sm">Sıfırla</Button>
+                  <Button variant="ghost" size="sm" className="min-h-[44px] text-xs sm:text-sm">Sıfırla</Button>
                 </Link>
               </div>
             </div>
 
-            <form id="filter-form" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4" action="/marketplace" method="get">
+            <form id="filter-form" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4" action="/marketplace" method="get">
               <Input
                 name="q"
                 placeholder="🔍 Arama: başlık veya açıklama"
@@ -225,7 +225,7 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
               <select
                 name="sort"
                 defaultValue={sort}
-                className="h-10 rounded-md border border-border bg-background px-3 text-sm sm:col-span-2 lg:col-span-1"
+                className="h-10 min-h-[44px] w-full rounded-md border border-border bg-background px-3 text-sm sm:col-span-2 lg:col-span-1"
               >
                 <option value="newest">Yeni → Eski</option>
                 <option value="price-asc">Fiyat (Artan)</option>
@@ -236,7 +236,7 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
               <Button type="submit" form="filter-form" className="w-full sm:w-auto min-h-[44px]">Filtrele</Button>
             </div>
 
-            <div className="flex flex-wrap gap-2 break-words">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 break-words">
               {[
                 { key: 'ALL', label: 'Tümü' },
                 { key: 'ACTIVE', label: 'Aktif' },
@@ -250,11 +250,11 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
                 sp.set('page', '1')
                 const href = `/marketplace?${sp.toString()}`
                 return (
-                  <Link key={s.key} href={href}>
+                  <Link key={s.key} href={href} className="min-h-[44px] flex items-center">
                     <Badge
                       variant={active ? 'default' : 'outline'}
                       className={cn(
-                        'rounded-full px-3 py-1.5 text-xs shadow-sm transition-all',
+                        'rounded-full px-2.5 sm:px-3 py-1.5 text-xs shadow-sm transition-all min-h-[44px] flex items-center',
                         active
                           ? 'bg-primary text-primary-foreground shadow-primary/30 hover:shadow-primary/40'
                           : 'border-border/70 hover:border-primary/50 hover:text-foreground'
@@ -268,7 +268,7 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
             </div>
 
             {/* Price quick ranges */}
-            <div className="flex flex-wrap gap-2 break-words">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 break-words">
               {[
                 { label: '0 - 500₺', min: 0, max: 500 },
                 { label: '500 - 2000₺', min: 500, max: 2000 },
@@ -283,11 +283,11 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
                 const isActive =
                   (minPrice ?? '') === r.min && (maxPrice ?? '') === (r.max ?? '')
                 return (
-                  <Link key={r.label} href={href}>
+                  <Link key={r.label} href={href} className="min-h-[44px] flex items-center">
                     <Badge
                       variant="outline"
                       className={cn(
-                        'cursor-pointer rounded-full px-3 py-1.5 text-xs border-border/70 hover:border-primary/50 hover:text-foreground transition-all shadow-sm',
+                        'cursor-pointer rounded-full px-2.5 sm:px-3 py-1.5 text-xs border-border/70 hover:border-primary/50 hover:text-foreground transition-all shadow-sm min-h-[44px] flex items-center',
                         isActive ? 'bg-primary/10 border-primary/50 text-primary' : ''
                       )}
                     >
@@ -309,16 +309,16 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
 
       {/* Empty State */}
       {listings.length === 0 && (
-        <div className="text-center py-20">
-          <ShoppingBag className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-          <h3 className="text-xl font-semibold mb-2">Henüz ilan yok</h3>
-          <p className="text-muted-foreground mb-6">
+        <div className="text-center py-12 sm:py-16 md:py-20 px-4">
+          <ShoppingBag className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-muted-foreground" />
+          <h3 className="text-lg sm:text-xl font-semibold mb-2 break-words">Henüz ilan yok</h3>
+          <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 break-words px-4">
             İlk ilanı oluşturmak ister misiniz?
           </p>
           {session && (
-            <Link href="/marketplace/create">
-              <Button size="lg" className="gap-2">
-                <Plus className="h-5 w-5" />
+            <Link href="/marketplace/create" className="inline-block">
+              <Button size="lg" className="gap-2 min-h-[44px]">
+                <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                 İlan Oluştur
               </Button>
             </Link>
@@ -328,10 +328,10 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2">
+        <div className="flex justify-center gap-1.5 sm:gap-2 flex-wrap">
           {page > 1 && (
             <Link href={buildLink({ page: page - 1 })}>
-              <Button variant="outline">Önceki</Button>
+              <Button variant="outline" className="min-h-[44px] text-xs sm:text-sm">Önceki</Button>
             </Link>
           )}
           {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -339,7 +339,7 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
             if (pageNum > totalPages) return null
             return (
               <Link key={pageNum} href={buildLink({ page: pageNum })}>
-                <Button variant={pageNum === page ? 'default' : 'outline'}>
+                <Button variant={pageNum === page ? 'default' : 'outline'} className="min-h-[44px] min-w-[44px] text-xs sm:text-sm">
                   {pageNum}
                 </Button>
               </Link>
@@ -347,7 +347,7 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
           })}
           {page < totalPages && (
             <Link href={buildLink({ page: page + 1 })}>
-              <Button variant="outline">Sonraki</Button>
+              <Button variant="outline" className="min-h-[44px] text-xs sm:text-sm">Sonraki</Button>
             </Link>
           )}
         </div>

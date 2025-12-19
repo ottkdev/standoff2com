@@ -64,40 +64,40 @@ export function WalletOverview({ wallet, recentTransactions }: WalletOverviewPro
   }
 
   return (
-    <div className="container py-6 md:py-10 px-4 md:px-6 max-w-4xl">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Cüzdan</h1>
-        <p className="text-muted-foreground">Bakiye yönetimi ve işlem geçmişi</p>
+    <div className="container py-6 md:py-10 px-4 md:px-6 max-w-4xl w-full overflow-x-hidden">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2 break-words">Cüzdan</h1>
+        <p className="text-sm sm:text-base text-muted-foreground break-words">Bakiye yönetimi ve işlem geçmişi</p>
       </div>
 
       {/* Balance Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Wallet className="h-4 w-4" />
-              Kullanılabilir Bakiye
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <Card className="overflow-hidden">
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2">
+              <Wallet className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+              <span className="break-words">Kullanılabilir Bakiye</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-500">
+            <div className="text-2xl sm:text-3xl font-bold text-green-500 break-words">
               {formatAmount(wallet.balanceAvailable)} ₺
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Wallet className="h-4 w-4" />
-              Tutulan Bakiye
+        <Card className="overflow-hidden">
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2">
+              <Wallet className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+              <span className="break-words">Tutulan Bakiye</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-yellow-500">
+            <div className="text-2xl sm:text-3xl font-bold text-yellow-500 break-words">
               {formatAmount(wallet.balanceHeld)} ₺
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1 break-words">
               Escrow ve çekim talepleri için tutulan
             </p>
           </CardContent>
@@ -105,53 +105,54 @@ export function WalletOverview({ wallet, recentTransactions }: WalletOverviewPro
       </div>
 
       {/* Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <Link href="/wallet/deposit">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <Link href="/wallet/deposit" className="w-full">
           <Button className="w-full min-h-[44px]" size="lg">
-            <Plus className="h-5 w-5 mr-2" />
+            <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
             Para Yükle
           </Button>
         </Link>
-        <Link href="/wallet/withdraw">
+        <Link href="/wallet/withdraw" className="w-full">
           <Button variant="outline" className="w-full min-h-[44px]" size="lg">
-            <Minus className="h-5 w-5 mr-2" />
+            <Minus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
             Para Çek
           </Button>
         </Link>
       </div>
 
       {/* Recent Transactions */}
-      <Card>
+      <Card className="overflow-hidden">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Son İşlemler</CardTitle>
-              <CardDescription>En son 10 işlem</CardDescription>
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="min-w-0">
+              <CardTitle className="text-base sm:text-lg break-words">Son İşlemler</CardTitle>
+              <CardDescription className="text-xs sm:text-sm break-words">En son 10 işlem</CardDescription>
             </div>
-            <Link href="/wallet/history">
-              <Button variant="ghost" size="sm" className="min-h-[44px]">
-                <History className="h-4 w-4 mr-2" />
-                Tümünü Gör
+            <Link href="/wallet/history" className="flex-shrink-0">
+              <Button variant="ghost" size="sm" className="min-h-[44px] text-xs sm:text-sm">
+                <History className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Tümünü Gör</span>
+                <span className="sm:hidden">Tümü</span>
               </Button>
             </Link>
           </div>
         </CardHeader>
         <CardContent>
           {recentTransactions.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Wallet className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>Henüz işlem yok</p>
+            <div className="text-center py-6 sm:py-8 text-muted-foreground px-4">
+              <Wallet className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-2 sm:mb-3 opacity-50" />
+              <p className="text-sm sm:text-base break-words">Henüz işlem yok</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {recentTransactions.map((tx) => (
                 <div
                   key={tx.id}
-                  className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                  className="flex items-center justify-between p-2 sm:p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors gap-2 sm:gap-4"
                 >
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`font-medium ${getTransactionColor(tx.type)}`}>
+                    <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
+                      <span className={`font-medium text-xs sm:text-sm ${getTransactionColor(tx.type)} break-words`}>
                         {getTransactionLabel(tx.type)}
                       </span>
                       <Badge
@@ -162,7 +163,7 @@ export function WalletOverview({ wallet, recentTransactions }: WalletOverviewPro
                             ? 'secondary'
                             : 'destructive'
                         }
-                        className="text-xs"
+                        className="text-[10px] sm:text-xs"
                       >
                         {tx.status === 'SUCCESS' && 'Başarılı'}
                         {tx.status === 'PENDING' && 'Beklemede'}
@@ -170,13 +171,13 @@ export function WalletOverview({ wallet, recentTransactions }: WalletOverviewPro
                         {tx.status === 'CANCELLED' && 'İptal'}
                       </Badge>
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-[10px] sm:text-xs text-muted-foreground break-words">
                       {formatRelativeTime(tx.createdAt)}
                     </div>
                   </div>
-                  <div className="text-right flex-shrink-0 ml-4">
+                  <div className="text-right flex-shrink-0">
                     <div
-                      className={`font-semibold ${
+                      className={`font-semibold text-sm sm:text-base ${
                         tx.type.includes('DEPOSIT') && !tx.type.includes('FEE')
                           ? 'text-green-500'
                           : tx.type === 'RELEASE'
@@ -186,7 +187,7 @@ export function WalletOverview({ wallet, recentTransactions }: WalletOverviewPro
                           : tx.type.includes('WITHDRAW')
                           ? 'text-orange-500'
                           : 'text-muted-foreground'
-                      }`}
+                      } break-words`}
                     >
                       {tx.type.includes('WITHDRAW') || tx.type === 'HOLD' ? '-' : '+'}
                       {formatAmount(tx.amount)} ₺
