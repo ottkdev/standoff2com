@@ -66,10 +66,7 @@ export async function POST(request: Request) {
     // Calculate amounts
     const { feeAmount, grossAmount } = PayTRService.calculateDepositAmounts(netCreditAmount)
 
-    // Generate unique merchant OID
-    const merchantOid = `DEPOSIT_${session.user.id}_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`
-
-    // Create deposit record
+    // Create deposit record first (we'll generate merchantOid after to use deposit.id)
     const deposit = await prisma.deposit.create({
       data: {
         userId: session.user.id,
@@ -77,9 +74,44 @@ export async function POST(request: Request) {
         netCreditAmount,
         feeAmount,
         status: 'PENDING',
-        paytrMerchantOid: merchantOid,
+        paytrMerchantOid: `DEP${Date.now()}`, // Temporary, will be updated below
       },
     })
+
+    // Generate PayTR-compliant merchant OID
+    // MUST: only A-Z a-z 0-9, under 32 chars, NO underscores/hashes/random strings
+    // Use deposit.id to ensure uniqueness: DEP + deposit.id
+    let merchantOid = `DEP${deposit.id}`
+
+    // Validate merchant_oid format (PayTR requirements)
+    // If deposit.id makes it too long, use timestamp fallback
+    if (merchantOid.length > 32 || !/^[A-Za-z0-9]+$/.test(merchantOid)) {
+      console.warn('merchant_oid too long or invalid, using timestamp fallback:', merchantOid)
+      merchantOid = `DEP${Date.now()}`
+      
+      // Validate fallback
+      if (merchantOid.length > 32 || !/^[A-Za-z0-9]+$/.test(merchantOid)) {
+        throw new Error('Failed to generate valid merchant_oid')
+      }
+    }
+
+    // Update deposit with final merchantOid
+    const updatedDeposit = await prisma.deposit.update({
+      where: { id: deposit.id },
+      data: { paytrMerchantOid: merchantOid },
+      select: {
+        id: true,
+        userId: true,
+        grossAmount: true,
+        netCreditAmount: true,
+        feeAmount: true,
+        status: true,
+        paytrMerchantOid: true,
+      },
+    })
+
+    // Use updated deposit
+    const finalMerchantOid = updatedDeposit.paytrMerchantOid
 
     // Create pending transactions
     await WalletService.createTransaction(
@@ -88,8 +120,8 @@ export async function POST(request: Request) {
       netCreditAmount,
       'PENDING',
       'PAYTR',
-      deposit.id,
-      { depositId: deposit.id }
+      updatedDeposit.id,
+      { depositId: updatedDeposit.id }
     )
 
     await WalletService.createTransaction(
@@ -98,8 +130,8 @@ export async function POST(request: Request) {
       feeAmount,
       'PENDING',
       'PAYTR',
-      deposit.id,
-      { depositId: deposit.id }
+      updatedDeposit.id,
+      { depositId: updatedDeposit.id }
     )
 
     // Validate all PayTR environment variables with clear error messages
@@ -190,9 +222,17 @@ export async function POST(request: Request) {
       console.log('PayTR test mode: DISABLED (production)')
     }
 
+    // Log merchant_oid before sending to PayTR (CRITICAL for debugging)
+    console.log('PayTR merchant_oid generated:', {
+      merchantOid: finalMerchantOid,
+      length: finalMerchantOid.length,
+      isValid: /^[A-Za-z0-9]+$/.test(finalMerchantOid) && finalMerchantOid.length <= 32,
+      depositId: deposit.id,
+    })
+
     // Log init parameters (without sensitive data)
     console.log('PayTR init request:', {
-      merchantOid,
+      merchantOid: finalMerchantOid,
       email: user.email,
       paymentAmount: grossAmount,
       userIp,
@@ -210,10 +250,10 @@ export async function POST(request: Request) {
         merchantSalt: validatedMerchantSalt.trim(),
         email: user.email.trim(),
         paymentAmount: grossAmount, // Already in kuruş
-        merchantOid,
+        merchantOid: finalMerchantOid,
         userIp,
-        merchantOkUrl: `${validatedSiteUrl.trim()}/wallet/deposit/success?merchantOid=${merchantOid}`,
-        merchantFailUrl: `${validatedSiteUrl.trim()}/wallet/deposit/fail?merchantOid=${merchantOid}`,
+        merchantOkUrl: `${validatedSiteUrl.trim()}/wallet/deposit/success?merchantOid=${finalMerchantOid}`,
+        merchantFailUrl: `${validatedSiteUrl.trim()}/wallet/deposit/fail?merchantOid=${finalMerchantOid}`,
         testMode: testModeValue,
       })
     } catch (hashError: any) {
@@ -240,7 +280,7 @@ export async function POST(request: Request) {
     // Return PayTR form data (client will POST to PayTR API to get iframe token)
     return NextResponse.json({
       success: true,
-      merchantOid,
+      merchantOid: finalMerchantOid,
       hash,
       merchantId: validatedMerchantId,
       merchantKey: validatedMerchantKey,
@@ -248,8 +288,8 @@ export async function POST(request: Request) {
       email: user.email,
       paymentAmount: grossAmount,
       userIp,
-      merchantOkUrl: `${validatedSiteUrl.trim()}/wallet/deposit/success?merchantOid=${merchantOid}`,
-      merchantFailUrl: `${validatedSiteUrl.trim()}/wallet/deposit/fail?merchantOid=${merchantOid}`,
+      merchantOkUrl: `${validatedSiteUrl.trim()}/wallet/deposit/success?merchantOid=${finalMerchantOid}`,
+      merchantFailUrl: `${validatedSiteUrl.trim()}/wallet/deposit/fail?merchantOid=${finalMerchantOid}`,
       testMode: testModeValue,
       currency: 'TL',
       installment: 0,

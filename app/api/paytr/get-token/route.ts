@@ -211,6 +211,32 @@ export async function POST(request: Request) {
       )
     }
 
+    // Log merchant_oid before sending to PayTR (CRITICAL for debugging)
+    console.log('PayTR merchant_oid validation:', {
+      merchantOid,
+      length: merchantOid.length,
+      isValid: /^[A-Za-z0-9]+$/.test(merchantOid) && merchantOid.length <= 32,
+      containsUnderscore: merchantOid.includes('_'),
+      containsHash: merchantOid.includes('#'),
+      containsDash: merchantOid.includes('-'),
+    })
+
+    // Validate merchant_oid format (PayTR requirements)
+    if (!/^[A-Za-z0-9]+$/.test(merchantOid) || merchantOid.length > 32) {
+      console.error('INVALID merchant_oid format detected:', {
+        merchantOid,
+        length: merchantOid.length,
+        pattern: /^[A-Za-z0-9]+$/.test(merchantOid),
+      })
+      return NextResponse.json(
+        { 
+          error: `Geçersiz merchant_oid formatı: ${merchantOid}. Sadece A-Z, a-z, 0-9 karakterleri kullanılabilir ve maksimum 32 karakter olmalıdır.`,
+          merchantOid,
+        },
+        { status: 400 }
+      )
+    }
+
     // Log request parameters (without sensitive data)
     console.log('PayTR get-token request parameters:', {
       merchantId: validatedMerchantId,
