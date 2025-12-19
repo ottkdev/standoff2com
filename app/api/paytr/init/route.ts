@@ -102,17 +102,35 @@ export async function POST(request: Request) {
       { depositId: deposit.id }
     )
 
-    // Get PayTR credentials
+    // Validate all PayTR environment variables with clear error messages
     const merchantId = process.env.PAYTR_MERCHANT_ID
     const merchantKey = process.env.PAYTR_MERCHANT_KEY
     const merchantSalt = process.env.PAYTR_MERCHANT_SALT
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+    const paytrTestMode = process.env.PAYTR_TEST_MODE
 
-    if (!merchantId || !merchantKey || !merchantSalt) {
+    const missingVars: string[] = []
+    if (!merchantId || merchantId.trim() === '') missingVars.push('PAYTR_MERCHANT_ID')
+    if (!merchantKey || merchantKey.trim() === '') missingVars.push('PAYTR_MERCHANT_KEY')
+    if (!merchantSalt || merchantSalt.trim() === '') missingVars.push('PAYTR_MERCHANT_SALT')
+    if (!siteUrl || siteUrl.trim() === '') missingVars.push('NEXT_PUBLIC_SITE_URL')
+
+    if (missingVars.length > 0) {
+      console.error('Missing PayTR environment variables:', missingVars)
       return NextResponse.json(
-        { error: 'PayTR yapılandırması eksik' },
+        { 
+          error: `PayTR yapılandırması eksik: ${missingVars.join(', ')}`,
+          missingVars,
+        },
         { status: 500 }
       )
     }
+
+    // TypeScript: After validation, we know these are defined
+    const validatedMerchantId = merchantId!
+    const validatedMerchantKey = merchantKey!
+    const validatedMerchantSalt = merchantSalt!
+    const validatedSiteUrl = siteUrl!
 
     // Validate email
     if (!user.email || !user.email.trim()) {
@@ -159,13 +177,17 @@ export async function POST(request: Request) {
       )
     }
 
-    // Validate site URL is set
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-    if (!siteUrl || siteUrl.trim() === '') {
-      return NextResponse.json(
-        { error: 'Site URL yapılandırması eksik' },
-        { status: 500 }
-      )
+    // Determine test mode: explicit PAYTR_TEST_MODE env var takes precedence
+    let testModeValue: number
+    if (paytrTestMode === '1' || paytrTestMode?.toLowerCase() === 'true') {
+      testModeValue = 1
+      console.log('PayTR test mode: ENABLED (via PAYTR_TEST_MODE env)')
+    } else if (process.env.NODE_ENV === 'development') {
+      testModeValue = 1
+      console.log('PayTR test mode: ENABLED (via NODE_ENV=development)')
+    } else {
+      testModeValue = 0
+      console.log('PayTR test mode: DISABLED (production)')
     }
 
     // Log init parameters (without sensitive data)
@@ -174,24 +196,25 @@ export async function POST(request: Request) {
       email: user.email,
       paymentAmount: grossAmount,
       userIp,
-      siteUrl,
-      testMode: process.env.NODE_ENV === 'development' ? 1 : 0,
+      siteUrl: validatedSiteUrl.trim(),
+      testMode: testModeValue,
+      paytrTestModeEnv: paytrTestMode,
     })
 
     // Generate PayTR hash/token with defensive error handling
     let hash: string
     try {
       hash = PayTRService.generateToken({
-        merchantId,
-        merchantKey,
-        merchantSalt,
+        merchantId: validatedMerchantId.trim(),
+        merchantKey: validatedMerchantKey.trim(),
+        merchantSalt: validatedMerchantSalt.trim(),
         email: user.email.trim(),
         paymentAmount: grossAmount, // Already in kuruş
         merchantOid,
         userIp,
-        merchantOkUrl: `${siteUrl}/wallet/deposit/success?merchantOid=${merchantOid}`,
-        merchantFailUrl: `${siteUrl}/wallet/deposit/fail?merchantOid=${merchantOid}`,
-        testMode: process.env.NODE_ENV === 'development' ? 1 : 0,
+        merchantOkUrl: `${validatedSiteUrl.trim()}/wallet/deposit/success?merchantOid=${merchantOid}`,
+        merchantFailUrl: `${validatedSiteUrl.trim()}/wallet/deposit/fail?merchantOid=${merchantOid}`,
+        testMode: testModeValue,
       })
     } catch (hashError: any) {
       console.error('PayTR hash generation error:', {
@@ -219,15 +242,15 @@ export async function POST(request: Request) {
       success: true,
       merchantOid,
       hash,
-      merchantId,
-      merchantKey,
-      merchantSalt,
+      merchantId: validatedMerchantId,
+      merchantKey: validatedMerchantKey,
+      merchantSalt: validatedMerchantSalt,
       email: user.email,
       paymentAmount: grossAmount,
       userIp,
-      merchantOkUrl: `${siteUrl}/wallet/deposit/success?merchantOid=${merchantOid}`,
-      merchantFailUrl: `${siteUrl}/wallet/deposit/fail?merchantOid=${merchantOid}`,
-      testMode: process.env.NODE_ENV === 'development' ? 1 : 0,
+      merchantOkUrl: `${validatedSiteUrl.trim()}/wallet/deposit/success?merchantOid=${merchantOid}`,
+      merchantFailUrl: `${validatedSiteUrl.trim()}/wallet/deposit/fail?merchantOid=${merchantOid}`,
+      testMode: testModeValue,
       currency: 'TL',
       installment: 0,
       language: 'tr',

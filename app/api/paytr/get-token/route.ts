@@ -70,16 +70,36 @@ export async function POST(request: Request) {
       )
     }
 
+    // Validate all PayTR environment variables with clear error messages
     const merchantId = process.env.PAYTR_MERCHANT_ID
     const merchantKey = process.env.PAYTR_MERCHANT_KEY
     const merchantSalt = process.env.PAYTR_MERCHANT_SALT
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+    const paytrTestMode = process.env.PAYTR_TEST_MODE
 
-    if (!merchantId || !merchantKey || !merchantSalt) {
+    const missingVars: string[] = []
+    if (!merchantId || merchantId.trim() === '') missingVars.push('PAYTR_MERCHANT_ID')
+    if (!merchantKey || merchantKey.trim() === '') missingVars.push('PAYTR_MERCHANT_KEY')
+    if (!merchantSalt || merchantSalt.trim() === '') missingVars.push('PAYTR_MERCHANT_SALT')
+    if (!siteUrl || siteUrl.trim() === '') missingVars.push('NEXT_PUBLIC_SITE_URL')
+
+    if (missingVars.length > 0) {
+      console.error('Missing PayTR environment variables:', missingVars)
       return NextResponse.json(
-        { error: 'PayTR yapılandırması eksik' },
+        { 
+          error: `PayTR yapılandırması eksik: ${missingVars.join(', ')}`,
+          missingVars,
+        },
         { status: 500 }
       )
     }
+
+    // TypeScript: After validation, we know these are defined
+    // Use non-null assertions since we've validated above
+    const validatedMerchantId = merchantId!
+    const validatedMerchantKey = merchantKey!
+    const validatedMerchantSalt = merchantSalt!
+    const validatedSiteUrl = siteUrl!
 
     // Validate email
     if (!user.email || !user.email.trim()) {
@@ -109,14 +129,19 @@ export async function POST(request: Request) {
       )
     }
 
-    // Validate site URL is set (must be before hash generation)
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-    if (!siteUrl || siteUrl.trim() === '') {
-      console.error('Site URL is missing')
-      return NextResponse.json(
-        { error: 'Site URL yapılandırması eksik' },
-        { status: 500 }
-      )
+    // Determine test mode: explicit PAYTR_TEST_MODE env var takes precedence
+    // If PAYTR_TEST_MODE is '1' or 'true', force test mode
+    // Otherwise, fall back to NODE_ENV check
+    let testModeValue: number
+    if (paytrTestMode === '1' || paytrTestMode?.toLowerCase() === 'true') {
+      testModeValue = 1
+      console.log('PayTR test mode: ENABLED (via PAYTR_TEST_MODE env)')
+    } else if (process.env.NODE_ENV === 'development') {
+      testModeValue = 1
+      console.log('PayTR test mode: ENABLED (via NODE_ENV=development)')
+    } else {
+      testModeValue = 0
+      console.log('PayTR test mode: DISABLED (production)')
     }
 
     // Validate IP is IPv4 format (basic check)
@@ -129,23 +154,25 @@ export async function POST(request: Request) {
     // Import PayTRService
     const { PayTRService } = await import('@/lib/services/paytr.service')
 
-    // Prepare callback URL (PayTR panel must match this)
-    const callbackUrl = `${siteUrl}/api/paytr/callback`
+    // Prepare callback URL (PayTR panel must match this) - generate ONLY ONCE
+    const callbackUrl = `${validatedSiteUrl.trim()}/api/paytr/callback`
+    const merchantOkUrl = `${validatedSiteUrl.trim()}/wallet/deposit/success?merchantOid=${merchantOid}`
+    const merchantFailUrl = `${validatedSiteUrl.trim()}/wallet/deposit/fail?merchantOid=${merchantOid}`
 
     // Generate hash with defensive error handling
     let hash: string
     try {
       hash = PayTRService.generateToken({
-        merchantId,
-        merchantKey,
-        merchantSalt,
+        merchantId: validatedMerchantId.trim(),
+        merchantKey: validatedMerchantKey.trim(),
+        merchantSalt: validatedMerchantSalt.trim(),
         email: user.email.trim(),
         paymentAmount: deposit.grossAmount, // Already in kuruş
         merchantOid,
         userIp,
-        merchantOkUrl: `${siteUrl}/wallet/deposit/success?merchantOid=${merchantOid}`,
-        merchantFailUrl: `${siteUrl}/wallet/deposit/fail?merchantOid=${merchantOid}`,
-        testMode: process.env.NODE_ENV === 'development' ? 1 : 0,
+        merchantOkUrl,
+        merchantFailUrl,
+        testMode: testModeValue,
       })
     } catch (hashError: any) {
       console.error('PayTR hash generation error:', hashError)
@@ -164,17 +191,15 @@ export async function POST(request: Request) {
     }
 
     // Prepare PayTR API call - all values must be strings
-    // callbackUrl already defined above (line 133)
-    const merchantOkUrl = `${siteUrl}/wallet/deposit/success?merchantOid=${merchantOid}`
-    const merchantFailUrl = `${siteUrl}/wallet/deposit/fail?merchantOid=${merchantOid}`
-    const testMode = process.env.NODE_ENV === 'development' ? '1' : '0'
+    // callbackUrl, merchantOkUrl, merchantFailUrl already defined above
+    const testMode = String(testModeValue) // Convert to string: '0' or '1'
 
     // Validate all required fields before sending to PayTR
-    if (!merchantId || !merchantKey || !merchantSalt || !merchantOid || !user.email || !hash || !userIp) {
+    if (!validatedMerchantId || !validatedMerchantKey || !validatedMerchantSalt || !merchantOid || !user.email || !hash || !userIp) {
       console.error('Missing required PayTR fields:', {
-        hasMerchantId: !!merchantId,
-        hasMerchantKey: !!merchantKey,
-        hasMerchantSalt: !!merchantSalt,
+        hasMerchantId: !!validatedMerchantId,
+        hasMerchantKey: !!validatedMerchantKey,
+        hasMerchantSalt: !!validatedMerchantSalt,
         hasMerchantOid: !!merchantOid,
         hasEmail: !!user.email,
         hasHash: !!hash,
@@ -187,36 +212,53 @@ export async function POST(request: Request) {
     }
 
     // Log request parameters (without sensitive data)
-    console.log('PayTR get-token request:', {
-      merchantId,
+    console.log('PayTR get-token request parameters:', {
+      merchantId: validatedMerchantId,
       merchantOid,
       email: user.email,
       paymentAmount: deposit.grossAmount,
+      paymentAmountString: String(deposit.grossAmount),
       userIp,
       testMode,
+      testModeValue,
       merchantOkUrl,
       merchantFailUrl,
       callbackUrl,
+      siteUrl: validatedSiteUrl,
+      paytrTestModeEnv: paytrTestMode,
     })
 
-    // Call PayTR API to get token - all values as strings
+    // Call PayTR API to get token - ALL values MUST be strings
     const paytrFormData = new FormData()
-    paytrFormData.append('merchant_id', String(merchantId))
-    paytrFormData.append('merchant_key', String(merchantKey))
-    paytrFormData.append('merchant_salt', String(merchantSalt))
+    paytrFormData.append('merchant_id', String(validatedMerchantId).trim())
+    paytrFormData.append('merchant_key', String(validatedMerchantKey).trim())
+    paytrFormData.append('merchant_salt', String(validatedMerchantSalt).trim())
     paytrFormData.append('merchant_oid', String(merchantOid))
     paytrFormData.append('email', String(user.email).trim())
     paytrFormData.append('payment_amount', String(deposit.grossAmount)) // In kuruş, as string
     paytrFormData.append('paytr_token', String(hash))
     paytrFormData.append('user_ip', String(userIp))
-    paytrFormData.append('merchant_ok_url', merchantOkUrl)
-    paytrFormData.append('merchant_fail_url', merchantFailUrl)
-    paytrFormData.append('callback_url', callbackUrl) // PayTR callback URL
-    paytrFormData.append('test_mode', testMode)
+    paytrFormData.append('merchant_ok_url', String(merchantOkUrl))
+    paytrFormData.append('merchant_fail_url', String(merchantFailUrl))
+    paytrFormData.append('callback_url', String(callbackUrl)) // PayTR callback URL
+    paytrFormData.append('test_mode', String(testMode)) // Must be '0' or '1' as string
     paytrFormData.append('currency', 'TL')
     paytrFormData.append('installment', '0')
     paytrFormData.append('lang', 'tr')
     paytrFormData.append('timeout_limit', '30')
+
+    // Log FormData values for debugging (without sensitive data)
+    console.log('PayTR FormData values:', {
+      merchant_id: String(validatedMerchantId).substring(0, 5) + '...',
+      merchant_oid: String(merchantOid),
+      email: String(user.email).trim(),
+      payment_amount: String(deposit.grossAmount),
+      user_ip: String(userIp),
+      test_mode: String(testMode),
+      callback_url: String(callbackUrl),
+      merchant_ok_url: String(merchantOkUrl),
+      merchant_fail_url: String(merchantFailUrl),
+    })
 
     // Call PayTR API
     let paytrResponse: Response
@@ -231,7 +273,16 @@ export async function POST(request: Request) {
 
       paytrResult = await paytrResponse.text()
       console.log('PayTR API response status:', paytrResponse.status)
-      console.log('PayTR API response body:', paytrResult.substring(0, 200)) // First 200 chars
+      console.log('PayTR API response statusText:', paytrResponse.statusText)
+      console.log('PayTR API response body (full):', paytrResult)
+      console.log('PayTR API response body length:', paytrResult.length)
+      
+      // Log response headers for debugging
+      const responseHeaders: Record<string, string> = {}
+      paytrResponse.headers.forEach((value, key) => {
+        responseHeaders[key] = value
+      })
+      console.log('PayTR API response headers:', responseHeaders)
     } catch (fetchError: any) {
       console.error('PayTR API fetch error:', {
         message: fetchError.message,
