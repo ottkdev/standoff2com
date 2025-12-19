@@ -76,12 +76,12 @@ export function ForumActivity({ newPosts, mostCommented, mostViewed }: ForumActi
           </div>
           <p className="text-sm md:text-base text-muted-foreground">Forum aktiviteleri ve tartışmalar</p>
         </div>
-        <Link href="/forum">
-          <Button variant="ghost" className="gap-2 group w-full md:w-auto">
+        <Button variant="ghost" className="gap-2 group w-full md:w-auto" asChild>
+          <Link href="/forum">
             Tümünü Gör
             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
 
       <Card className="glass-effect">
@@ -177,12 +177,12 @@ export function ForumActivity({ newPosts, mostCommented, mostViewed }: ForumActi
 
           {/* Footer Link */}
           <div className="mt-6 pt-6 border-t text-center">
-            <Link href="/forum">
-              <Button variant="ghost" className="gap-2 group">
+            <Button variant="ghost" className="gap-2 group" asChild>
+              <Link href="/forum">
                 Forumun tamamını gör
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </CardContent>
       </Card>

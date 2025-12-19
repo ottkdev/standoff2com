@@ -13,8 +13,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { ShoppingCart, Loader2 } from 'lucide-react'
+import { ShoppingCart, Loader2, Wallet } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import Link from 'next/link'
 
 interface BuyButtonProps {
   listingId: string
@@ -39,7 +40,15 @@ export function BuyButton({ listingId, price, className }: BuyButtonProps) {
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || 'Satın alma işlemi başarısız')
+        const errorMessage = error.error || 'Satın alma işlemi başarısız'
+        
+        // Check if it's an insufficient balance error
+        if (errorMessage.includes('Yetersiz bakiye') || errorMessage.includes('yetersiz')) {
+          setIsOpen(false) // Close dialog
+          throw new Error(errorMessage)
+        }
+        
+        throw new Error(errorMessage)
       }
 
       const order = await response.json()
@@ -51,10 +60,20 @@ export function BuyButton({ listingId, price, className }: BuyButtonProps) {
 
       router.push(`/marketplace/orders/${order.id}`)
     } catch (error: any) {
+      const isInsufficientBalance = error.message.includes('Yetersiz bakiye') || error.message.includes('yetersiz')
+      
       toast({
         title: 'Hata',
         description: error.message,
         variant: 'destructive',
+        action: isInsufficientBalance ? (
+          <Link href="/wallet/deposit">
+            <Button size="sm" variant="outline" className="gap-2">
+              <Wallet className="h-3 w-3" />
+              Bakiye Ekle
+            </Button>
+          </Link>
+        ) : undefined,
       })
       setIsLoading(false)
     }

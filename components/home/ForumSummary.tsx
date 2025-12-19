@@ -145,6 +145,7 @@ export function ForumSummary({ newPosts, mostCommented, mostLiked }: ForumSummar
                       username={post.author.username}
                       isVerified={post.author.isVerified}
                       className="hover:text-primary"
+                      noLink
                     />
                     <span className="hidden sm:inline">•</span>
                     <Badge variant="secondary" className="text-xs px-1.5 py-0 hidden sm:inline-flex">

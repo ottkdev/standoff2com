@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { ArrowLeft, Loader2, Banknote } from 'lucide-react'
+import { ArrowLeft, Loader2, Banknote, Wallet } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
 export default function WithdrawPage() {
@@ -70,6 +70,14 @@ export default function WithdrawPage() {
           title: 'Hata',
           description: 'Yetersiz bakiye',
           variant: 'destructive',
+          action: (
+            <Link href="/wallet/deposit">
+              <Button size="sm" variant="outline" className="gap-2">
+                <Wallet className="h-3 w-3" />
+                Bakiye Ekle
+              </Button>
+            </Link>
+          ),
         })
         setIsLoading(false)
         return

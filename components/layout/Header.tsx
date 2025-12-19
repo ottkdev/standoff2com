@@ -41,7 +41,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/70 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70 shadow-sm">
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-yellow-500/10" />
-      <div className="container relative flex h-16 items-center justify-between px-4 md:px-6 max-w-full overflow-hidden">
+      <div className="container relative flex h-16 items-center justify-between px-4 md:px-6 max-w-full overflow-visible">
         <div className="flex items-center gap-2 md:gap-4 lg:gap-6 min-w-0 flex-1">
           <Link href="/" className="flex items-center space-x-2 md:space-x-3 group min-w-0 flex-shrink-0">
             <span className="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-xl bg-orange-500/15 text-orange-400 ring-1 ring-orange-500/30 group-hover:scale-105 transition-transform flex-shrink-0">
@@ -103,16 +103,16 @@ export function Header() {
                   <span className="md:hidden">İlan</span>
                 </Button>
               </Link>
-              <DropdownMenu>
+              <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 md:h-10 md:w-10 rounded-full ring-1 ring-border hover:ring-primary/40 transition flex-shrink-0">
+                  <Button variant="ghost" className="relative h-9 w-9 md:h-10 md:w-10 rounded-full ring-1 ring-border hover:ring-primary/40 transition-all flex-shrink-0">
                     <Avatar className="h-9 w-9 md:h-10 md:w-10">
                       <AvatarImage src="" alt={session.user.username} />
                       <AvatarFallback className="text-xs md:text-sm">{session.user.username[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 max-w-[calc(100vw-2rem)]" align="end" forceMount>
+                <DropdownMenuContent className="w-56 max-w-[calc(100vw-2rem)]" align="end">
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none flex items-center gap-2">
@@ -158,7 +158,7 @@ export function Header() {
           )}
 
           {/* Mobile menu */}
-          <DropdownMenu>
+          <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden h-9 w-9 flex-shrink-0">
                 <Menu className="h-4 w-4" />

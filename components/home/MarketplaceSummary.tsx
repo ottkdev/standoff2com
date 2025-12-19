@@ -93,6 +93,7 @@ export function MarketplaceSummary({ listings }: MarketplaceSummaryProps) {
                     username={listing.seller.username}
                     isVerified={listing.seller.isVerified}
                     className="hover:text-primary truncate flex-1 min-w-0"
+                    noLink
                   />
                   <span>•</span>
                   <span className="whitespace-nowrap">{formatRelativeTime(listing.createdAt)}</span>

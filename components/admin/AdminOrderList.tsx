@@ -79,7 +79,7 @@ export function OrderList({
 
   const handleStatusFilter = (status: string) => {
     const params = new URLSearchParams()
-    if (status) params.set('status', status)
+    if (status && status !== 'all') params.set('status', status)
     params.set('page', '1')
     router.push(`/admin/orders?${params.toString()}`)
   }
@@ -132,12 +132,12 @@ export function OrderList({
         <CardContent className="pt-6">
           <div className="flex items-center gap-4">
             <Label>Durum Filtresi</Label>
-            <Select value={currentStatus || ''} onValueChange={handleStatusFilter}>
+            <Select value={currentStatus || 'all'} onValueChange={handleStatusFilter}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Tümü" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tümü</SelectItem>
+                <SelectItem value="all">Tümü</SelectItem>
                 <SelectItem value="PENDING_DELIVERY">Teslimat Bekleniyor</SelectItem>
                 <SelectItem value="COMPLETED">Tamamlandı</SelectItem>
                 <SelectItem value="DISPUTED">İtiraz Edildi</SelectItem>

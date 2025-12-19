@@ -94,6 +94,10 @@ export function ModerationPanel({
   const [selectedReport, setSelectedReport] = useState<string | null>(highlightedReportId || null)
   const [actionReason, setActionReason] = useState('')
   const [banUntil, setBanUntil] = useState('')
+  const [adminNote, setAdminNote] = useState('')
+  const [isResolving, setIsResolving] = useState(false)
+  const [resolveDialogOpen, setResolveDialogOpen] = useState(false)
+  const [resolveAction, setResolveAction] = useState<'APPROVED' | 'REJECTED' | null>(null)
 
   const status = searchParams.get('status') || initialFilters.status || 'OPEN'
   const targetType = searchParams.get('targetType') || initialFilters.targetType || ''
@@ -163,16 +167,26 @@ export function ModerationPanel({
     }
   }
 
-  const handleReportAction = async (reportId: string, action: 'approve_report' | 'dismiss_report') => {
-    setIsLoading(true)
+  const handleResolveReport = async () => {
+    if (!selectedReport || !resolveAction) return
+
+    if (adminNote.trim().length > 500) {
+      toast({
+        title: 'Hata',
+        description: 'Admin notu en fazla 500 karakter olabilir',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setIsResolving(true)
     try {
-      const response = await fetch('/api/moderation', {
+      const response = await fetch(`/api/admin/reports/${selectedReport}/resolve`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action,
-          targetType: 'report',
-          targetId: reportId,
+          status: resolveAction,
+          adminNote: adminNote.trim() || undefined,
         }),
       })
 
@@ -183,9 +197,12 @@ export function ModerationPanel({
 
       toast({
         title: 'Başarılı',
-        description: action === 'approve_report' ? 'Rapor onaylandı' : 'Rapor reddedildi',
+        description: resolveAction === 'APPROVED' ? 'Rapor onaylandı' : 'Rapor reddedildi',
       })
 
+      setResolveDialogOpen(false)
+      setAdminNote('')
+      setResolveAction(null)
       router.refresh()
     } catch (error: any) {
       toast({
@@ -194,8 +211,13 @@ export function ModerationPanel({
         variant: 'destructive',
       })
     } finally {
-      setIsLoading(false)
+      setIsResolving(false)
     }
+  }
+
+  const openResolveDialog = (action: 'APPROVED' | 'REJECTED') => {
+    setResolveAction(action)
+    setResolveDialogOpen(true)
   }
 
   const getReasonLabel = (reason: string) => {
@@ -226,6 +248,13 @@ export function ModerationPanel({
   }
 
   const selectedReportData = reports.find((r) => r.id === selectedReport)
+
+  // Clear admin note when report selection changes
+  useEffect(() => {
+    setAdminNote('')
+    setResolveDialogOpen(false)
+    setResolveAction(null)
+  }, [selectedReport])
 
   return (
     <div className="container py-6 md:py-10 px-4 md:px-6 w-full overflow-x-hidden">
@@ -276,27 +305,29 @@ export function ModerationPanel({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <Label>Durum</Label>
-              <Select value={status} onValueChange={(v) => handleFilterChange('status', v)}>
+              <Select value={status || 'all'} onValueChange={(v) => handleFilterChange('status', v === 'all' ? undefined : v)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tümü</SelectItem>
+                  <SelectItem value="all">Tümü</SelectItem>
                   <SelectItem value="OPEN">Açık</SelectItem>
                   <SelectItem value="REVIEWED">İncelenen</SelectItem>
                   <SelectItem value="RESOLVED">Çözülen</SelectItem>
                   <SelectItem value="DISMISSED">Reddedilen</SelectItem>
+                  <SelectItem value="APPROVED">Onaylanan</SelectItem>
+                  <SelectItem value="REJECTED">Reddedilen</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
               <Label>İçerik Tipi</Label>
-              <Select value={targetType} onValueChange={(v) => handleFilterChange('targetType', v)}>
+              <Select value={targetType || 'all'} onValueChange={(v) => handleFilterChange('targetType', v === 'all' ? undefined : v)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tümü</SelectItem>
+                  <SelectItem value="all">Tümü</SelectItem>
                   <SelectItem value="POST">Konu</SelectItem>
                   <SelectItem value="COMMENT">Yorum</SelectItem>
                   <SelectItem value="LISTING">İlan</SelectItem>
@@ -340,8 +371,10 @@ export function ModerationPanel({
                         variant={
                           report.status === 'OPEN'
                             ? 'default'
-                            : report.status === 'RESOLVED'
+                            : report.status === 'RESOLVED' || report.status === 'APPROVED'
                             ? 'secondary'
+                            : report.status === 'REJECTED' || report.status === 'DISMISSED'
+                            ? 'destructive'
                             : 'outline'
                         }
                         className="text-xs"
@@ -350,6 +383,8 @@ export function ModerationPanel({
                         {report.status === 'REVIEWED' && 'İncelenen'}
                         {report.status === 'RESOLVED' && 'Çözülen'}
                         {report.status === 'DISMISSED' && 'Reddedilen'}
+                        {report.status === 'APPROVED' && 'Onaylanan'}
+                        {report.status === 'REJECTED' && 'Reddedilen'}
                       </Badge>
                     </div>
                   </div>
@@ -744,26 +779,75 @@ export function ModerationPanel({
                   </div>
 
                   {/* Report Actions */}
-                  <div className="flex gap-3 pt-4 border-t">
-                    <Button
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => handleReportAction(selectedReportData.id, 'approve_report')}
-                      disabled={isLoading || selectedReportData.status === 'RESOLVED'}
-                    >
-                      <CheckCircle2 className="h-4 w-4 mr-2" />
-                      Raporu Onayla
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => handleReportAction(selectedReportData.id, 'dismiss_report')}
-                      disabled={isLoading || selectedReportData.status === 'DISMISSED'}
-                    >
-                      <XCircle className="h-4 w-4 mr-2" />
-                      Raporu Reddet
-                    </Button>
-                  </div>
+                  {selectedReportData.status !== 'APPROVED' && selectedReportData.status !== 'REJECTED' && (
+                    <div className="space-y-4 pt-4 border-t">
+                      <div>
+                        <Label htmlFor="adminNote">Admin Geri Bildirimi (Opsiyonel)</Label>
+                        <Textarea
+                          id="adminNote"
+                          value={adminNote}
+                          onChange={(e) => setAdminNote(e.target.value)}
+                          placeholder="Raporu onayladığınızda veya reddettiğinizde kullanıcıya gösterilecek geri bildirim mesajı..."
+                          rows={4}
+                          maxLength={500}
+                          disabled={isResolving}
+                          className="mt-2"
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {adminNote.length}/500 karakter
+                        </p>
+                      </div>
+                      <div className="flex gap-3">
+                        <Button
+                          variant="default"
+                          className="flex-1"
+                          onClick={() => openResolveDialog('APPROVED')}
+                          disabled={isResolving}
+                        >
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          Raporu Onayla
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          className="flex-1"
+                          onClick={() => openResolveDialog('REJECTED')}
+                          disabled={isResolving}
+                        >
+                          <XCircle className="h-4 w-4 mr-2" />
+                          Raporu Reddet
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Show admin note if report is already resolved */}
+                  {selectedReportData.status === 'APPROVED' || selectedReportData.status === 'REJECTED' ? (
+                    <div className="pt-4 border-t space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Badge variant={selectedReportData.status === 'APPROVED' ? 'default' : 'destructive'}>
+                          {selectedReportData.status === 'APPROVED' ? 'Onaylandı' : 'Reddedildi'}
+                        </Badge>
+                        {selectedReportData.reviewer && (
+                          <span className="text-xs text-muted-foreground">
+                            @{selectedReportData.reviewer.username} tarafından
+                          </span>
+                        )}
+                        {selectedReportData.reviewedAt && (
+                          <span className="text-xs text-muted-foreground">
+                            {formatRelativeTime(selectedReportData.reviewedAt)}
+                          </span>
+                        )}
+                      </div>
+                      {selectedReportData.adminNote && (
+                        <div className="p-3 rounded-lg bg-muted/50">
+                          <p className="text-sm font-medium mb-1">Admin Geri Bildirimi:</p>
+                          <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                            {selectedReportData.adminNote}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
                 </div>
               </CardContent>
             </Card>
@@ -777,6 +861,54 @@ export function ModerationPanel({
           )}
         </div>
       </div>
+
+      {/* Resolve Report Confirmation Dialog */}
+      <AlertDialog open={resolveDialogOpen} onOpenChange={setResolveDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {resolveAction === 'APPROVED' ? 'Raporu Onayla' : 'Raporu Reddet'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {resolveAction === 'APPROVED'
+                ? 'Bu raporu onaylamak istediğinize emin misiniz? Kullanıcıya bildirim gönderilecektir.'
+                : 'Bu raporu reddetmek istediğinize emin misiniz? Kullanıcıya bildirim gönderilecektir.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {adminNote && (
+            <div className="py-4">
+              <p className="text-sm font-medium mb-2">Geri Bildirim Mesajı:</p>
+              <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg whitespace-pre-wrap">
+                {adminNote}
+              </p>
+            </div>
+          )}
+          {!adminNote && (
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                Ek bir geri bildirim belirtilmedi.
+              </p>
+            </div>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isResolving}>İptal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleResolveReport}
+              disabled={isResolving}
+              className={resolveAction === 'REJECTED' ? 'bg-destructive text-destructive-foreground' : ''}
+            >
+              {isResolving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  İşleniyor...
+                </>
+              ) : (
+                resolveAction === 'APPROVED' ? 'Onayla' : 'Reddet'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

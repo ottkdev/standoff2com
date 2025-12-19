@@ -18,7 +18,7 @@ export default async function AdminDisputesPage({ searchParams }: PageProps) {
     redirect('/')
   }
 
-  const status = searchParams.status as any
+  const status = searchParams.status === 'all' ? undefined : (searchParams.status as any)
   const page = parseInt(searchParams.page || '1')
   const limit = 20
 

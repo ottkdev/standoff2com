@@ -34,10 +34,26 @@ Detaylı kurulum için **[QUICK_START.md](./QUICK_START.md)** dosyasına bakın.
 npm install
 ```
 
-2. **.env dosyası oluşturun ve NextAuth secret oluşturun:**
+2. **.env dosyası oluşturun:**
 ```bash
-npm run generate:secret
+# .env.example dosyasını .env olarak kopyalayın
+cp .env.example .env
 ```
+
+**Önemli:** `.env` dosyasını düzenleyip aşağıdaki değerleri ekleyin:
+- `DATABASE_URL`: PostgreSQL veritabanı bağlantı string'i
+- `NEXTAUTH_SECRET`: NextAuth için secret (oluşturmak için: `openssl rand -base64 32`)
+- `NEXT_PUBLIC_SITE_URL`: Site URL'iniz (production'da: `https://yourdomain.com`)
+- `CLOUDINARY_*`: Cloudinary API bilgileri (image upload için)
+- `PAYTR_*`: PayTR ödeme gateway bilgileri (wallet sistemi için)
+
+**PayTR Yapılandırması:**
+1. [PayTR](https://www.paytr.com) hesabı oluşturun
+2. Panel → Ayarlar → API Bilgileri bölümünden:
+   - `PAYTR_MERCHANT_ID`: Mağaza numaranız
+   - `PAYTR_MERCHANT_KEY`: API anahtarınız
+   - `PAYTR_MERCHANT_SALT`: Güvenlik anahtarınız
+3. Bu değerleri `.env` dosyasına ekleyin
 
 3. **Veritabanını hazırlayın ve oluşturun:**
 ```bash

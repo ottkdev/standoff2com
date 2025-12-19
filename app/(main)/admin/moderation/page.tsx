@@ -37,6 +37,7 @@ export default async function ModerationPage({ searchParams }: PageProps) {
     ...report,
     createdAt: report.createdAt instanceof Date ? report.createdAt.toISOString() : report.createdAt,
     reviewedAt: report.reviewedAt instanceof Date ? report.reviewedAt.toISOString() : report.reviewedAt,
+    adminNote: report.adminNote || null,
   }))
 
   // Get stats

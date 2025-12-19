@@ -4,11 +4,9 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
 export function Footer() {
-  const [year, setYear] = useState<number | null>(null)
-
-  useEffect(() => {
-    setYear(new Date().getFullYear())
-  }, [])
+  // Use static year to prevent hydration mismatch
+  // The year won't change during a session, so this is safe
+  const year = new Date().getFullYear()
 
   return (
     <footer className="border-t bg-background mt-auto">
@@ -72,7 +70,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-6 sm:mt-8 border-t pt-6 sm:pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {year ?? '2024'} Standoff 2 Topluluk. Tüm hakları saklıdır.</p>
+          <p>&copy; {year} Standoff 2 Topluluk. Tüm hakları saklıdır.</p>
         </div>
       </div>
     </footer>

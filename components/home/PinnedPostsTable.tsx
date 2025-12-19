@@ -70,6 +70,7 @@ export function PinnedPostsTable({ posts }: PinnedPostsTableProps) {
                       username={post.author.username}
                       isVerified={post.author.isVerified}
                       className="hover:text-primary"
+                      noLink
                     />
                     <span>•</span>
                     <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-xs">
@@ -122,6 +123,7 @@ export function PinnedPostsTable({ posts }: PinnedPostsTableProps) {
                           username={post.author.username}
                           isVerified={post.author.isVerified}
                           className="hover:text-primary"
+                          noLink
                         />
                         <span>•</span>
                         <span className="truncate">{post.category.name}</span>

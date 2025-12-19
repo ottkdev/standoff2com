@@ -99,14 +99,14 @@ export function WalletHistory({
             <div>
               <label className="text-sm font-medium mb-2 block">İşlem Tipi</label>
               <Select
-                value={searchParams.get('type') || ''}
-                onValueChange={(v) => handleFilterChange('type', v)}
+                value={searchParams.get('type') || 'all'}
+                onValueChange={(v) => handleFilterChange('type', v === 'all' ? undefined : v)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Tümü" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tümü</SelectItem>
+                  <SelectItem value="all">Tümü</SelectItem>
                   <SelectItem value="DEPOSIT">Yükleme</SelectItem>
                   <SelectItem value="HOLD">Tutulan</SelectItem>
                   <SelectItem value="RELEASE">Serbest Bırakıldı</SelectItem>
@@ -119,14 +119,14 @@ export function WalletHistory({
             <div>
               <label className="text-sm font-medium mb-2 block">Durum</label>
               <Select
-                value={searchParams.get('status') || ''}
-                onValueChange={(v) => handleFilterChange('status', v)}
+                value={searchParams.get('status') || 'all'}
+                onValueChange={(v) => handleFilterChange('status', v === 'all' ? undefined : v)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Tümü" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tümü</SelectItem>
+                  <SelectItem value="all">Tümü</SelectItem>
                   <SelectItem value="SUCCESS">Başarılı</SelectItem>
                   <SelectItem value="PENDING">Beklemede</SelectItem>
                   <SelectItem value="FAILED">Başarısız</SelectItem>

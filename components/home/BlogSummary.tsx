@@ -84,6 +84,7 @@ export function BlogSummary({ posts }: BlogSummaryProps) {
                     username={post.author.username}
                     isVerified={post.author.isVerified}
                     className="hover:text-primary truncate flex-1 min-w-0"
+                    noLink
                   />
                   <span>•</span>
                   <RelativeTime date={post.publishedAt || post.createdAt} className="whitespace-nowrap" />

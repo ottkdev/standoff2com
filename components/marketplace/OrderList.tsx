@@ -124,14 +124,14 @@ export function OrderList({
             <div>
               <Label>Durum</Label>
               <Select
-                value={currentStatus || ''}
-                onValueChange={(v) => handleFilterChange('status', v)}
+                value={currentStatus || 'all'}
+                onValueChange={(v) => handleFilterChange('status', v === 'all' ? undefined : v)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Tümü" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tümü</SelectItem>
+                  <SelectItem value="all">Tümü</SelectItem>
                   <SelectItem value="PENDING_DELIVERY">Teslimat Bekleniyor</SelectItem>
                   <SelectItem value="COMPLETED">Tamamlandı</SelectItem>
                   <SelectItem value="DISPUTED">İtiraz Edildi</SelectItem>

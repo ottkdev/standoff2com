@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { UserService } from '@/lib/services/user.service'
+import { WalletService } from '@/lib/services/wallet.service'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -16,6 +17,7 @@ import {
   Sparkles,
   Trophy,
   Calendar,
+  Wallet,
 } from 'lucide-react'
 import Link from 'next/link'
 import { FollowButton } from '@/components/profile/FollowButton'
@@ -41,6 +43,12 @@ export default async function ProfilePage({ params }: PageProps) {
   const isFollowing = session?.user?.id
     ? await UserService.isFollowing(session.user.id, user.id)
     : false
+
+  // Get wallet balance for own profile
+  let wallet = null
+  if (isOwnProfile) {
+    wallet = await WalletService.getWallet(user.id)
+  }
 
   return (
     <div className="container py-4 sm:py-6 md:py-8 lg:py-10 max-w-5xl px-4 md:px-6 w-full overflow-x-hidden">
@@ -82,6 +90,39 @@ export default async function ProfilePage({ params }: PageProps) {
                     <StatPill icon={<MessageSquare className="h-4 w-4" />} label="Konu" value={user.postCount} />
                     <StatPill icon={<Heart className="h-4 w-4" />} label="Yorum" value={user.commentCount} />
                   </div>
+                  {isOwnProfile && wallet && (
+                    <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Wallet className="h-4 w-4 text-primary" />
+                          <span className="text-sm font-medium">Cüzdan Bakiyesi:</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-bold text-primary">
+                            {(wallet.balanceAvailable / 100).toLocaleString('tr-TR', {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}{' '}
+                            ₺
+                          </span>
+                          <Link href="/wallet">
+                            <Button size="sm" variant="outline" className="h-8 text-xs">
+                              Yönet
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                      {wallet.balanceHeld > 0 && (
+                        <div className="mt-2 text-xs text-muted-foreground">
+                          Tutulan: {(wallet.balanceHeld / 100).toLocaleString('tr-TR', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}{' '}
+                          ₺
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-2 flex-shrink-0 w-full sm:w-auto">

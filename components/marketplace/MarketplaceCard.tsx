@@ -90,6 +90,7 @@ export function MarketplaceCard({ listing, statusBadges }: MarketplaceCardProps)
                 <ProfileLink
                   username={listing.seller.username}
                   className="hover:text-primary truncate max-w-[120px] md:max-w-none"
+                  noLink
                 />
               </div>
               <span className="text-muted-foreground text-xs">

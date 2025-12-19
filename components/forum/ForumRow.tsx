@@ -60,6 +60,7 @@ export function ForumRow({ post }: ForumRowProps) {
               username={post.author.username}
               isVerified={post.author.isVerified}
               className="text-sm text-muted-foreground hover:text-primary flex items-center gap-1"
+              noLink
             />
             <span className="text-xs text-muted-foreground">•</span>
             <RelativeTime date={post.createdAt} className="text-xs text-muted-foreground" />

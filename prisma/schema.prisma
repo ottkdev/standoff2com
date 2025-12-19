@@ -494,6 +494,8 @@ enum ReportStatus {
   REVIEWED
   RESOLVED
   DISMISSED
+  APPROVED
+  REJECTED
 }
 
 enum ReportTargetType {
@@ -513,6 +515,7 @@ model Report {
   status      ReportStatus     @default(OPEN)
   reviewedById String?
   reviewedAt  DateTime?
+  adminNote   String?          @db.Text
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 

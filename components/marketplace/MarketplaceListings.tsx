@@ -167,6 +167,7 @@ function ListCard({ listing, statusBadges }: { listing: Listing; statusBadges: R
                   <ProfileLink
                     username={listing.seller.username}
                     className="hover:text-primary truncate"
+                    noLink
                   />
                 </div>
                 <span className="whitespace-nowrap">{formatRelativeTime(listing.createdAt)}</span>
