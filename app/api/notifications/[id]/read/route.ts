@@ -20,10 +20,7 @@ export async function POST(
     const notification = await prisma.notification.findFirst({
       where: {
         id: params.id,
-        OR: [
-          { userId: session.user.id },
-          { userId: null }, // Genel bildirimler
-        ],
+        userId: session.user.id, // Only user-specific notifications
       },
     })
 

@@ -15,6 +15,16 @@ export async function POST(request: Request) {
       )
     }
 
+    // Check if user is banned
+    const { ModerationService } = await import('@/lib/services/moderation.service')
+    const isBanned = await ModerationService.isUserBanned(session.user.id)
+    if (isBanned) {
+      return NextResponse.json(
+        { error: 'Hesabınız yasaklanmıştır. İçerik oluşturamazsınız.' },
+        { status: 403 }
+      )
+    }
+
     const body = await request.json()
     const validation = createPostSchema.safeParse(body)
 

@@ -19,7 +19,9 @@ import {
   Eye,
   Heart,
   DollarSign,
-  Activity
+  Activity,
+  Banknote,
+  AlertTriangle
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatRelativeTime } from '@/lib/utils'
@@ -48,6 +50,7 @@ export default async function AdminDashboard() {
     recentUsers,
     recentListings,
     recentPosts,
+    openReportsCount,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.user.count({ where: { isVerified: true } }),
@@ -113,6 +116,9 @@ export default async function AdminDashboard() {
           },
         },
       },
+    }),
+    prisma.report.count({
+      where: { status: 'OPEN' },
     }),
   ])
 

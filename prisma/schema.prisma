@@ -21,6 +21,65 @@ enum MarketplaceStatus {
   ACTIVE
   SOLD
   REJECTED
+  DELETED
+}
+
+enum WalletTransactionType {
+  DEPOSIT
+  DEPOSIT_FEE
+  HOLD
+  RELEASE
+  REFUND
+  WITHDRAW_REQUEST
+  WITHDRAW_APPROVED
+  WITHDRAW_REJECTED
+  WITHDRAW_PAID
+}
+
+enum WalletTransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+enum WalletTransactionProvider {
+  PAYTR
+  INTERNAL
+  MANUAL
+}
+
+enum DepositStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  PAID
+  REJECTED
+  CANCELLED
+}
+
+enum OrderStatus {
+  PENDING_DELIVERY
+  COMPLETED
+  DISPUTED
+  REFUNDED
+  CANCELLED
+}
+
+enum DisputeStatus {
+  OPEN
+  RESOLVED
+}
+
+enum DisputeResolution {
+  REFUND_BUYER
+  RELEASE_SELLER
+  PARTIAL
 }
 
 model User {
@@ -59,7 +118,8 @@ model User {
   badges UserBadge[]
 
   // Notifications
-  notifications Notification[]
+  notifications        Notification[]
+  notificationsActed   Notification[] @relation("NotificationActor")
 
   // Likes
   likedPosts     PostLike[]
@@ -77,6 +137,29 @@ model User {
   // Block system
   blockedUsers Block[] @relation("Blocker")
   blockedBy    Block[] @relation("Blocked")
+
+  // Moderation
+  reportsCreated   Report[]     @relation("Reporter")
+  reportsReviewed  Report[]     @relation("Reviewer")
+  postsDeleted     Post[]       @relation("PostDeleter")
+  commentsDeleted  Comment[]    @relation("CommentDeleter")
+  auditLogs        AuditLog[]
+
+  // Wallet
+  wallet              Wallet?
+  walletTransactions  WalletTransaction[]
+  deposits            Deposit[]
+  withdrawalRequests  WithdrawalRequest[]
+  withdrawalsReviewed WithdrawalRequest[] @relation("WithdrawalReviewer")
+  
+  // Marketplace Orders
+  ordersAsBuyer       MarketplaceOrder[] @relation("Buyer")
+  ordersAsSeller      MarketplaceOrder[] @relation("Seller")
+  disputesOpened       Dispute[]         @relation("DisputeOpener")
+  disputesResolved     Dispute[]         @relation("DisputeResolver")
+  tradeConversationsAsBuyer  TradeConversation[] @relation("Buyer")
+  tradeConversationsAsSeller  TradeConversation[] @relation("Seller")
+  tradeMessagesSent    TradeMessage[]    @relation("TradeMessageSender")
 
   @@map("users")
 }
@@ -123,22 +206,25 @@ model Category {
 }
 
 model Post {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   title        String
-  content      String   @db.Text
-  slug         String   @unique
-  isPinned     Boolean  @default(false)
-  isLocked     Boolean  @default(false)
+  content      String    @db.Text
+  slug         String    @unique
+  isPinned     Boolean   @default(false)
+  isLocked     Boolean   @default(false)
   authorId     String
   categoryId   String
-  viewCount    Int      @default(0)
-  likeCount    Int      @default(0)
-  commentCount Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  viewCount    Int       @default(0)
+  likeCount    Int       @default(0)
+  commentCount Int       @default(0)
+  deletedAt    DateTime? // Soft delete
+  deletedById  String?   // Who deleted it
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   author   User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
   category Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  deleter  User?       @relation("PostDeleter", fields: [deletedById], references: [id], onDelete: SetNull)
   comments Comment[]
   images   PostImage[]
   likes    PostLike[]
@@ -146,6 +232,7 @@ model Post {
   @@index([categoryId])
   @@index([authorId])
   @@index([createdAt])
+  @@index([deletedAt])
   @@map("posts")
 }
 
@@ -163,24 +250,28 @@ model PostImage {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
-  content   String   @db.Text
-  postId    String
-  authorId  String
-  parentId  String?
-  likeCount Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String    @id @default(cuid())
+  content    String    @db.Text
+  postId     String
+  authorId   String
+  parentId   String?
+  likeCount  Int       @default(0)
+  deletedAt DateTime? // Soft delete
+  deletedById String? // Who deleted it
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
-  author  User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  post    Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
-  parent  Comment?      @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies Comment[]     @relation("CommentReplies")
-  likes   CommentLike[]
+  author   User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post     Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent   Comment?      @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  deleter  User?         @relation("CommentDeleter", fields: [deletedById], references: [id], onDelete: SetNull)
+  replies  Comment[]     @relation("CommentReplies")
+  likes    CommentLike[]
 
   @@index([postId])
   @@index([authorId])
   @@index([parentId])
+  @@index([deletedAt])
   @@map("comments")
 }
 
@@ -303,6 +394,7 @@ model MarketplaceListing {
   seller   User               @relation("Seller", fields: [sellerId], references: [id], onDelete: Cascade)
   approver User?              @relation("Approver", fields: [approvedById], references: [id], onDelete: SetNull)
   images   MarketplaceImage[]
+  orders   MarketplaceOrder[]
 
   @@index([sellerId])
   @@index([status])
@@ -364,20 +456,110 @@ model SiteSettings {
 }
 
 model Notification {
-  id        String    @id @default(cuid())
-  title     String
-  content   String    @db.Text
-  type      String    @default("info") // info, warning, success, error
-  userId    String? // null = tüm kullanıcılara
-  isRead    Boolean   @default(false)
-  readAt    DateTime?
-  createdAt DateTime  @default(now())
+  id         String    @id @default(cuid())
+  title      String
+  content    String    @db.Text
+  type       String    @default("info") // follow, forum_reply, comment_reply, marketplace_approval, marketplace_rejection, marketplace_sold, admin_warning, admin_ban, system_announcement
+  userId     String?   // null = tüm kullanıcılara
+  actorId    String?   // Who triggered the notification (nullable for system notifications)
+  targetType String?   // post, comment, listing, user, system
+  targetId   String?   // ID of the target (post ID, comment ID, listing ID, etc.)
+  url        String?   // URL to navigate to when clicked
+  isRead     Boolean   @default(false)
+  readAt     DateTime?
+  createdAt  DateTime  @default(now())
 
-  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  actor User?  @relation("NotificationActor", fields: [actorId], references: [id], onDelete: SetNull)
 
   @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@index([actorId])
+  @@index([targetType, targetId])
   @@index([createdAt])
   @@map("notifications")
+}
+
+enum ReportReason {
+  SPAM
+  HARASSMENT
+  INAPPROPRIATE_CONTENT
+  COPYRIGHT_VIOLATION
+  SCAM
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum ReportTargetType {
+  POST
+  COMMENT
+  LISTING
+  PROFILE
+}
+
+model Report {
+  id          String           @id @default(cuid())
+  reporterId  String
+  targetType  ReportTargetType
+  targetId    String
+  reason      ReportReason
+  note        String?          @db.Text
+  status      ReportStatus     @default(OPEN)
+  reviewedById String?
+  reviewedAt  DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  reporter   User         @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reviewer   User?        @relation("Reviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  // Note: targetId is polymorphic - no foreign key constraint
+
+  @@index([targetType, targetId])
+  @@index([reporterId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("reports")
+}
+
+enum AuditAction {
+  DELETE_POST
+  RESTORE_POST
+  DELETE_COMMENT
+  RESTORE_COMMENT
+  DELETE_LISTING
+  RESTORE_LISTING
+  WARN_USER
+  TEMP_BAN_USER
+  PERM_BAN_USER
+  UNBAN_USER
+  APPROVE_REPORT
+  DISMISS_REPORT
+}
+
+model AuditLog {
+  id        String       @id @default(cuid())
+  actorId   String
+  action    AuditAction
+  targetType String?     // post, comment, listing, user, report
+  targetId  String?
+  details   String?      @db.Text // JSON or text details
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime     @default(now())
+
+  actor User @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([actorId])
+  @@index([action])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
 
 enum WikiCategory {
@@ -454,4 +636,170 @@ model WikiLike {
 
   @@unique([userId, articleId])
   @@map("wiki_likes")
+}
+
+model Wallet {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  balanceAvailable Int    @default(0) // in kuruş
+  balanceHeld     Int     @default(0) // in kuruş (escrow holds + withdrawal holds)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("wallets")
+}
+
+model WalletTransaction {
+  id          String                   @id @default(cuid())
+  userId      String
+  type        WalletTransactionType
+  amount      Int                      // in kuruş (always positive, direction implied by type)
+  status      WalletTransactionStatus
+  provider    WalletTransactionProvider
+  referenceId String?                  // PayTR order id, escrow order id, withdraw id, etc.
+  meta        Json?                    // store details safely
+  createdAt   DateTime                 @default(now())
+
+  user        User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@index([referenceId])
+  @@index([createdAt])
+  @@map("wallet_transactions")
+}
+
+model Deposit {
+  id              String        @id @default(cuid())
+  userId          String
+  grossAmount     Int           // in kuruş (amount charged on PayTR)
+  netCreditAmount Int           // in kuruş (amount credited to wallet)
+  feeAmount       Int           // in kuruş (10% of net)
+  status          DepositStatus
+  paytrMerchantOid String      @unique
+  paytrResponse   Json?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([paytrMerchantOid])
+  @@index([createdAt])
+  @@map("deposits")
+}
+
+model WithdrawalRequest {
+  id          String           @id @default(cuid())
+  userId      String
+  amount      Int              // in kuruş
+  iban        String
+  accountName String
+  status      WithdrawalStatus
+  requestedAt DateTime         @default(now())
+  reviewedAt  DateTime?
+  paidAt      DateTime?
+  reviewedById String?
+  rejectReason String?         @db.Text
+  meta        Json?
+
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviewer    User?            @relation("WithdrawalReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([status])
+  @@index([requestedAt])
+  @@map("withdrawal_requests")
+}
+
+model MarketplaceOrder {
+  id            String      @id @default(cuid())
+  listingId    String      @unique // Only one active order per listing
+  buyerId      String
+  sellerId     String
+  amount       Int         // in kuruş
+  status       OrderStatus
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  autoReleaseAt DateTime?  // Auto-release after 72h if not disputed
+  completedAt  DateTime?
+  disputedAt   DateTime?
+
+  listing      MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  buyer        User               @relation("Buyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller       User               @relation("Seller", fields: [sellerId], references: [id], onDelete: Cascade)
+  dispute      Dispute?
+  conversation TradeConversation?
+
+  @@index([buyerId])
+  @@index([sellerId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([autoReleaseAt])
+  @@map("marketplace_orders")
+}
+
+model Dispute {
+  id          String            @id @default(cuid())
+  orderId     String            @unique
+  openedById  String
+  reason      String            @db.Text
+  note        String?           @db.Text
+  status      DisputeStatus
+  resolvedById String?
+  resolution  DisputeResolution?
+  meta        Json?
+  createdAt   DateTime          @default(now())
+  resolvedAt DateTime?
+
+  order       MarketplaceOrder  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  opener      User              @relation("DisputeOpener", fields: [openedById], references: [id], onDelete: Cascade)
+  resolver    User?             @relation("DisputeResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+
+  @@index([openedById])
+  @@index([status])
+  @@index([createdAt])
+  @@map("disputes")
+}
+
+model TradeConversation {
+  id        String   @id @default(cuid())
+  orderId  String   @unique
+  buyerId  String
+  sellerId String
+  isLocked Boolean  @default(false)
+  createdAt DateTime @default(now())
+  lockedAt  DateTime?
+
+  order    MarketplaceOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  buyer    User             @relation("Buyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller   User             @relation("Seller", fields: [sellerId], references: [id], onDelete: Cascade)
+  messages TradeMessage[]
+
+  @@index([buyerId, sellerId])
+  @@index([orderId])
+  @@map("trade_conversations")
+}
+
+model TradeMessage {
+  id        String   @id @default(cuid())
+  conversationId String
+  senderId String
+  content   String   @db.Text
+  isRead   Boolean  @default(false)
+  readAt   DateTime?
+  createdAt DateTime @default(now())
+
+  conversation TradeConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User               @relation("TradeMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([createdAt])
+  @@map("trade_messages")
 }

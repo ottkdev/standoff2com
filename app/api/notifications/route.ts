@@ -24,34 +24,52 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url)
     const unreadOnly = searchParams.get('unread') === 'true'
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1'))
+    const limit = Math.min(50, Math.max(10, parseInt(searchParams.get('limit') || '20')))
+    const skip = (page - 1) * limit
 
     const where: any = {
-      OR: [
-        { userId: session.user.id }, // Kullanıcıya özel
-        { userId: null }, // Genel bildirimler
-      ],
+      userId: session.user.id, // Only user-specific notifications
     }
 
     if (unreadOnly) {
       where.isRead = false
     }
 
-    const notifications = await prisma.notification.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-      take: 50,
-    })
-
-    const unreadCount = await prisma.notification.count({
-      where: {
-        ...where,
-        isRead: false,
-      },
-    })
+    const [notifications, total, unreadCount] = await Promise.all([
+      prisma.notification.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+        include: {
+          actor: {
+            select: {
+              id: true,
+              username: true,
+              avatarUrl: true,
+            },
+          },
+        },
+      }),
+      prisma.notification.count({ where }),
+      prisma.notification.count({
+        where: {
+          userId: session.user.id,
+          isRead: false,
+        },
+      }),
+    ])
 
     return NextResponse.json({
       notifications,
       unreadCount,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
     })
   } catch (error: any) {
     return NextResponse.json(
@@ -82,39 +100,33 @@ export async function POST(request: Request) {
       )
     }
 
+    const { NotificationService } = await import('@/lib/services/notification.service')
+
     // Eğer userId null ise, tüm kullanıcılara bildirim gönder
     if (!validation.data.userId) {
-      // Tüm kullanıcıları al ve her birine bildirim oluştur
-      const users = await prisma.user.findMany({
-        select: { id: true },
-      })
+      await NotificationService.broadcastSystemAnnouncement(
+        validation.data.title,
+        validation.data.content,
+        body.url || undefined
+      )
 
-      const notifications = await prisma.notification.createMany({
-        data: users.map((user) => ({
-          title: validation.data.title,
-          content: validation.data.content,
-          type: validation.data.type,
-          userId: user.id,
-        })),
-      })
+      const userCount = await prisma.user.count()
 
       return NextResponse.json({
         success: true,
-        count: notifications.count,
-        message: `${notifications.count} kullanıcıya bildirim gönderildi`,
+        count: userCount,
+        message: `${userCount} kullanıcıya bildirim gönderildi`,
       })
     } else {
       // Tek kullanıcıya bildirim gönder
-      const notification = await prisma.notification.create({
-        data: {
-          title: validation.data.title,
-          content: validation.data.content,
-          type: validation.data.type,
-          userId: validation.data.userId,
-        },
-      })
+      await NotificationService.notifySystemAnnouncement(
+        validation.data.userId,
+        validation.data.title,
+        validation.data.content,
+        body.url || undefined
+      )
 
-      return NextResponse.json(notification, { status: 201 })
+      return NextResponse.json({ success: true }, { status: 201 })
     }
   } catch (error: any) {
     return NextResponse.json(

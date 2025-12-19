@@ -20,7 +20,10 @@ export class ForumService {
 
     const [posts, total] = await Promise.all([
       prisma.post.findMany({
-        where: { categoryId },
+        where: {
+          categoryId,
+          deletedAt: null, // Filter deleted posts
+        },
         skip,
         take: limit,
         orderBy: [
@@ -51,7 +54,10 @@ export class ForumService {
         },
       }),
       prisma.post.count({
-        where: { categoryId },
+        where: {
+          categoryId,
+          deletedAt: null,
+        },
       }),
     ])
 
@@ -63,8 +69,11 @@ export class ForumService {
   }
 
   static async getPostById(id: string, userId?: string) {
-    const post = await prisma.post.findUnique({
-      where: { id },
+    const post = await prisma.post.findFirst({
+      where: {
+        id,
+        deletedAt: null, // Filter deleted posts
+      },
       include: {
         author: {
           select: {
@@ -99,6 +108,9 @@ export class ForumService {
               },
             },
             replies: {
+              where: {
+                deletedAt: null, // Filter deleted replies
+              },
               include: {
                 author: {
                   select: {
@@ -123,6 +135,7 @@ export class ForumService {
           },
           where: {
             parentId: null,
+            deletedAt: null, // Filter deleted comments
           },
           orderBy: { createdAt: 'asc' },
         },
@@ -375,6 +388,43 @@ export class ForumService {
         },
       },
     })
+
+    // Create notifications
+    const { NotificationService } = await import('./notification.service')
+    
+    // Get post author
+    const post = await prisma.post.findUnique({
+      where: { id: data.postId },
+      select: { authorId: true, title: true },
+    })
+
+    if (post && post.authorId !== data.authorId) {
+      // Notify post author about new comment
+      await NotificationService.notifyForumReply(
+        data.postId,
+        post.authorId,
+        data.authorId,
+        comment.id
+      )
+    }
+
+    // If this is a reply to another comment, notify parent comment author
+    if (data.parentId) {
+      const parentComment = await prisma.comment.findUnique({
+        where: { id: data.parentId },
+        select: { authorId: true },
+      })
+
+      if (parentComment && parentComment.authorId !== data.authorId) {
+        await NotificationService.notifyCommentReply(
+          data.parentId,
+          parentComment.authorId,
+          data.authorId,
+          comment.id,
+          data.postId
+        )
+      }
+    }
 
     return comment
   }

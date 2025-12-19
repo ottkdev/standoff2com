@@ -18,15 +18,26 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { banned } = body
+    const { banned, reason, bannedUntil } = body
 
     const user = await prisma.user.update({
       where: { id: params.id },
       data: {
         isBanned: banned,
-        bannedUntil: banned ? null : null, // Permanent ban
+        bannedUntil: banned ? (bannedUntil ? new Date(bannedUntil) : null) : null,
       },
     })
+
+    // Create notification if banned
+    if (banned) {
+      const { NotificationService } = await import('@/lib/services/notification.service')
+      await NotificationService.notifyAdminBan(
+        params.id,
+        session.user.id,
+        reason || 'Yasaklama nedeni belirtilmedi',
+        bannedUntil ? new Date(bannedUntil) : null
+      )
+    }
 
     return NextResponse.json(user)
   } catch (error: any) {

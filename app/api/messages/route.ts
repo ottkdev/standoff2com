@@ -73,9 +73,12 @@ export async function POST(request: Request) {
       )
     }
 
-    if (user.isBanned) {
+    // Check if user is banned (including temporary bans)
+    const { ModerationService } = await import('@/lib/services/moderation.service')
+    const isBanned = await ModerationService.isUserBanned(user.id)
+    if (isBanned) {
       return NextResponse.json(
-        { error: 'Hesabınız yasaklanmıştır' },
+        { error: 'Hesabınız yasaklanmıştır. Mesaj gönderemezsiniz.' },
         { status: 403 }
       )
     }

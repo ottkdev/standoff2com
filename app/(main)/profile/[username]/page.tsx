@@ -21,6 +21,7 @@ import Link from 'next/link'
 import { FollowButton } from '@/components/profile/FollowButton'
 import { UserPosts } from '@/components/profile/UserPosts'
 import { UserListings } from '@/components/profile/UserListings'
+import { ReportButton } from '@/components/report/ReportButton'
 
 interface PageProps {
   params: {
@@ -95,6 +96,9 @@ export default async function ProfilePage({ params }: PageProps) {
                     </Link>
                     <div className="w-full sm:w-auto">
                       <FollowButton userId={user.id} isFollowing={isFollowing} />
+                    </div>
+                    <div className="w-full sm:w-auto">
+                      <ReportButton targetType="PROFILE" targetId={user.id} variant="outline" size="sm" className="w-full sm:w-auto min-h-[44px]" />
                     </div>
                   </>
                 ) : null}

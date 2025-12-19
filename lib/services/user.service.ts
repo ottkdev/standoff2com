@@ -90,12 +90,18 @@ export class UserService {
       throw new Error('Kendinizi takip edemezsiniz')
     }
 
-    return prisma.follow.create({
+    const follow = await prisma.follow.create({
       data: {
         followerId,
         followingId,
       },
     })
+
+    // Create notification
+    const { NotificationService } = await import('./notification.service')
+    await NotificationService.notifyFollow(followerId, followingId)
+
+    return follow
   }
 
   static async unfollowUser(followerId: string, followingId: string) {

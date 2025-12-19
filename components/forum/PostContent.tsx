@@ -15,6 +15,7 @@ import {
   MoreVertical,
   Pin,
   Lock,
+  Flag,
 } from 'lucide-react'
 import NextImage from 'next/image'
 import {
@@ -23,6 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ReportButton } from '@/components/report/ReportButton'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
@@ -144,32 +146,37 @@ export function PostContent({
             ) : null}
           </div>
         </div>
-        {(isOwner || isAdmin) ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9 md:h-8 md:w-8 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 flex-shrink-0">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {isOwner && onEdit ? (
-                <DropdownMenuItem onClick={onEdit}>
-                  <Edit className="h-4 w-4 mr-2" />
-                  Düzenle
-                </DropdownMenuItem>
-              ) : null}
-              {(isOwner || isAdmin) && onDelete ? (
-                <DropdownMenuItem
-                  className="text-destructive"
-                  onClick={onDelete}
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Sil
-                </DropdownMenuItem>
-              ) : null}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : null}
+        <div className="flex items-center gap-2">
+          {!isOwner && (
+            <ReportButton targetType="POST" targetId={id} variant="ghost" size="sm" />
+          )}
+          {(isOwner || isAdmin) ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9 md:h-8 md:w-8 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 flex-shrink-0">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {isOwner && onEdit ? (
+                  <DropdownMenuItem onClick={onEdit}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Düzenle
+                  </DropdownMenuItem>
+                ) : null}
+                {(isOwner || isAdmin) && onDelete ? (
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onClick={onDelete}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Sil
+                  </DropdownMenuItem>
+                ) : null}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null}
+        </div>
       </div>
 
       {/* Content */}

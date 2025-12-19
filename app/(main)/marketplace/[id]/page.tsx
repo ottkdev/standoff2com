@@ -13,6 +13,8 @@ import Image from 'next/image'
 import { ListingActions } from '@/components/marketplace/ListingActions'
 import { MarkSoldButton } from '@/components/marketplace/MarkSoldButton'
 import { ListingImageGallery } from '@/components/marketplace/ListingImageGallery'
+import { ReportButton } from '@/components/report/ReportButton'
+import { BuyButton } from '@/components/marketplace/BuyButton'
 
 interface PageProps {
   params: {
@@ -40,6 +42,23 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
       images: {
         orderBy: { order: 'asc' },
       },
+      orders: {
+        where: {
+          status: {
+            in: ['PENDING_DELIVERY', 'COMPLETED', 'DISPUTED'],
+          },
+        },
+        include: {
+          buyer: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 1,
+      },
     },
   })
 
@@ -49,8 +68,10 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
 
   const isOwner = session?.user?.id === listing.sellerId
   const isAdmin = session?.user?.role === 'ADMIN' || session?.user?.role === 'MODERATOR'
+  const hasActiveOrder = listing.orders.length > 0
+  const isBuyer = hasActiveOrder && listing.orders[0]?.buyerId === session?.user?.id
 
-  if (listing.status !== 'ACTIVE' && !isOwner && !isAdmin) {
+  if (listing.status !== 'ACTIVE' && !isOwner && !isAdmin && !isBuyer) {
     notFound()
   }
 
@@ -166,12 +187,26 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
             </Card>
           )}
 
-          {!isOwner && listing.status === 'ACTIVE' && (
-            <Link href={`/messages/${listing.sellerId}`}>
-              <Button size="lg" className="w-full">
-                Satıcıyla İletişime Geç
-              </Button>
-            </Link>
+          {!isOwner && listing.status === 'ACTIVE' && !hasActiveOrder && session?.user && (
+            <div className="space-y-3">
+              <BuyButton listingId={listing.id} price={listing.price} />
+              <ReportButton targetType="LISTING" targetId={listing.id} variant="outline" className="w-full" />
+            </div>
+          )}
+
+          {!isOwner && listing.status === 'ACTIVE' && hasActiveOrder && isBuyer && (
+            <div className="space-y-3">
+              <Link href={`/marketplace/orders/${listing.orders[0].id}`}>
+                <Button size="lg" className="w-full" variant="outline">
+                  Siparişi Görüntüle
+                </Button>
+              </Link>
+              <ReportButton targetType="LISTING" targetId={listing.id} variant="outline" className="w-full" />
+            </div>
+          )}
+
+          {!isOwner && listing.status === 'SOLD' && !hasActiveOrder && (
+            <ReportButton targetType="LISTING" targetId={listing.id} variant="outline" className="w-full" />
           )}
         </div>
       </div>

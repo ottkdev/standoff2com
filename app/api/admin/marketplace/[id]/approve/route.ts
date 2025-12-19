@@ -26,7 +26,22 @@ export async function POST(
         rejectedAt: null,
         rejectedReason: null,
       },
+      include: {
+        seller: {
+          select: {
+            id: true,
+          },
+        },
+      },
     })
+
+    // Create notification
+    const { NotificationService } = await import('@/lib/services/notification.service')
+    await NotificationService.notifyMarketplaceApproval(
+      params.id,
+      listing.sellerId,
+      listing.title
+    )
 
     // Log admin action
     if (process.env.NODE_ENV === 'development') {

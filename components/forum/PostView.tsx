@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 import { PostLayout } from './PostLayout'
 import { PostWithDetails } from '@/lib/types/forum'
+import { ReportButton } from '@/components/report/ReportButton'
 
 interface PostViewProps {
   post: PostWithDetails

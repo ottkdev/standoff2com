@@ -17,7 +17,10 @@ import {
   Shield,
   Award,
   Activity,
-  BarChart3
+  BarChart3,
+  Banknote,
+  AlertTriangle,
+  Package
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -29,6 +32,8 @@ async function AdminNav() {
   const navItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/users', label: 'Kullanıcılar', icon: Users },
+    { href: '/admin/moderation', label: 'Moderasyon', icon: Shield },
+    { href: '/admin/withdrawals', label: 'Çekimler', icon: Banknote },
     { href: '/admin/forum', label: 'Forum', icon: MessageSquare },
     { href: '/admin/blog', label: 'Blog', icon: BookOpen },
     { href: '/admin/wiki', label: 'Wiki', icon: BookMarked },

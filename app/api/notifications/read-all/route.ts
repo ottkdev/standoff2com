@@ -16,10 +16,7 @@ export async function POST() {
 
     await prisma.notification.updateMany({
       where: {
-        OR: [
-          { userId: session.user.id },
-          { userId: null }, // Genel bildirimler
-        ],
+        userId: session.user.id, // Only user-specific notifications
         isRead: false,
       },
       data: {
