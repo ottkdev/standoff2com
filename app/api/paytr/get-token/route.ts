@@ -210,7 +210,7 @@ export async function POST(request: Request) {
     const paymentAmountStr = String(deposit.grossAmount) // kuruş as string
     const paymentType = 'card'
     const installmentCount = '0'
-    const maxInstallment = '0'
+    const maxInstallment = '1'
     const noInstallment = '1'
     const non3d = '0'
     const currency = 'TL'
@@ -219,18 +219,20 @@ export async function POST(request: Request) {
     const clientLang = 'tr'
     const testModeString = String(testModeValue)
     
-    // User name and phone for PayTR
-    const userName = String(user.displayName || user.username || '').trim()
-    const userPhone = String('').trim() // Phone not available in User model
+    // User fields for PayTR (NOT included in hash)
+    const userName = String(user.displayName || user.username || 'PayTR User').trim()
+    const userAddress = String('Türkiye')
+    const userPhone = String('5000000000')
     
-    // Build user_basket first (needed for hash)
+    // Build user_basket (NOT included in hash)
     const amountTlString = (deposit.grossAmount / 100).toFixed(2)
     const userBasketPayload = [['Cüzdan Yükleme', amountTlString, 1]]
     const userBasketJson = JSON.stringify(userBasketPayload)
     const userBasketBase64 = Buffer.from(userBasketJson).toString('base64')
     
-    // PayTR hash order: merchant_id + user_ip + merchant_oid + email + payment_amount + payment_type + installment_count + currency + test_mode + non_3d + user_basket + no_installment + max_installment + merchant_salt
-    const hashStr = `${validatedMerchantId.trim()}${userIp}${merchantOidForPaytr}${user.email.trim()}${paymentAmountStr}${paymentType}${installmentCount}${currency}${testModeString}${non3d}${userBasketBase64}${noInstallment}${maxInstallment}${validatedMerchantSalt.trim()}`
+    // PayTR hash order (ONLY documented fields, NO user_* fields, NO user_basket, NO no_installment, NO max_installment):
+    // merchant_id + user_ip + merchant_oid + email + payment_amount + payment_type + installment_count + currency + test_mode + non_3d + merchant_salt
+    const hashStr = `${validatedMerchantId.trim()}${userIp}${merchantOidForPaytr}${user.email.trim()}${paymentAmountStr}${paymentType}${installmentCount}${currency}${testModeString}${non3d}${validatedMerchantSalt.trim()}`
     const paytrToken = crypto
       .createHmac('sha256', validatedMerchantKey.trim())
       .update(hashStr)
@@ -317,9 +319,12 @@ export async function POST(request: Request) {
     if (!userBasketBase64) missingPaytrFields.push('user_basket')
     if (!maxInstallment) missingPaytrFields.push('max_installment')
     if (!noInstallment) missingPaytrFields.push('no_installment')
-    if (userName === '') missingPaytrFields.push('user_name')
+    if (!userName) missingPaytrFields.push('user_name')
+    if (!userAddress) missingPaytrFields.push('user_address')
+    if (!userPhone) missingPaytrFields.push('user_phone')
     if (missingPaytrFields.length > 0) {
-      console.error('Missing required PayTR fields:', missingPaytrFields)
+      console.log('Missing required PayTR fields:', missingPaytrFields)
+      console.error('Eksik PayTR alanları:', missingPaytrFields.join(', '))
       return NextResponse.json(
         { error: `Eksik PayTR alanları: ${missingPaytrFields.join(', ')}` },
         { status: 400 }
@@ -335,6 +340,7 @@ export async function POST(request: Request) {
     paytrParams.append('email', String(user.email).trim())
     paytrParams.append('payment_amount', paymentAmountStr) // In kuruş, as string
     paytrParams.append('user_name', userName)
+    paytrParams.append('user_address', userAddress)
     paytrParams.append('user_phone', userPhone)
     paytrParams.append('payment_type', paymentType)
     paytrParams.append('installment_count', installmentCount)
@@ -360,6 +366,7 @@ export async function POST(request: Request) {
       payment_amount: String(deposit.grossAmount),
       user_ip: String(userIp),
       user_name: userName,
+      user_address: userAddress,
       user_phone: userPhone,
       test_mode: String(testMode),
       callback_url: String(callbackUrl),
