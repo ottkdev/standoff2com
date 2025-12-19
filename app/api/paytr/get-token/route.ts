@@ -254,6 +254,21 @@ export async function POST(request: Request) {
       paytrTestModeEnv: paytrTestMode,
     })
 
+    // Build user_basket (required): [["Bakiye Yükleme", "<tutar TL string>", 1]]
+    const amountTlString = (deposit.grossAmount / 100).toFixed(2)
+    const userBasketPayload = [['Bakiye Yükleme', amountTlString, 1]]
+    const userBasketJson = JSON.stringify(userBasketPayload)
+    const userBasketBase64 = Buffer.from(userBasketJson).toString('base64')
+
+    if (!userBasketBase64) {
+      return NextResponse.json(
+        { error: 'user_basket oluşturulamadı' },
+        { status: 400 }
+      )
+    }
+
+    console.log('PayTR user_basket (base64):', userBasketBase64)
+
     // Call PayTR API to get token - use URLSearchParams for application/x-www-form-urlencoded
     // ALL values MUST be strings and we must NOT send JSON
     const paytrParams = new URLSearchParams()
@@ -268,6 +283,7 @@ export async function POST(request: Request) {
     paytrParams.append('merchant_fail_url', String(merchantFailUrl))
     paytrParams.append('callback_url', String(callbackUrl)) // PayTR callback URL
     paytrParams.append('hash', String(hash)) // PayTR hash/token value
+    paytrParams.append('user_basket', userBasketBase64)
 
     // Log request parameters for debugging (without sensitive data)
     console.log('PayTR request parameters (URLSearchParams):', {
