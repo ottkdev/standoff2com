@@ -163,6 +163,9 @@ export async function POST(request: Request) {
     const installmentCount = '0'
     const non3d = '0'
     const currency = 'TL'
+    const timeoutLimit = '30'
+    const debugOn = '1'
+    const clientLang = 'tr'
     const testModeString = String(testModeValue)
     const hashStr = `${validatedMerchantId.trim()}${userIp}${merchantOid}${user.email.trim()}${paymentAmountStr}${paymentType}${installmentCount}${currency}${testModeString}${non3d}${validatedMerchantSalt.trim()}`
     const paytrToken = crypto
@@ -181,23 +184,6 @@ export async function POST(request: Request) {
     // Prepare PayTR API call - all values must be strings
     // callbackUrl, merchantOkUrl, merchantFailUrl already defined above
     const testMode = testModeString // Convert to string: '0' or '1'
-
-    // Validate all required fields before sending to PayTR
-    const missingPaytrFields: string[] = []
-    if (!validatedMerchantId) missingPaytrFields.push('merchant_id')
-    if (!validatedMerchantKey) missingPaytrFields.push('merchant_key')
-    if (!validatedMerchantSalt) missingPaytrFields.push('merchant_salt')
-    if (!merchantOid) missingPaytrFields.push('merchant_oid')
-    if (!user.email) missingPaytrFields.push('email')
-    if (!paytrToken) missingPaytrFields.push('paytr_token')
-    if (!userIp) missingPaytrFields.push('user_ip')
-    if (missingPaytrFields.length > 0) {
-      console.error('Missing required PayTR fields:', missingPaytrFields)
-      return NextResponse.json(
-        { error: `Eksik PayTR alanları: ${missingPaytrFields.join(', ')}` },
-        { status: 400 }
-      )
-    }
 
     // Log merchant_oid before sending to PayTR (CRITICAL for debugging)
     console.log('PayTR merchant_oid validation:', {
@@ -242,7 +228,7 @@ export async function POST(request: Request) {
       paytrTestModeEnv: paytrTestMode,
     })
 
-    // Build user_basket (required): [["Bakiye Yükleme", "<tutar TL string>", 1]]
+    // Build user_basket (required): [["Cüzdan Yükleme", "<tutar TL string>", 1]]
     const amountTlString = (deposit.grossAmount / 100).toFixed(2)
     const userBasketPayload = [['Cüzdan Yükleme', amountTlString, 1]]
     if (!Array.isArray(userBasketPayload) || userBasketPayload.length === 0) {
@@ -264,6 +250,28 @@ export async function POST(request: Request) {
 
     console.log('PayTR user_basket (base64):', userBasketBase64)
 
+    // Validate all required fields before sending to PayTR
+    const missingPaytrFields: string[] = []
+    if (!validatedMerchantId) missingPaytrFields.push('merchant_id')
+    if (!validatedMerchantKey) missingPaytrFields.push('merchant_key')
+    if (!validatedMerchantSalt) missingPaytrFields.push('merchant_salt')
+    if (!merchantOid) missingPaytrFields.push('merchant_oid')
+    if (!user.email) missingPaytrFields.push('email')
+    if (!paytrToken) missingPaytrFields.push('paytr_token')
+    if (!userIp) missingPaytrFields.push('user_ip')
+    if (!paymentAmountStr) missingPaytrFields.push('payment_amount')
+    if (!callbackUrl) missingPaytrFields.push('callback_url')
+    if (!merchantOkUrl) missingPaytrFields.push('merchant_ok_url')
+    if (!merchantFailUrl) missingPaytrFields.push('merchant_fail_url')
+    if (!userBasketBase64) missingPaytrFields.push('user_basket')
+    if (missingPaytrFields.length > 0) {
+      console.error('Missing required PayTR fields:', missingPaytrFields)
+      return NextResponse.json(
+        { error: `Eksik PayTR alanları: ${missingPaytrFields.join(', ')}` },
+        { status: 400 }
+      )
+    }
+
     // Call PayTR API to get token - use URLSearchParams for application/x-www-form-urlencoded
     // ALL values MUST be strings and we must NOT send JSON
     const paytrParams = new URLSearchParams()
@@ -277,6 +285,9 @@ export async function POST(request: Request) {
     paytrParams.append('currency', currency)
     paytrParams.append('test_mode', String(testMode)) // Must be '0' or '1' as string
     paytrParams.append('non_3d', non3d)
+    paytrParams.append('timeout_limit', timeoutLimit)
+    paytrParams.append('debug_on', debugOn)
+    paytrParams.append('client_lang', clientLang)
     paytrParams.append('merchant_ok_url', String(merchantOkUrl))
     paytrParams.append('merchant_fail_url', String(merchantFailUrl))
     paytrParams.append('callback_url', String(callbackUrl)) // PayTR callback URL
@@ -296,6 +307,9 @@ export async function POST(request: Request) {
       merchant_fail_url: String(merchantFailUrl),
       currency: 'TL',
       user_basket: userBasketBase64,
+      timeout_limit: timeoutLimit,
+      debug_on: debugOn,
+      client_lang: clientLang,
     })
 
     // Call PayTR API with application/x-www-form-urlencoded
