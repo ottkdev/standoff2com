@@ -164,9 +164,9 @@ export async function POST(request: Request) {
     }
 
     // Prepare PayTR API call - all values must be strings
+    // callbackUrl already defined above (line 133)
     const merchantOkUrl = `${siteUrl}/wallet/deposit/success?merchantOid=${merchantOid}`
     const merchantFailUrl = `${siteUrl}/wallet/deposit/fail?merchantOid=${merchantOid}`
-    const callbackUrl = `${siteUrl}/api/paytr/callback`
     const testMode = process.env.NODE_ENV === 'development' ? '1' : '0'
 
     // Validate all required fields before sending to PayTR
