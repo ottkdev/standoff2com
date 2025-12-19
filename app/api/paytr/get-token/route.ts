@@ -257,10 +257,17 @@ export async function POST(request: Request) {
     // Build user_basket (required): [["Bakiye Yükleme", "<tutar TL string>", 1]]
     const amountTlString = (deposit.grossAmount / 100).toFixed(2)
     const userBasketPayload = [['Bakiye Yükleme', amountTlString, 1]]
+    if (!Array.isArray(userBasketPayload) || userBasketPayload.length === 0) {
+      return NextResponse.json(
+        { error: 'user_basket boş olamaz' },
+        { status: 400 }
+      )
+    }
+
     const userBasketJson = JSON.stringify(userBasketPayload)
     const userBasketBase64 = Buffer.from(userBasketJson).toString('base64')
 
-    if (!userBasketBase64) {
+    if (!userBasketBase64 || userBasketBase64.trim() === '') {
       return NextResponse.json(
         { error: 'user_basket oluşturulamadı' },
         { status: 400 }
@@ -297,6 +304,7 @@ export async function POST(request: Request) {
       merchant_ok_url: String(merchantOkUrl),
       merchant_fail_url: String(merchantFailUrl),
       currency: 'TL',
+      user_basket: userBasketBase64,
     })
 
     // Call PayTR API with application/x-www-form-urlencoded
