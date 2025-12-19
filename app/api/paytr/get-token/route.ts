@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import crypto from 'crypto'
 
 export async function POST(request: Request) {
   try {
@@ -146,44 +147,31 @@ export async function POST(request: Request) {
 
     // Validate IP is IPv4 format (basic check)
     const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/
-    if (!ipv4Regex.test(userIp) && userIp !== '127.0.0.1') {
+    if (!ipv4Regex.test(userIp)) {
       console.warn('Invalid IP format, using fallback:', userIp)
-      userIp = '127.0.0.1'
+      userIp = '8.8.8.8'
     }
-
-    // Import PayTRService
-    const { PayTRService } = await import('@/lib/services/paytr.service')
 
     // Prepare callback URL (PayTR panel must match this) - generate ONLY ONCE
     const callbackUrl = `${validatedSiteUrl.trim()}/api/paytr/callback`
     const merchantOkUrl = `${validatedSiteUrl.trim()}/wallet/deposit/success?merchantOid=${merchantOid}`
     const merchantFailUrl = `${validatedSiteUrl.trim()}/wallet/deposit/fail?merchantOid=${merchantOid}`
 
-    // Generate hash with defensive error handling
-    let hash: string
-    try {
-      hash = PayTRService.generateToken({
-        merchantId: validatedMerchantId.trim(),
-        merchantKey: validatedMerchantKey.trim(),
-        merchantSalt: validatedMerchantSalt.trim(),
-        email: user.email.trim(),
-        paymentAmount: deposit.grossAmount, // Already in kuruş
-        merchantOid,
-        userIp,
-        merchantOkUrl,
-        merchantFailUrl,
-        testMode: testModeValue,
-      })
-    } catch (hashError: any) {
-      console.error('PayTR hash generation error:', hashError)
-      return NextResponse.json(
-        { error: `Hash oluşturma hatası: ${hashError.message}` },
-        { status: 500 }
-      )
-    }
+    // Generate PayTR token/hash using documented order
+    const paymentAmountStr = String(deposit.grossAmount) // kuruş as string
+    const paymentType = 'card'
+    const installmentCount = '0'
+    const non3d = '0'
+    const currency = 'TL'
+    const testModeString = String(testModeValue)
+    const hashStr = `${validatedMerchantId.trim()}${userIp}${merchantOid}${user.email.trim()}${paymentAmountStr}${paymentType}${installmentCount}${currency}${testModeString}${non3d}${validatedMerchantSalt.trim()}`
+    const paytrToken = crypto
+      .createHmac('sha256', validatedMerchantKey.trim())
+      .update(hashStr)
+      .digest('base64')
 
-    if (!hash || hash.length === 0) {
-      console.error('Hash is empty after generation')
+    if (!paytrToken || paytrToken.length === 0) {
+      console.error('PayTR token hash is empty after generation')
       return NextResponse.json(
         { error: 'Hash oluşturulamadı' },
         { status: 500 }
@@ -192,7 +180,7 @@ export async function POST(request: Request) {
 
     // Prepare PayTR API call - all values must be strings
     // callbackUrl, merchantOkUrl, merchantFailUrl already defined above
-    const testMode = String(testModeValue) // Convert to string: '0' or '1'
+    const testMode = testModeString // Convert to string: '0' or '1'
 
     // Validate all required fields before sending to PayTR
     const missingPaytrFields: string[] = []
@@ -201,7 +189,7 @@ export async function POST(request: Request) {
     if (!validatedMerchantSalt) missingPaytrFields.push('merchant_salt')
     if (!merchantOid) missingPaytrFields.push('merchant_oid')
     if (!user.email) missingPaytrFields.push('email')
-    if (!hash) missingPaytrFields.push('hash')
+    if (!paytrToken) missingPaytrFields.push('paytr_token')
     if (!userIp) missingPaytrFields.push('user_ip')
     if (missingPaytrFields.length > 0) {
       console.error('Missing required PayTR fields:', missingPaytrFields)
@@ -256,7 +244,7 @@ export async function POST(request: Request) {
 
     // Build user_basket (required): [["Bakiye Yükleme", "<tutar TL string>", 1]]
     const amountTlString = (deposit.grossAmount / 100).toFixed(2)
-    const userBasketPayload = [['Bakiye Yükleme', amountTlString, 1]]
+    const userBasketPayload = [['Cüzdan Yükleme', amountTlString, 1]]
     if (!Array.isArray(userBasketPayload) || userBasketPayload.length === 0) {
       return NextResponse.json(
         { error: 'user_basket boş olamaz' },
@@ -283,13 +271,16 @@ export async function POST(request: Request) {
     paytrParams.append('user_ip', String(userIp))
     paytrParams.append('merchant_oid', String(merchantOid))
     paytrParams.append('email', String(user.email).trim())
-    paytrParams.append('payment_amount', String(deposit.grossAmount)) // In kuruş, as string
-    paytrParams.append('currency', 'TL')
+    paytrParams.append('payment_amount', paymentAmountStr) // In kuruş, as string
+    paytrParams.append('payment_type', paymentType)
+    paytrParams.append('installment_count', installmentCount)
+    paytrParams.append('currency', currency)
     paytrParams.append('test_mode', String(testMode)) // Must be '0' or '1' as string
+    paytrParams.append('non_3d', non3d)
     paytrParams.append('merchant_ok_url', String(merchantOkUrl))
     paytrParams.append('merchant_fail_url', String(merchantFailUrl))
     paytrParams.append('callback_url', String(callbackUrl)) // PayTR callback URL
-    paytrParams.append('hash', String(hash)) // PayTR hash/token value
+    paytrParams.append('paytr_token', String(paytrToken)) // PayTR hash/token value
     paytrParams.append('user_basket', userBasketBase64)
 
     // Log request parameters for debugging (without sensitive data)
