@@ -6,9 +6,10 @@ import { createTicketSchema } from '@/lib/validations/support.validation'
 
 export async function GET(request: Request) {
   try {
+    // Auth check - strict validation
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!session || !session.user || !session.user.id) {
       return NextResponse.json(
         { error: 'Giriş yapmalısınız' },
         { status: 401 }
@@ -76,39 +77,93 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    // Auth check - strict validation
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!session) {
       return NextResponse.json(
-        { error: 'Giriş yapmalısınız' },
+        { error: 'Oturum bulunamadı. Lütfen giriş yapın.' },
         { status: 401 }
       )
     }
 
-    const body = await request.json()
-    const validation = createTicketSchema.safeParse(body)
-
-    if (!validation.success) {
+    if (!session.user) {
       return NextResponse.json(
-        { error: validation.error.errors[0].message },
+        { error: 'Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.' },
+        { status: 401 }
+      )
+    }
+
+    if (!session.user.id) {
+      return NextResponse.json(
+        { error: 'Kullanıcı ID bulunamadı. Lütfen tekrar giriş yapın.' },
+        { status: 401 }
+      )
+    }
+
+    // Parse and validate request body
+    let body
+    try {
+      body = await request.json()
+    } catch (parseError) {
+      return NextResponse.json(
+        { error: 'Geçersiz JSON formatı' },
         { status: 400 }
       )
     }
 
-    // Create ticket with first message
+    // Validate input
+    const validation = createTicketSchema.safeParse(body)
+
+    if (!validation.success) {
+      const firstError = validation.error.errors[0]
+      return NextResponse.json(
+        { error: firstError?.message || 'Geçersiz form verisi' },
+        { status: 400 }
+      )
+    }
+
+    // Verify user exists in database
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { id: true, isBanned: true },
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Kullanıcı bulunamadı. Lütfen tekrar giriş yapın.' },
+        { status: 401 }
+      )
+    }
+
+    if (user.isBanned) {
+      return NextResponse.json(
+        { error: 'Hesabınız yasaklanmıştır. Destek talebi oluşturamazsınız.' },
+        { status: 403 }
+      )
+    }
+
+    // Validate all required fields before creating
+    const ticketData = {
+      userId: session.user.id,
+      subject: validation.data.subject.trim(),
+      category: validation.data.category,
+      priority: validation.data.priority || 'MEDIUM',
+      status: 'OPEN' as const,
+    }
+
+    const messageData = {
+      senderType: 'USER' as const,
+      senderId: session.user.id,
+      message: validation.data.message.trim(),
+    }
+
+    // Create ticket with first message - with explicit error handling
     const ticket = await prisma.supportTicket.create({
       data: {
-        userId: session.user.id,
-        subject: validation.data.subject,
-        category: validation.data.category,
-        priority: validation.data.priority,
-        status: 'OPEN',
+        ...ticketData,
         messages: {
-          create: {
-            senderType: 'USER',
-            senderId: session.user.id,
-            message: validation.data.message,
-          },
+          create: messageData,
         },
       },
       include: {
@@ -130,8 +185,24 @@ export async function POST(request: Request) {
     return NextResponse.json(ticket, { status: 201 })
   } catch (error: any) {
     console.error('Create ticket error:', error)
+    
+    // More specific error messages
+    if (error.code === 'P2002') {
+      return NextResponse.json(
+        { error: 'Bu destek talebi zaten mevcut' },
+        { status: 409 }
+      )
+    }
+
+    if (error.code === 'P2003') {
+      return NextResponse.json(
+        { error: 'Geçersiz kullanıcı referansı' },
+        { status: 400 }
+      )
+    }
+
     return NextResponse.json(
-      { error: error.message || 'Bir hata oluştu' },
+      { error: error.message || 'Destek talebi oluşturulurken bir hata oluştu' },
       { status: 500 }
     )
   }

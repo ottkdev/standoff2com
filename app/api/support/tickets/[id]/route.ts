@@ -9,9 +9,10 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Strict auth check
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!session || !session.user || !session.user.id) {
       return NextResponse.json(
         { error: 'Giriş yapmalısınız' },
         { status: 401 }
@@ -68,9 +69,10 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Strict auth check
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!session || !session.user || !session.user.id) {
       return NextResponse.json(
         { error: 'Giriş yapmalısınız' },
         { status: 401 }

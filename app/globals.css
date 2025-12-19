@@ -225,6 +225,17 @@
       hyphens: auto;
     }
     
+    /* Additional word breaking utilities */
+    .overflow-wrap-anywhere {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    
+    .word-break-break-word {
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    
     /* Prevent text overflow in cards */
     .line-clamp-1 {
       display: -webkit-box;

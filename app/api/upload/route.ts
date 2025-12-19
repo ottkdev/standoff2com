@@ -16,9 +16,10 @@ const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp']
 
 export async function POST(request: Request) {
   try {
+    // Strict auth check
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!session || !session.user || !session.user.id) {
       return NextResponse.json(
         { error: 'Giriş yapmalısınız' },
         { status: 401 }

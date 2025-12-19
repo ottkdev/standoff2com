@@ -98,13 +98,34 @@ export default function SupportPage() {
 
   const fetchTickets = async () => {
     try {
-      const response = await fetch('/api/support/tickets')
+      setLoading(true)
+      const response = await fetch('/api/support/tickets', {
+        credentials: 'include',
+      })
+      
+      if (response.status === 401) {
+        router.push('/login')
+        return
+      }
+      
       if (response.ok) {
         const data = await response.json()
         setTickets(data)
+      } else {
+        const error = await response.json()
+        toast({
+          title: 'Hata',
+          description: error.error || 'Talepler yüklenemedi',
+          variant: 'destructive',
+        })
       }
     } catch (error) {
       console.error('Fetch tickets error:', error)
+      toast({
+        title: 'Hata',
+        description: 'Talepler yüklenirken bir hata oluştu',
+        variant: 'destructive',
+      })
     } finally {
       setLoading(false)
     }
@@ -112,13 +133,48 @@ export default function SupportPage() {
 
   const handleCreateTicket = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Client-side validation
+    if (!formData.subject.trim()) {
+      toast({
+        title: 'Hata',
+        description: 'Konu boş olamaz',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    if (!formData.category) {
+      toast({
+        title: 'Hata',
+        description: 'Kategori seçmelisiniz',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    if (!formData.message.trim()) {
+      toast({
+        title: 'Hata',
+        description: 'Açıklama boş olamaz',
+        variant: 'destructive',
+      })
+      return
+    }
+
     setCreating(true)
 
     try {
       const response = await fetch('/api/support/tickets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        credentials: 'include',
+        body: JSON.stringify({
+          subject: formData.subject.trim(),
+          category: formData.category,
+          priority: formData.priority,
+          message: formData.message.trim(),
+        }),
       })
 
       const data = await response.json()
@@ -134,7 +190,7 @@ export default function SupportPage() {
 
       setOpenDialog(false)
       setFormData({ subject: '', category: '', priority: 'MEDIUM', message: '' })
-      fetchTickets()
+      await fetchTickets()
     } catch (error: any) {
       toast({
         title: 'Hata',
@@ -283,11 +339,11 @@ export default function SupportPage() {
               <Link href={`/support/${ticket.id}`} className="contents">
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 overflow-hidden">
                       <div className="flex items-start gap-2 sm:gap-3 mb-2">
                         <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0 mt-0.5" />
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-sm sm:text-base font-semibold mb-1 break-words line-clamp-2">
+                        <div className="flex-1 min-w-0 overflow-hidden">
+                          <h3 className="text-sm sm:text-base font-semibold mb-1 break-words line-clamp-2 overflow-wrap-anywhere">
                             {ticket.subject}
                           </h3>
                           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

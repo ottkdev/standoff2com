@@ -5,8 +5,9 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { prisma } from '@/lib/db'
 import { formatRelativeTime, cn } from '@/lib/utils'
-import { BookOpen, ArrowRight, Calendar, User, Eye, Search, Newspaper, Sparkles } from 'lucide-react'
+import { BookOpen, ArrowRight, Search, Newspaper, Sparkles } from 'lucide-react'
 import { Metadata } from 'next'
+import { RecentContent } from '@/components/shared/RecentContent'
 
 export const metadata: Metadata = {
   title: 'Standoff 2 Blog - Güncel Haberler, Duyurular ve Rehberler',
@@ -45,6 +46,32 @@ export default async function BlogPage({ searchParams }: PageProps) {
   }
 
   let orderBy: any = { publishedAt: 'desc' }
+
+  // Get recent posts for "Son Eklenenler"
+  let recentPosts: any[] = []
+  try {
+    recentPosts = await prisma.blogPost.findMany({
+      where: { isPublished: true },
+      take: 10,
+      orderBy: { publishedAt: 'desc' },
+      include: {
+        author: {
+          select: {
+            username: true,
+            avatarUrl: true,
+          },
+        },
+        category: {
+          select: {
+            name: true,
+            slug: true,
+          },
+        },
+      },
+    })
+  } catch (error) {
+    console.error('Error fetching recent blog posts:', error)
+  }
 
   const [posts, total, categories, pinned] = await Promise.all([
     prisma.blogPost.findMany({
@@ -117,35 +144,35 @@ export default async function BlogPage({ searchParams }: PageProps) {
   const totalPages = Math.ceil(total / limit)
 
   return (
-    <div className="container py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-5 lg:px-6 w-full overflow-x-hidden max-w-6xl">
-      {/* Hero Section - Kompakt */}
-      <div className="text-center mb-4 sm:mb-6 md:mb-8">
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-2.5 sm:px-3 py-1 sm:py-1.5 mb-2 sm:mb-3">
-          <BookOpen className="h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0" />
-          <span className="font-medium text-[10px] sm:text-xs break-words">Blog & Haberler</span>
+    <div className="container py-6 md:py-8 lg:py-12 px-3 sm:px-4 md:px-5 lg:px-6 w-full overflow-x-hidden max-w-6xl mx-auto">
+      {/* Hero Section */}
+      <div className="text-center mb-6 sm:mb-8 md:mb-10">
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-primary/10 text-primary px-2.5 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 mb-3 sm:mb-4 md:mb-6">
+          <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 flex-shrink-0" />
+          <span className="font-medium text-[10px] sm:text-xs md:text-sm break-words">Blog & Haberler</span>
         </div>
-        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 gradient-text break-words px-2">
+        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 gradient-text break-words px-2">
           Standoff 2 Blog
         </h1>
-        <p className="text-xs sm:text-sm md:text-base text-muted-foreground max-w-3xl mx-auto mb-3 sm:mb-4 break-words px-2">
+        <p className="text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto mb-4 sm:mb-5 md:mb-6 break-words px-2">
           Oyunun en güncel haberleri, duyuruları, yamaları ve topluluk rehberleri. 
           Standoff 2 dünyasındaki son gelişmeleri buradan takip edin.
         </p>
-        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 px-2">
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 px-2">
           <Link href="/blog?sort=recent" className="w-full sm:w-auto">
-            <Button size="lg" className="gap-1.5 w-full sm:w-auto min-h-[44px] text-sm">
-              <Newspaper className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <Button size="lg" className="gap-1.5 sm:gap-2 w-full sm:w-auto min-h-[44px] text-sm">
+              <Newspaper className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" />
               Son Yazılar
             </Button>
           </Link>
           <Link href="/blog?sort=popular" className="w-full sm:w-auto">
-            <Button variant="outline" size="lg" className="gap-1.5 w-full sm:w-auto min-h-[44px] text-sm">
-              <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <Button variant="outline" size="lg" className="gap-1.5 sm:gap-2 w-full sm:w-auto min-h-[44px] text-sm">
+              <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" />
               Popüler İçerikler
             </Button>
           </Link>
         </div>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mt-3 sm:mt-4 px-2">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mt-3 sm:mt-4 md:mt-5 px-2">
           <div className="flex items-center gap-1.5 rounded-lg border border-border/70 bg-background/70 px-2.5 sm:px-3 py-1.5 shadow-sm">
             <BookOpen className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary flex-shrink-0" />
             <span className="text-[10px] sm:text-xs font-medium break-words">{total.toLocaleString('tr-TR')} yazı</span>
@@ -157,113 +184,184 @@ export default async function BlogPage({ searchParams }: PageProps) {
         </div>
       </div>
 
-      {/* Categories Section - Kompakt */}
+      {/* Son Eklenenler */}
+      {recentPosts.length > 0 && (
+        <RecentContent
+          type="blog"
+          items={recentPosts.map((post) => ({
+            id: post.id,
+            title: post.title,
+            slug: post.slug,
+            createdAt: post.publishedAt || post.createdAt,
+            category: post.category ? {
+              name: post.category.name,
+              slug: post.category.slug,
+            } : undefined,
+            author: post.author,
+            viewCount: post.viewCount,
+          }))}
+        />
+      )}
+
+      {/* Categories Grid - Wiki style */}
       {categories.length > 0 && (
-        <div className="mb-4 sm:mb-6 md:mb-8">
-          <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <div className="mb-8 sm:mb-10 md:mb-12">
+          <div className="flex items-center justify-between mb-4 sm:mb-5 md:mb-6">
             <div>
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 break-words">Kategoriler</h2>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 break-words">Kategoriler</h2>
               <p className="text-xs sm:text-sm text-muted-foreground break-words">İçerikleri kategoriye göre filtreleyin</p>
             </div>
             <Link href="/blog">
-              <Button variant="outline" className="gap-1.5 text-xs sm:text-sm min-h-[44px]">
+              <Button variant="outline" className="gap-2 text-xs sm:text-sm min-h-[44px]">
                 <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                Tümünü Gör
+                <span className="hidden sm:inline">Tümünü Ara</span>
+                <span className="sm:hidden">Ara</span>
               </Button>
             </Link>
           </div>
-          <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center md:justify-start">
-            <Link href="/blog" className="min-h-[44px] flex items-center">
-              <Badge
-                variant={!searchParams.category ? 'default' : 'secondary'}
-                className="cursor-pointer hover:bg-primary/20 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm shadow-sm min-h-[44px] flex items-center"
-              >
-                Tümü
-              </Badge>
-            </Link>
-            {categories.map((category) => (
-              <Link key={category.id} href={`/blog?category=${category.slug}`} className="min-h-[44px] flex items-center">
-                <Badge
-                  variant={searchParams.category === category.slug ? 'default' : 'secondary'}
-                  className="cursor-pointer hover:bg-primary/20 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm shadow-sm min-h-[44px] flex items-center break-words"
-                >
-                  {category.name} ({category._count.blogPosts})
-                </Badge>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
+            <Card className="glass-effect hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all h-full group overflow-hidden">
+              <Link href="/blog" className="contents h-full flex flex-col">
+                <CardHeader className="pb-2.5 sm:pb-3">
+                  <div className="flex items-start justify-between mb-3 sm:mb-4">
+                    <div className="p-2.5 sm:p-3 rounded-lg bg-primary/10 border-primary/20 border group-hover:scale-110 transition-transform flex-shrink-0">
+                      <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                    </div>
+                    {total > 0 && (
+                      <Badge variant="secondary" className="text-[10px] sm:text-xs flex-shrink-0">
+                        {total} yazı
+                      </Badge>
+                    )}
+                  </div>
+                  <CardTitle className="text-lg sm:text-xl mb-2 group-hover:text-primary transition-colors break-words">
+                    Tümü
+                  </CardTitle>
+                  <CardDescription className="text-xs sm:text-sm leading-relaxed break-words">
+                    Tüm blog yazılarını görüntüleyin
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="mt-auto">
+                  <div className="flex items-center gap-2 text-primary text-xs sm:text-sm font-medium group-hover:gap-3 transition-all">
+                    <span className="break-words">Keşfet</span>
+                    <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                  </div>
+                </CardContent>
               </Link>
-            ))}
+            </Card>
+            {categories.map((category) => {
+              let Icon = BookOpen
+              let color = 'text-blue-500'
+              let bg = 'bg-blue-500/10'
+              let border = 'border-blue-500/20'
+
+              if (category.name.toLowerCase().includes('haber') || category.name.toLowerCase().includes('duyuru')) {
+                Icon = Newspaper
+                color = 'text-orange-500'
+                bg = 'bg-orange-500/10'
+                border = 'border-orange-500/20'
+              } else if (category.name.toLowerCase().includes('rehber')) {
+                Icon = BookOpen
+                color = 'text-green-500'
+                bg = 'bg-green-500/10'
+                border = 'border-green-500/20'
+              }
+
+              return (
+                <Card key={category.id} className="glass-effect hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all h-full group overflow-hidden">
+                  <Link href={`/blog?category=${category.slug}`} className="contents h-full flex flex-col">
+                    <CardHeader className="pb-2.5 sm:pb-3">
+                      <div className="flex items-start justify-between mb-3 sm:mb-4">
+                        <div className={`p-2.5 sm:p-3 rounded-lg ${bg} ${border} border group-hover:scale-110 transition-transform flex-shrink-0`}>
+                          <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${color}`} />
+                        </div>
+                        {category._count.blogPosts > 0 && (
+                          <Badge variant="secondary" className="text-[10px] sm:text-xs flex-shrink-0">
+                            {category._count.blogPosts} yazı
+                          </Badge>
+                        )}
+                      </div>
+                      <CardTitle className="text-lg sm:text-xl mb-2 group-hover:text-primary transition-colors break-words">
+                        {category.name}
+                      </CardTitle>
+                      <CardDescription className="text-xs sm:text-sm leading-relaxed break-words">
+                        {category.description || 'Blog yazıları ve içerikler'}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="mt-auto">
+                      <div className="flex items-center gap-2 text-primary text-xs sm:text-sm font-medium group-hover:gap-3 transition-all">
+                        <span className="break-words">Keşfet</span>
+                        <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                      </div>
+                    </CardContent>
+                  </Link>
+                </Card>
+              )
+            })}
           </div>
         </div>
       )}
 
-      {/* Featured Posts */}
+      {/* Featured Posts - Wiki style */}
       {pinned.length > 0 && (
-        <div className="mb-8 md:mb-12">
-          <div className="flex items-center justify-between mb-6">
+        <div className="mb-8 sm:mb-10 md:mb-12">
+          <div className="flex items-center justify-between mb-4 sm:mb-5 md:mb-6">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-2">Öne Çıkan Yazılar</h2>
-              <p className="text-muted-foreground">En çok okunan ve popüler blog yazıları</p>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 break-words">Popüler Yazılar</h2>
+              <p className="text-xs sm:text-sm text-muted-foreground break-words">En çok okunan blog yazıları</p>
             </div>
+            <Link href="/blog">
+              <Button variant="outline" className="gap-2 text-xs sm:text-sm min-h-[44px]">
+                <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Tümünü Ara</span>
+                <span className="sm:hidden">Ara</span>
+              </Button>
+            </Link>
           </div>
-          <div className="grid gap-3 sm:gap-4 lg:grid-cols-3">
-            {pinned.map((post, idx) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 md:gap-5 lg:gap-6">
+            {pinned.map((post) => (
               <Card
                 key={post.id}
-                className={cn(
-                  "glass-effect hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all h-full group overflow-hidden",
-                  idx === 0 ? "lg:col-span-2" : ""
-                )}
+                className="glass-effect hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all h-full group overflow-hidden"
               >
                 <Link href={`/blog/${post.slug}`} className="contents">
-                  {post.coverImage && (
-                    <div className="relative aspect-video w-full overflow-hidden">
-                      <img
-                        src={post.coverImage}
-                        alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-card/90 via-card/50 to-transparent" />
-                      {post.category && (
-                        <div className="absolute top-3 left-3">
-                          <Badge variant="secondary" className="text-xs">{post.category.name}</Badge>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <CardHeader>
-                    <div className="flex items-center gap-2 mb-2">
-                      {post.category && !post.coverImage && (
-                        <Badge variant="outline" className="text-xs">
-                          {post.category.name}
-                        </Badge>
-                      )}
-                      <span className="text-xs text-muted-foreground">
-                        {post.viewCount.toLocaleString('tr-TR')} görüntülenme
+                  <CardHeader className="pb-2 sm:pb-2.5 md:pb-3 p-3 sm:p-4 md:p-6">
+                    {/* Top Row: Category + Views - Tek Satır */}
+                    <div className="flex items-center justify-between gap-2 mb-1.5 sm:mb-2 flex-wrap">
+                      <div className="flex items-center gap-1.5 flex-wrap min-w-0 flex-1">
+                        {post.category && (
+                          <Badge variant="outline" className="text-[9px] sm:text-[10px] md:text-xs px-1.5 py-0.5 h-auto leading-tight">
+                            {post.category.name}
+                          </Badge>
+                        )}
+                      </div>
+                      <span className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground whitespace-nowrap flex-shrink-0">
+                        👁 {post.viewCount.toLocaleString('tr-TR')}
                       </span>
                     </div>
-                    <CardTitle className={cn(
-                      "line-clamp-2 group-hover:text-primary transition-colors",
-                      idx === 0 ? "text-xl md:text-2xl" : "text-lg"
-                    )}>
+                    
+                    {/* Title - Max 2 satır */}
+                    <CardTitle className="text-sm sm:text-base md:text-lg line-clamp-2 group-hover:text-primary transition-colors break-words leading-tight mb-1.5 sm:mb-2">
                       {post.title}
                     </CardTitle>
+                    
+                    {/* Excerpt - Max 2 satır (opsiyonel) */}
                     {post.excerpt && (
-                      <CardDescription className={cn("line-clamp-2 mt-2", idx === 0 ? "text-base" : "text-sm")}>
+                      <CardDescription className="line-clamp-2 text-[10px] sm:text-xs md:text-sm leading-relaxed mb-1.5 sm:mb-2">
                         {post.excerpt}
                       </CardDescription>
                     )}
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <User className="h-4 w-4" />
-                      <span>{post.author?.username || 'Bilinmeyen'}</span>
+                    
+                    {/* Bottom Row: Author + Date - Tek Satır */}
+                    <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] md:text-xs text-muted-foreground">
+                      <span className="truncate max-w-[100px] sm:max-w-none">{post.author?.username || 'Bilinmeyen'}</span>
                       {post.publishedAt && (
                         <>
                           <span>•</span>
-                          <span>{formatRelativeTime(post.publishedAt)}</span>
+                          <span className="whitespace-nowrap">{new Date(post.publishedAt).toLocaleDateString('tr-TR')}</span>
                         </>
                       )}
                     </div>
-                  </CardContent>
+                  </CardHeader>
                 </Link>
               </Card>
             ))}
@@ -271,73 +369,60 @@ export default async function BlogPage({ searchParams }: PageProps) {
         </div>
       )}
 
-      {/* Posts Grid */}
-      {posts.length > 0 && (
-        <div className="mb-8 md:mb-12">
-          <div className="flex items-center justify-between mb-6">
+      {/* All Posts Grid - Wiki style (only shown if there are more posts than featured) */}
+      {posts.length > pinned.length && (
+        <div className="mb-8 sm:mb-10 md:mb-12">
+          <div className="flex items-center justify-between mb-4 sm:mb-5 md:mb-6">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-2">Tüm Yazılar</h2>
-              <p className="text-muted-foreground">Blog yazılarının tam listesi</p>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 break-words">Tüm Yazılar</h2>
+              <p className="text-xs sm:text-sm text-muted-foreground break-words">Blog yazılarının tam listesi</p>
             </div>
           </div>
-          <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 md:gap-5 lg:gap-6">
             {posts.map((post) => (
               <Card
                 key={post.id}
                 className="glass-effect hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all h-full group overflow-hidden"
               >
                 <Link href={`/blog/${post.slug}`} className="contents">
-                  {post.coverImage && (
-                    <div className="aspect-video w-full overflow-hidden relative">
-                      <img
-                        src={post.coverImage}
-                        alt={post.title}
-                        className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
-                      {post.category && (
-                        <div className="absolute top-3 left-3">
-                          <Badge variant="secondary" className="text-xs">{post.category.name}</Badge>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <CardHeader>
-                    <div className="flex items-center gap-2 mb-2">
-                      {post.category && !post.coverImage && (
-                        <Badge variant="outline" className="text-xs">
-                          {post.category.name}
-                        </Badge>
-                      )}
-                      <span className="text-xs text-muted-foreground">
-                        {post.viewCount.toLocaleString('tr-TR')} görüntülenme
+                  <CardHeader className="pb-2 sm:pb-2.5 md:pb-3 p-3 sm:p-4 md:p-6">
+                    {/* Top Row: Category + Views - Tek Satır */}
+                    <div className="flex items-center justify-between gap-2 mb-1.5 sm:mb-2 flex-wrap">
+                      <div className="flex items-center gap-1.5 flex-wrap min-w-0 flex-1">
+                        {post.category && (
+                          <Badge variant="outline" className="text-[9px] sm:text-[10px] md:text-xs px-1.5 py-0.5 h-auto leading-tight">
+                            {post.category.name}
+                          </Badge>
+                        )}
+                      </div>
+                      <span className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground whitespace-nowrap flex-shrink-0">
+                        👁 {post.viewCount.toLocaleString('tr-TR')}
                       </span>
                     </div>
-                    <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">
+                    
+                    {/* Title - Max 2 satır */}
+                    <CardTitle className="text-sm sm:text-base md:text-lg line-clamp-2 group-hover:text-primary transition-colors break-words leading-tight mb-1.5 sm:mb-2">
                       {post.title}
                     </CardTitle>
+                    
+                    {/* Excerpt - Max 2 satır (opsiyonel) */}
                     {post.excerpt && (
-                      <CardDescription className="line-clamp-2 mt-2 text-sm">
+                      <CardDescription className="line-clamp-2 text-[10px] sm:text-xs md:text-sm leading-relaxed mb-1.5 sm:mb-2">
                         {post.excerpt}
                       </CardDescription>
                     )}
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        <span className="truncate max-w-[120px] md:max-w-none">
-                          {post.author.username}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Eye className="h-4 w-4" />
-                        <span className="text-xs">{post.viewCount.toLocaleString('tr-TR')}</span>
-                        <Calendar className="h-4 w-4 ml-2" />
-                        <span className="text-xs">{formatRelativeTime(post.publishedAt || post.createdAt)}</span>
-                      </div>
+                    
+                    {/* Bottom Row: Author + Date - Tek Satır */}
+                    <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] md:text-xs text-muted-foreground">
+                      <span className="truncate max-w-[100px] sm:max-w-none">{post.author.username}</span>
+                      {post.publishedAt && (
+                        <>
+                          <span>•</span>
+                          <span className="whitespace-nowrap">{new Date(post.publishedAt).toLocaleDateString('tr-TR')}</span>
+                        </>
+                      )}
                     </div>
-                  </CardContent>
+                  </CardHeader>
                 </Link>
               </Card>
             ))}
@@ -385,30 +470,30 @@ export default async function BlogPage({ searchParams }: PageProps) {
       )}
 
       {/* About Section */}
-      <div className="prose prose-invert max-w-none mt-12">
+      <div className="prose prose-invert max-w-none mt-8 sm:mt-10 md:mt-12">
         <Card className="glass-effect">
-          <CardContent className="pt-6">
-            <h2 className="text-2xl font-bold mb-4">Blog Hakkında</h2>
-            <p className="text-muted-foreground leading-relaxed mb-4">
+          <CardContent className="p-4 sm:p-5 md:p-6">
+            <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 break-words">Blog Hakkında</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-3 sm:mb-4 break-words">
               Standoff 2 Blog, oyunun en güncel haberlerini, duyurularını ve rehberlerini içeren
               kapsamlı bir içerik platformudur. Burada oyun güncellemeleri, patch notları, turnuva
               duyuruları ve topluluk rehberleri bulabilirsiniz.
             </p>
-            <p className="text-muted-foreground leading-relaxed mb-4">
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-3 sm:mb-4 break-words">
               Blog içeriğimiz düzenli olarak güncellenmekte ve oyunun en son gelişmelerini yansıtmaktadır.
               Topluluk üyeleri ve deneyimli oyuncular tarafından hazırlanan bu yazılar, hem yeni
               başlayanlar hem de deneyimli oyuncular için değerli bilgiler sunmaktadır.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mt-4 sm:mt-5 md:mt-6">
               <div>
-                <h3 className="font-semibold mb-2">Güncel İçerik</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold mb-1.5 sm:mb-2 text-sm sm:text-base break-words">Güncel İçerik</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground break-words">
                   Oyun güncellemeleri, patch notları ve en son haberler hakkında bilgiler.
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Topluluk Rehberleri</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold mb-1.5 sm:mb-2 text-sm sm:text-base break-words">Topluluk Rehberleri</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground break-words">
                   Oyuncular tarafından hazırlanan detaylı rehberler ve taktikler.
                 </p>
               </div>

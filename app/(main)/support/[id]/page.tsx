@@ -80,7 +80,16 @@ export default function TicketDetailPage() {
 
   const fetchTicket = async () => {
     try {
-      const response = await fetch(`/api/support/tickets/${params.id}`)
+      setLoading(true)
+      const response = await fetch(`/api/support/tickets/${params.id}`, {
+        credentials: 'include',
+      })
+      
+      if (response.status === 401) {
+        router.push('/login')
+        return
+      }
+      
       if (response.ok) {
         const data = await response.json()
         setTicket(data)
@@ -115,17 +124,23 @@ export default function TicketDetailPage() {
       const response = await fetch(`/api/support/tickets/${params.id}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ message: message.trim() }),
       })
 
       const data = await response.json()
+
+      if (response.status === 401) {
+        router.push('/login')
+        return
+      }
 
       if (!response.ok) {
         throw new Error(data.error || 'Mesaj gönderilemedi')
       }
 
       setMessage('')
-      fetchTicket()
+      await fetchTicket()
     } catch (error: any) {
       toast({
         title: 'Hata',
@@ -208,18 +223,18 @@ export default function TicketDetailPage() {
                     </Avatar>
                   )}
                   <div
-                    className={`flex flex-col max-w-[80%] sm:max-w-[70%] ${
+                    className={`flex flex-col max-w-[85%] sm:max-w-[75%] min-w-0 ${
                       isUser ? 'items-start' : 'items-end'
                     }`}
                   >
                     <div
-                      className={`rounded-lg px-3 sm:px-4 py-2 sm:py-2.5 break-words ${
+                      className={`rounded-lg px-3 sm:px-4 py-2 sm:py-2.5 break-words overflow-wrap-anywhere w-full ${
                         isUser
                           ? 'bg-muted text-foreground'
                           : 'bg-primary text-primary-foreground'
                       }`}
                     >
-                      <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
+                      <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-words overflow-wrap-anywhere word-break-break-word">
                         {msg.message}
                       </p>
                     </div>
