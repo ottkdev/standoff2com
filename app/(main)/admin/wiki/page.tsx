@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/db'
-import { Prisma } from '@prisma/client'
+import { Prisma, WikiCategory } from '@prisma/client'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -32,7 +32,10 @@ export default async function AdminWikiPage({ searchParams }: PageProps) {
   const where: Prisma.WikiArticleWhereInput = {}
 
   if (category !== 'all') {
-    where.category = category.toUpperCase().replace('-', '_') as Prisma.WikiCategory
+    const normalized = category.toUpperCase().replace(/-/g, '_')
+    if (Object.values(WikiCategory).includes(normalized as WikiCategory)) {
+      where.category = normalized as WikiCategory
+    }
   }
 
   const [articles, total, stats] = await Promise.all([
