@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/db'
+import { Prisma } from '@prisma/client'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -26,9 +27,7 @@ export default async function AdminBadgesPage({ searchParams }: PageProps) {
 
   const search = searchParams.search || ''
 
-  const where: {
-    name?: { contains: string; mode: 'insensitive' }
-  } = {}
+  const where: Prisma.BadgeWhereInput = {}
   if (search) {
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
