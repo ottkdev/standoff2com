@@ -30,7 +30,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const { posts, total, pages } = await ForumService.getPostsByCategory(category.id, page)
 
   return (
-    <div className="container py-4 sm:py-6 md:py-8 lg:py-10 px-4 md:px-6 w-full overflow-x-hidden">
+    <div className="page-container-default py-4 sm:py-6 md:py-8 lg:py-10 overflow-x-hidden">
       <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex-1 min-w-0">
           <h1 className="text-2xl md:text-3xl font-bold mb-2 break-words">{category.name}</h1>

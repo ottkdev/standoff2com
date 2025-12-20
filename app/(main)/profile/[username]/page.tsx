@@ -51,7 +51,7 @@ export default async function ProfilePage({ params }: PageProps) {
   }
 
   return (
-    <div className="container py-4 sm:py-6 md:py-8 lg:py-10 max-w-5xl px-4 md:px-6 w-full overflow-x-hidden">
+    <div className="page-container-narrow py-4 sm:py-6 md:py-8 lg:py-10 overflow-x-hidden">
       <div className="relative mb-4 sm:mb-6">
         <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-orange-500/20 via-amber-500/10 to-yellow-500/20 blur-3xl opacity-70" />
         <Card className="relative overflow-hidden border border-border/70">

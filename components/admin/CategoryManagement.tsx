@@ -224,13 +224,19 @@ export function CategoryManagement({ categories: initialCategories }: CategoryMa
                   size="icon"
                   onClick={() => handleEdit(category)}
                   className="h-8 w-8"
+                  aria-label={`${category.name} kategorisini düzenle`}
                 >
-                  <Edit className="h-3 w-3" />
+                  <Edit className="h-3 w-3" aria-hidden="true" />
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
-                      <Trash2 className="h-3 w-3" />
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-destructive"
+                      aria-label={`${category.name} kategorisini sil`}
+                    >
+                      <Trash2 className="h-3 w-3" aria-hidden="true" />
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>

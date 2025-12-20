@@ -10,6 +10,7 @@ import { BookOpen, Plus, Edit, Eye, Heart, MessageSquare } from 'lucide-react'
 import { BlogDeleteButton } from '@/components/admin/BlogDeleteButton'
 import { formatRelativeTime } from '@/lib/utils'
 import { BlogSearchFilters } from '@/components/admin/BlogSearchFilters'
+import Image from 'next/image'
 
 interface PageProps {
   searchParams: {
@@ -34,7 +35,11 @@ export default async function AdminBlogPage({ searchParams }: PageProps) {
   const perPage = 20
   const skip = (page - 1) * perPage
 
-  const where: any = {}
+  const where: {
+    title?: { contains: string; mode: 'insensitive' }
+    isPublished?: boolean
+    categoryId?: string
+  } = {}
 
   if (search) {
     where.OR = [
@@ -203,7 +208,7 @@ export default async function AdminBlogPage({ searchParams }: PageProps) {
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-auto">
                         <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                           {post.author.avatarUrl ? (
-                            <img src={post.author.avatarUrl} alt={post.author.username} className="h-5 w-5 rounded-full" />
+                            <Image src={post.author.avatarUrl} alt={post.author.username} width={20} height={20} className="h-5 w-5 rounded-full object-cover" />
                           ) : (
                             <span className="text-xs font-semibold text-primary">
                               {post.author.username[0].toUpperCase()}

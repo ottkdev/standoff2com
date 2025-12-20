@@ -148,7 +148,15 @@ export default async function WikiPage() {
   const countsMap = new Map(articleCounts.map((c) => [c.slug, c.count]))
 
   // Get featured/recent articles
-  let featuredArticles: any[] = []
+  let featuredArticles: Array<{
+    id: string
+    title: string
+    slug: string
+    excerpt: string | null
+    viewCount: number
+    createdAt: Date
+    author: { username: string } | null
+  }> = []
   try {
     featuredArticles = await prisma.wikiArticle.findMany({
       where: { isPublished: true },
@@ -167,7 +175,15 @@ export default async function WikiPage() {
   }
 
   // Get recent articles for "Son Eklenenler"
-  let recentArticles: any[] = []
+  let recentArticles: Array<{
+    id: string
+    title: string
+    slug: string
+    excerpt: string | null
+    viewCount: number
+    createdAt: Date
+    author: { username: string } | null
+  }> = []
   try {
     recentArticles = await prisma.wikiArticle.findMany({
       where: { isPublished: true },
@@ -186,7 +202,7 @@ export default async function WikiPage() {
   }
 
   return (
-    <div className="container py-6 md:py-8 lg:py-12 px-3 sm:px-4 md:px-5 lg:px-6 w-full overflow-x-hidden max-w-6xl mx-auto">
+    <div className="page-container-default py-6 md:py-8 lg:py-12 overflow-x-hidden">
       {/* Hero Section */}
       <div className="text-center mb-6 sm:mb-8 md:mb-10">
         <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-primary/10 text-primary px-2.5 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 mb-3 sm:mb-4 md:mb-6">

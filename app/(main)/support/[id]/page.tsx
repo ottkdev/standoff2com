@@ -158,7 +158,7 @@ export default function TicketDetailPage() {
 
   if (loading) {
     return (
-      <div className="container py-4 sm:py-6 md:py-8 max-w-4xl px-3 sm:px-4 md:px-5 lg:px-6 w-full overflow-x-hidden">
+      <div className="page-container-narrow py-4 sm:py-6 md:py-8 overflow-x-hidden">
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>

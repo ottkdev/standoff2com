@@ -5,6 +5,7 @@ import { prisma } from '@/lib/db'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 import { 
   Users, 
   MessageSquare, 
@@ -261,7 +262,7 @@ export default async function AdminDashboard() {
                 >
                   <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                     {user.avatarUrl ? (
-                      <img src={user.avatarUrl} alt={user.username} className="h-8 w-8 sm:h-9 sm:w-9 rounded-full" />
+                      <Image src={user.avatarUrl} alt={user.username} width={36} height={36} className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover" />
                     ) : (
                       <span className="text-xs sm:text-sm font-semibold">{user.username[0].toUpperCase()}</span>
                     )}

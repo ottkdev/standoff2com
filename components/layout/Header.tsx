@@ -40,9 +40,9 @@ export function Header() {
     pathname === href || pathname.startsWith(`${href}/`)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/70 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70 shadow-sm overflow-x-hidden">
+    <header className="sticky top-0 z-50 w-full max-w-full border-b border-border/70 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70 shadow-sm overflow-x-hidden">
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-yellow-500/10" />
-      <div className="container relative flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4 md:px-6 max-w-full overflow-visible">
+      <div className="container relative flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4 md:px-6 max-w-full overflow-hidden">
         <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 lg:gap-6 min-w-0 flex-1">
           <Link href="/" className="flex items-center space-x-1.5 sm:space-x-2 md:space-x-3 group min-w-0 flex-shrink-0">
             <span className="flex h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 items-center justify-center rounded-xl bg-orange-500/15 text-orange-400 ring-1 ring-orange-500/30 group-hover:scale-105 transition-transform flex-shrink-0">
@@ -119,7 +119,7 @@ export function Header() {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 max-w-[calc(100vw-2rem)]" align="end">
+                <DropdownMenuContent className="w-56 max-w-[calc(100vw-3rem)]" align="end">
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none flex items-center gap-2 break-words">
@@ -173,11 +173,16 @@ export function Header() {
           {/* Mobile menu */}
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="md:hidden h-9 w-9 min-h-[44px] min-w-[44px] flex-shrink-0">
-                <Menu className="h-4 w-4" />
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="md:hidden h-9 w-9 min-h-[44px] min-w-[44px] flex-shrink-0"
+                aria-label="Menüyü aç"
+              >
+                <Menu className="h-4 w-4" aria-hidden="true" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 max-w-[calc(100vw-2rem)]">
+            <DropdownMenuContent align="end" className="w-56 max-w-[calc(100vw-3rem)]">
               {navLinks.map(({ href, label }) => (
                 <DropdownMenuItem key={href} asChild>
                   <Link href={href} className="min-h-[44px] flex items-center">

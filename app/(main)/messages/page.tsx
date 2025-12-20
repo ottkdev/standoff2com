@@ -95,7 +95,7 @@ export default async function MessagesPage() {
   const stableNow = new Date()
 
   return (
-    <div className="container py-4 sm:py-6 md:py-8 max-w-5xl px-3 sm:px-4 md:px-5 lg:px-6 max-w-full overflow-x-hidden">
+    <div className="page-container-narrow py-4 sm:py-6 md:py-8 overflow-x-hidden">
       <div className="mb-4 sm:mb-6">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 break-words">Mesajlar</h1>
         <p className="text-xs sm:text-sm text-muted-foreground break-words">Topluluk üyeleriyle mesajlaşın</p>

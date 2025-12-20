@@ -97,7 +97,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const isLiked = post.likes && post.likes.length > 0
 
   return (
-    <div className="container py-6 md:py-10 max-w-4xl px-4 md:px-6 max-w-full overflow-x-hidden">
+    <div className="page-container-default py-6 md:py-10 overflow-x-hidden">
       <Link href="/blog" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 md:mb-6 text-sm md:text-base">
         <ArrowLeft className="h-4 w-4" />
         <span className="truncate">Blog'a Dön</span>

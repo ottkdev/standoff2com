@@ -39,7 +39,12 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
   const limit = 12
   const skip = (page - 1) * limit
 
-  const where: any = {
+  const where: {
+    deletedAt: null
+    status?: string
+    OR?: Array<{ title: { contains: string; mode: 'insensitive' } } | { description: { contains: string; mode: 'insensitive' } }>
+    price?: { gte?: number; lte?: number }
+  } = {
     deletedAt: null,
   }
 
@@ -60,7 +65,7 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
     if (maxPrice !== undefined) where.price.lte = maxPrice
   }
 
-  let orderBy: any = { createdAt: 'desc' }
+  let orderBy: { createdAt?: 'desc' | 'asc'; price?: 'asc' | 'desc' } = { createdAt: 'desc' }
   if (sort === 'price-asc') orderBy = { price: 'asc' }
   if (sort === 'price-desc') orderBy = { price: 'desc' }
 
@@ -126,7 +131,7 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
   }
 
   return (
-    <div className="container py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-5 lg:px-6 w-full overflow-x-hidden max-w-6xl">
+    <div className="page-container-default py-4 sm:py-6 md:py-8 overflow-x-hidden">
       {/* Header - Kompakt */}
       <div className="mb-4 sm:mb-6 md:mb-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4">

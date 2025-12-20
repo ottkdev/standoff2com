@@ -55,8 +55,9 @@ export function ImageGallery({ images, initialIndex = 0, onClose }: ImageGallery
         size="icon"
         className="absolute top-4 right-4 z-50 text-white hover:bg-white/20"
         onClick={onClose}
+        aria-label="Galeriyi kapat"
       >
-        <X className="h-6 w-6" />
+        <X className="h-6 w-6" aria-hidden="true" />
       </Button>
 
       {/* Navigation Buttons */}
@@ -70,8 +71,9 @@ export function ImageGallery({ images, initialIndex = 0, onClose }: ImageGallery
               e.stopPropagation()
               handlePrevious()
             }}
+            aria-label="Önceki görsel"
           >
-            <ChevronLeft className="h-8 w-8" />
+            <ChevronLeft className="h-8 w-8" aria-hidden="true" />
           </Button>
           <Button
             variant="ghost"
@@ -81,8 +83,9 @@ export function ImageGallery({ images, initialIndex = 0, onClose }: ImageGallery
               e.stopPropagation()
               handleNext()
             }}
+            aria-label="Sonraki görsel"
           >
-            <ChevronRight className="h-8 w-8" />
+            <ChevronRight className="h-8 w-8" aria-hidden="true" />
           </Button>
         </>
       )}

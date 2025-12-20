@@ -207,7 +207,7 @@ export default function SupportPage() {
   }
 
   return (
-    <div className="container py-4 sm:py-6 md:py-8 max-w-5xl px-3 sm:px-4 md:px-5 lg:px-6 w-full overflow-x-hidden">
+    <div className="page-container-narrow py-4 sm:py-6 md:py-8 overflow-x-hidden">
       <div className="mb-4 sm:mb-6">
         <div className="flex items-center justify-between mb-3 sm:mb-4">
           <div>

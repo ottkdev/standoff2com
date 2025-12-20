@@ -64,7 +64,7 @@ export function WalletOverview({ wallet, recentTransactions }: WalletOverviewPro
   }
 
   return (
-    <div className="container py-6 md:py-10 px-4 md:px-6 max-w-4xl w-full overflow-x-hidden">
+    <div className="page-container-narrow py-6 md:py-10 overflow-x-hidden">
       <div className="mb-4 sm:mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2 break-words">Cüzdan</h1>
         <p className="text-sm sm:text-base text-muted-foreground break-words">Bakiye yönetimi ve işlem geçmişi</p>

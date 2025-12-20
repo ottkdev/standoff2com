@@ -9,6 +9,7 @@ import { Award, Plus, Edit, Trash2, Users } from 'lucide-react'
 import Link from 'next/link'
 import { formatRelativeTime } from '@/lib/utils'
 import { BadgeManager } from '@/components/admin/BadgeManager'
+import Image from 'next/image'
 
 interface PageProps {
   searchParams: {
@@ -25,7 +26,9 @@ export default async function AdminBadgesPage({ searchParams }: PageProps) {
 
   const search = searchParams.search || ''
 
-  const where: any = {}
+  const where: {
+    name?: { contains: string; mode: 'insensitive' }
+  } = {}
   if (search) {
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },

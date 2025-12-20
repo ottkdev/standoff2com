@@ -78,7 +78,7 @@ export function WalletHistory({
   }
 
   return (
-    <div className="container py-6 md:py-10 px-4 md:px-6 max-w-4xl">
+    <div className="page-container-narrow py-6 md:py-10">
       <Link
         href="/wallet"
         className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-6"

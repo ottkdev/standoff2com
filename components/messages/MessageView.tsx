@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -11,6 +11,26 @@ import { RelativeTime } from '@/components/ui/RelativeTime'
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 
+interface Message {
+  id: string
+  content: string
+  createdAt: Date
+  isRead: boolean
+  sender: {
+    id: string
+    username: string
+    avatarUrl: string | null
+  }
+}
+
+interface Session {
+  user: {
+    id: string
+    username: string
+    role: string
+  }
+}
+
 interface MessageViewProps {
   otherUser: {
     id: string
@@ -18,8 +38,8 @@ interface MessageViewProps {
     avatarUrl: string | null
     isVerified: boolean
   }
-  messages: any[]
-  session: any
+  messages: Message[]
+  session: Session
 }
 
 export function MessageView({ otherUser, messages: initialMessages, session: initialSession }: MessageViewProps) {
@@ -55,7 +75,7 @@ export function MessageView({ otherUser, messages: initialMessages, session: ini
 
       if (response.ok) {
         const newMessage = await response.json()
-        setMessages([...messages, newMessage])
+        setMessages((prev) => [...prev, newMessage])
         setMessageContent('')
       } else {
         const error = await response.json()
@@ -73,7 +93,7 @@ export function MessageView({ otherUser, messages: initialMessages, session: ini
   }
 
   return (
-    <div className="container py-6 md:py-10 max-w-4xl px-4 md:px-6 max-w-full overflow-x-hidden">
+    <div className="page-container-narrow py-6 md:py-10 overflow-x-hidden">
       <Link href="/messages" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 md:mb-6 text-sm md:text-base">
         <ArrowLeft className="h-4 w-4" />
         <span className="truncate">Mesajlara Dön</span>

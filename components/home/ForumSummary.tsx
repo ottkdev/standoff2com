@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -41,7 +41,7 @@ type TabType = 'new' | 'comments' | 'likes'
 export function ForumSummary({ newPosts, mostCommented, mostLiked }: ForumSummaryProps) {
   const [activeTab, setActiveTab] = useState<TabType>('new')
 
-  const getActivePosts = () => {
+  const activePosts = useMemo(() => {
     switch (activeTab) {
       case 'new':
         return newPosts
@@ -52,9 +52,11 @@ export function ForumSummary({ newPosts, mostCommented, mostLiked }: ForumSummar
       default:
         return newPosts
     }
-  }
+  }, [activeTab, newPosts, mostCommented, mostLiked])
 
-  const activePosts = getActivePosts()
+  const handleTabChange = useCallback((tab: TabType) => {
+    setActiveTab(tab)
+  }, [])
 
   return (
     <div className="relative bg-card border border-border rounded-lg overflow-hidden w-full h-full flex flex-col">
@@ -83,7 +85,7 @@ export function ForumSummary({ newPosts, mostCommented, mostLiked }: ForumSummar
       {/* Tabs */}
       <div className="flex border-b border-border flex-shrink-0 relative z-10">
         <button
-          onClick={() => setActiveTab('new')}
+          onClick={() => handleTabChange('new')}
           className={`flex-1 px-3 sm:px-4 py-2.5 text-xs font-medium transition-colors border-b-2 flex items-center justify-center gap-2 ${
             activeTab === 'new'
               ? 'border-primary text-primary bg-primary/5'
@@ -95,7 +97,7 @@ export function ForumSummary({ newPosts, mostCommented, mostLiked }: ForumSummar
           <span className="sm:hidden">Yeni</span>
         </button>
         <button
-          onClick={() => setActiveTab('comments')}
+          onClick={() => handleTabChange('comments')}
           className={`flex-1 px-3 sm:px-4 py-2.5 text-xs font-medium transition-colors border-b-2 flex items-center justify-center gap-2 ${
             activeTab === 'comments'
               ? 'border-primary text-primary bg-primary/5'
@@ -107,7 +109,7 @@ export function ForumSummary({ newPosts, mostCommented, mostLiked }: ForumSummar
           <span className="sm:hidden">Mesaj</span>
         </button>
         <button
-          onClick={() => setActiveTab('likes')}
+          onClick={() => handleTabChange('likes')}
           className={`flex-1 px-3 sm:px-4 py-2.5 text-xs font-medium transition-colors border-b-2 flex items-center justify-center gap-2 ${
             activeTab === 'likes'
               ? 'border-primary text-primary bg-primary/5'

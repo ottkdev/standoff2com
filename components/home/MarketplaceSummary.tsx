@@ -57,17 +57,19 @@ export function MarketplaceSummary({ listings }: MarketplaceSummaryProps) {
               <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted flex-shrink-0">
                 {listing.images[0] ? (
                   <>
-                    <img
+                    <Image
                       src={listing.images[0].url}
                       alt={listing.title}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 hidden sm:block" />
                   </>
                 ) : (
                   <div className="h-full w-full flex items-center justify-center">
-                    <ShoppingBag className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/50" />
+                    <ShoppingBag className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/50" aria-hidden="true" />
                   </div>
                 )}
                 <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 z-10">

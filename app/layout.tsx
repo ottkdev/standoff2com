@@ -1,10 +1,18 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import './globals.css'
 import { Providers } from './providers'
+// Import CSS at the top level - Next.js will handle preload optimization
+import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+// Optimize font loading - only load what's needed
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap', // Better performance
+  preload: true,
+  // Prevent font preload warnings by ensuring it's used
+  adjustFontFallback: true,
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
@@ -18,9 +26,29 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="tr" className="dark overflow-x-hidden">
-      <body className={`${inter.className} overflow-x-hidden`}>
+    <html lang="tr" className="dark overflow-x-hidden" style={{ width: '100%', maxWidth: '100%', margin: 0, padding: 0, overflowX: 'hidden' }}>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#f97316" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+      </head>
+      <body className={`${inter.className} overflow-x-hidden`} style={{ width: '100%', maxWidth: '100vw', margin: 0, padding: 0, overflowX: 'hidden' }}>
         <Providers>{children}</Providers>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then((reg) => console.log('SW registered'))
+                    .catch((err) => console.log('SW registration failed:', err));
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   )

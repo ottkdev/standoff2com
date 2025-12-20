@@ -119,7 +119,7 @@ export default function EditPostPage() {
 
   if (isLoadingData) {
     return (
-      <div className="container py-6 md:py-10 max-w-3xl px-4 md:px-6 max-w-full overflow-x-hidden">
+      <div className="page-container-narrow py-6 md:py-10 overflow-x-hidden">
         <Card className="glass-effect">
           <CardContent className="pt-12 pb-12 text-center">
             <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
@@ -130,7 +130,7 @@ export default function EditPostPage() {
   }
 
   return (
-    <div className="container py-6 md:py-10 max-w-3xl px-4 md:px-6 max-w-full overflow-x-hidden">
+    <div className="page-container-narrow py-6 md:py-10 overflow-x-hidden">
       <Link
         href={`/forum/topic/${params.id}`}
         className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 md:mb-6 text-sm md:text-base"

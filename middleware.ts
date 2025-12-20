@@ -5,7 +5,6 @@ export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token
     const isAdminRoute = req.nextUrl.pathname.startsWith('/admin')
-    const isModRoute = req.nextUrl.pathname.startsWith('/admin')
 
     // Admin routes require ADMIN role
     if (isAdminRoute && token?.role !== 'ADMIN' && token?.role !== 'MODERATOR') {

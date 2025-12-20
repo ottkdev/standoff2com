@@ -28,7 +28,10 @@ export async function GET(request: Request) {
     const limit = Math.min(50, Math.max(10, parseInt(searchParams.get('limit') || '20')))
     const skip = (page - 1) * limit
 
-    const where: any = {
+    const where: {
+      userId: string
+      isRead?: boolean
+    } = {
       userId: session.user.id, // Only user-specific notifications
     }
 

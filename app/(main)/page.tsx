@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
@@ -16,10 +17,23 @@ import {
   Heart,
   BookOpen,
 } from 'lucide-react'
+import dynamic from 'next/dynamic'
 import { PinnedPostsTable } from '@/components/home/PinnedPostsTable'
-import { ForumSummary } from '@/components/home/ForumSummary'
-import { MarketplaceSummary } from '@/components/home/MarketplaceSummary'
-import { BlogSummary } from '@/components/home/BlogSummary'
+
+// Dynamic imports for client components - reduces initial bundle size
+// Using ssr: true ensures CSS is loaded during SSR, preventing preload warnings
+const ForumSummary = dynamic(() => import('@/components/home/ForumSummary').then((mod) => ({ default: mod.ForumSummary })), {
+  ssr: true, // Keep SSR for SEO - ensures CSS is loaded
+  loading: () => <div className="h-32 animate-pulse bg-muted rounded-lg" />,
+})
+const MarketplaceSummary = dynamic(() => import('@/components/home/MarketplaceSummary').then((mod) => ({ default: mod.MarketplaceSummary })), {
+  ssr: true, // Keep SSR for SEO - ensures CSS is loaded
+  loading: () => <div className="h-32 animate-pulse bg-muted rounded-lg" />,
+})
+const BlogSummary = dynamic(() => import('@/components/home/BlogSummary').then((mod) => ({ default: mod.BlogSummary })), {
+  ssr: true, // Keep SSR for SEO - ensures CSS is loaded
+  loading: () => <div className="h-32 animate-pulse bg-muted rounded-lg" />,
+})
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions)
@@ -200,16 +214,27 @@ export default async function HomePage() {
   const [userCount, postCount, listingCount] = stats
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b border-border/60 w-full">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 via-amber-500/10 to-yellow-500/20 blur-3xl opacity-40" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(251,146,60,0.25),transparent_35%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(251,146,60,0.18),transparent_45%)]" />
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-25"
-          style={{ backgroundImage: "url('/so2/banner_com.axlebolt.standoff2.jpg')" }}
-        />
+        {/* Hero Background Image - LCP Optimization */}
+        <div className="absolute inset-0 opacity-25">
+          <Image
+            src="/so2/banner_com.axlebolt.standoff2.jpg"
+            alt=""
+            fill
+            priority
+            fetchPriority="high"
+            sizes="100vw"
+            className="object-cover"
+            quality={85}
+            aria-hidden="true"
+            style={{ objectPosition: 'center' }}
+          />
+        </div>
 
         <div className="container relative z-10 max-w-6xl mx-auto px-3 sm:px-4 md:px-5 lg:px-6 py-6 sm:py-8 md:py-10 lg:py-12 w-full">
           <div className="grid gap-4 sm:gap-6 lg:gap-8 lg:grid-cols-[1.2fr,1fr] items-center">
@@ -269,7 +294,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="relative w-full min-w-0">
+            <div className="relative w-full min-w-0 overflow-hidden">
               <div className="absolute -inset-3 sm:-inset-4 bg-gradient-to-br from-orange-500/20 via-amber-500/15 to-yellow-500/20 blur-2xl opacity-60" />
               <div className="relative rounded-xl border border-border/70 bg-background/70 backdrop-blur-lg shadow-xl shadow-orange-500/10 p-3 sm:p-4 space-y-2 sm:space-y-3 w-full overflow-hidden">
                 <div className="flex items-center gap-2">
@@ -350,8 +375,8 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* Main Content - Kompakt */}
-      <div className="container max-w-6xl mx-auto px-3 sm:px-4 md:px-5 lg:px-6 pb-4 sm:pb-6 md:pb-8 w-full overflow-x-hidden">
+      {/* Main Content - Genel sayfa (hafif yan boşluk) */}
+      <div className="page-container-default pb-4 sm:pb-6 md:pb-8 overflow-x-hidden">
         <div className="space-y-3 sm:space-y-4 md:space-y-6">
           {/* Pinned Posts */}
           {pinnedPosts.length > 0 && (
@@ -375,10 +400,17 @@ export default async function HomePage() {
             <div className="w-full min-w-0">
               <Card className="h-full">
                 <CardContent className="relative pt-3 sm:pt-4 px-3 sm:px-4 pb-3 sm:pb-4 space-y-3 sm:space-y-4 overflow-hidden">
-                  <div
-                    className="pointer-events-none absolute bottom-0 right-0 h-24 w-24 sm:h-32 sm:w-32 opacity-10"
-                    style={{ backgroundImage: "url('/so2/Standoff_2_Logo.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'bottom right' }}
-                  />
+                  <div className="pointer-events-none absolute bottom-0 right-0 h-24 w-24 sm:h-32 sm:w-32 opacity-10">
+                    <Image
+                      src="/so2/Standoff_2_Logo.png"
+                      alt=""
+                      width={128}
+                      height={128}
+                      className="object-contain"
+                      loading="lazy"
+                      aria-hidden="true"
+                    />
+                  </div>
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0 flex-1">
                       <span className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
@@ -465,17 +497,17 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Marketplace Summary */}
-          {marketplaceListings.length > 0 && (
-            <div className="w-full">
-              <MarketplaceSummary listings={marketplaceListings} />
-            </div>
-          )}
-
           {/* Blog Summary */}
           {blogPosts.length > 0 && (
             <div className="w-full">
               <BlogSummary posts={blogPosts} />
+            </div>
+          )}
+
+          {/* Marketplace Summary */}
+          {marketplaceListings.length > 0 && (
+            <div className="w-full">
+              <MarketplaceSummary listings={marketplaceListings} />
             </div>
           )}
         </div>

@@ -61,7 +61,7 @@ export default function EditListingPage() {
           title: data.title || '',
           description: data.description || '',
           price: data.price.toString() || '',
-          images: data.images.map((img: any) => img.url) || [],
+          images: data.images?.map((img: { url: string }) => img.url) || [],
         })
         setIsLoadingData(false)
       })
@@ -125,7 +125,7 @@ export default function EditListingPage() {
   }
 
   return (
-    <div className="container py-4 sm:py-6 md:py-8 max-w-3xl px-3 sm:px-4 md:px-5 lg:px-6 w-full overflow-x-hidden">
+    <div className="page-container-narrow py-4 sm:py-6 md:py-8 overflow-x-hidden">
       <Link
         href={`/marketplace/${params.id}`}
         className="inline-flex items-center gap-1.5 sm:gap-2 text-muted-foreground hover:text-primary mb-3 sm:mb-4 text-xs sm:text-sm"

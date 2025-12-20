@@ -16,7 +16,7 @@ const PaymentLogos = () => {
   ]
 
   return (
-    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3 overflow-x-auto pb-1 sm:pb-0 scrollbar-hide">
+    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3 overflow-x-auto pb-1 sm:pb-0 scrollbar-hide max-w-full">
       {payments.map((payment) => (
         <div
           key={payment.name}
@@ -37,7 +37,7 @@ export function Footer() {
   const startYear = 2020
 
   return (
-    <footer className="border-t border-border/70 bg-background/95 backdrop-blur-sm mt-auto w-full overflow-x-hidden">
+    <footer className="border-t border-border/70 bg-background/95 backdrop-blur-sm mt-auto w-full max-w-full overflow-x-hidden">
       {/* Payment Methods Section */}
       <div className="border-b border-border/50 bg-gradient-to-r from-muted/30 via-muted/20 to-muted/30">
         <div className="container max-w-6xl mx-auto px-3 sm:px-4 md:px-5 lg:px-6 py-3 sm:py-4">

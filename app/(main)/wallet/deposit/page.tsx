@@ -75,7 +75,7 @@ export default function DepositPage() {
   }
 
   return (
-    <div className="container py-6 md:py-10 px-4 md:px-6 max-w-2xl w-full overflow-x-hidden">
+    <div className="page-container-tight py-6 md:py-10 overflow-x-hidden">
       <Link
         href="/wallet"
         className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 sm:mb-6 text-sm sm:text-base"

@@ -31,20 +31,94 @@
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
   html {
     @apply overflow-x-hidden;
     scroll-behavior: smooth;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    overflow-x: hidden !important;
+    /* Prevent horizontal overflow on mobile */
+    position: relative;
   }
   body {
     @apply bg-background text-foreground overflow-x-hidden;
+    width: 100%;
+    max-width: 100vw;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden !important;
+    /* Defensive CSS to prevent overflow */
+    position: relative;
+    min-width: 0;
     background-image: 
       radial-gradient(at 0% 0%, rgba(251, 146, 60, 0.05) 0px, transparent 50%),
       radial-gradient(at 100% 100%, rgba(251, 191, 36, 0.05) 0px, transparent 50%);
-    /* Reserve scrollbar space to prevent layout shift when dropdowns open */
-    scrollbar-gutter: stable;
     /* Prevent text selection issues on mobile */
     -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Prevent horizontal overflow globally */
+  * {
+    max-width: 100%;
+  }
+  
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Modern Custom Scrollbar - Ana Sayfa ve Tüm Site */
+  /* Webkit browsers (Chrome, Safari, Edge) - Sadece dikey scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 0px; /* Yatay scrollbar'ı tamamen gizle */
+  }
+
+  ::-webkit-scrollbar:horizontal {
+    display: none; /* Yatay scrollbar'ı gizle */
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+    border-left: 1px solid hsl(var(--border) / 0.3);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted));
+    border-radius: 4px;
+    border: 1px solid hsl(var(--border) / 0.2);
+    transition: background 0.2s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.6);
+    border-color: hsl(var(--primary) / 0.3);
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: hsl(var(--primary));
+  }
+
+  /* Firefox - Sadece dikey scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted)) hsl(var(--background));
+  }
+
+  /* Yatay scrollbar'ı tamamen gizle - Son koruma katmanı */
+  html, body {
+    overflow-x: hidden !important;
+    overflow-y: auto;
+  }
+
+  /* Hover state for Firefox (requires JS or CSS workaround) */
+  *:hover {
+    scrollbar-color: hsl(var(--primary) / 0.6) hsl(var(--background));
   }
   
   /* Typography hierarchy - Kompakt */
@@ -163,15 +237,97 @@
     display: none;  /* Chrome, Safari and Opera */
   }
 
-  /* Ensure containers don't overflow - Kompakt genişlikler */
+  /* Global Container System - Sayfa Bazlı Yan Boşluk */
   .container {
     @apply max-w-full px-3 sm:px-4 md:px-5 lg:px-6;
     width: 100%;
+    max-width: 100%;
     margin-left: auto;
     margin-right: auto;
+    box-sizing: border-box;
   }
   
-  /* Kompakt container genişlikleri */
+  /* GENEL SAYFALAR - Hafif yan boşluk (Ana sayfa, Marketplace, Forum, Blog, Wiki) */
+  /* Mobil-first: px-4, tablet: px-6, desktop: px-8 */
+  .page-container-default {
+    width: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem; /* px-4 equivalent */
+    padding-right: 1rem;
+    box-sizing: border-box;
+  }
+  
+  @media (min-width: 640px) {
+    .page-container-default {
+      padding-left: 1.5rem; /* px-6 equivalent */
+      padding-right: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .page-container-default {
+      max-width: 1280px;
+      padding-left: 2rem; /* px-8 equivalent */
+      padding-right: 2rem;
+    }
+  }
+  
+  /* DAR SAYFALAR - Daha fazla yan boşluk, ortalanmış (Profil, DM, Destek, Ayarlar) */
+  /* Mobil-first: px-4, tablet: px-6, desktop: max-w-[960px] */
+  .page-container-narrow {
+    width: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem; /* px-4 equivalent */
+    padding-right: 1rem;
+    box-sizing: border-box;
+  }
+  
+  @media (min-width: 640px) {
+    .page-container-narrow {
+      padding-left: 1.5rem; /* px-6 equivalent */
+      padding-right: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .page-container-narrow {
+      max-width: 960px;
+      padding-left: 2rem; /* px-8 equivalent */
+      padding-right: 2rem;
+    }
+  }
+  
+  /* ÇOK DAR SAYFALAR - Maksimum yan boşluk (Profil düzenleme, Form sayfaları) */
+  .page-container-tight {
+    width: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(1rem, 6vw, 4rem);
+    padding-right: clamp(1rem, 6vw, 4rem);
+    box-sizing: border-box;
+  }
+  
+  @media (min-width: 640px) {
+    .page-container-tight {
+      padding-left: clamp(1.5rem, 10vw, 5rem);
+      padding-right: clamp(1.5rem, 10vw, 5rem);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .page-container-tight {
+      max-width: 700px;
+      padding-left: clamp(2rem, 12vw, 8rem);
+      padding-right: clamp(2rem, 12vw, 8rem);
+    }
+  }
+  
+  /* Eski container genişlikleri (geriye dönük uyumluluk) */
   .container-compact {
     @apply max-w-5xl;
   }

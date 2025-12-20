@@ -66,9 +66,9 @@ export function PostActions({ post }: PostActionsProps) {
           size="sm"
           onClick={() => handleAction('unpin')}
           disabled={isLoading}
-          title="Sabitlemeyi kaldır"
+          aria-label="Sabitlemeyi kaldır"
         >
-          <Unlock className="h-4 w-4" />
+          <Unlock className="h-4 w-4" aria-hidden="true" />
         </Button>
       ) : (
         <Button
@@ -76,9 +76,9 @@ export function PostActions({ post }: PostActionsProps) {
           size="sm"
           onClick={() => handleAction('pin')}
           disabled={isLoading}
-          title="Sabitle"
+          aria-label="Sabitle"
         >
-          <Pin className="h-4 w-4" />
+          <Pin className="h-4 w-4" aria-hidden="true" />
         </Button>
       )}
       {post.isLocked ? (
@@ -87,9 +87,9 @@ export function PostActions({ post }: PostActionsProps) {
           size="sm"
           onClick={() => handleAction('unlock')}
           disabled={isLoading}
-          title="Kilidi aç"
+          aria-label="Kilidi aç"
         >
-          <Unlock className="h-4 w-4" />
+          <Unlock className="h-4 w-4" aria-hidden="true" />
         </Button>
       ) : (
         <Button
@@ -97,9 +97,9 @@ export function PostActions({ post }: PostActionsProps) {
           size="sm"
           onClick={() => handleAction('lock')}
           disabled={isLoading}
-          title="Kilitle"
+          aria-label="Kilitle"
         >
-          <Lock className="h-4 w-4" />
+          <Lock className="h-4 w-4" aria-hidden="true" />
         </Button>
       )}
       <Button
@@ -107,9 +107,9 @@ export function PostActions({ post }: PostActionsProps) {
         size="sm"
         onClick={() => handleAction('delete')}
         disabled={isLoading}
-        title="Sil"
+        aria-label="Sil"
       >
-        <Trash2 className="h-4 w-4" />
+        <Trash2 className="h-4 w-4" aria-hidden="true" />
       </Button>
     </>
   )

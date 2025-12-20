@@ -64,7 +64,9 @@ export function NotificationBell() {
         setIsLoadingMore(true)
       }
 
-      const response = await fetch(`/api/notifications?page=${pageNum}&limit=20`)
+      const response = await fetch(`/api/notifications?page=${pageNum}&limit=20`, {
+        cache: 'no-store', // Real-time notifications, don't cache
+      })
       if (response.ok) {
         const data: NotificationResponse = await response.json()
         
