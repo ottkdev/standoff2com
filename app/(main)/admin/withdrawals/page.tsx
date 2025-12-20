@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { Prisma, WithdrawalStatus } from '@prisma/client'
 import { WithdrawalPanel } from '@/components/admin/WithdrawalPanel'
 
 interface PageProps {
@@ -18,12 +19,12 @@ export default async function AdminWithdrawalsPage({ searchParams }: PageProps) 
     redirect('/')
   }
 
-  const status = searchParams.status === 'all' ? undefined : (searchParams.status as any)
+  const status = searchParams.status === 'all' ? undefined : (searchParams.status as WithdrawalStatus | undefined)
   const page = parseInt(searchParams.page || '1')
   const limit = 20
   const skip = (page - 1) * limit
 
-  const where: any = {}
+  const where: Prisma.WithdrawalRequestWhereInput = {}
   if (status) where.status = status
 
   const [withdrawals, total] = await Promise.all([

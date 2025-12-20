@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { Prisma, TicketStatus, TicketCategory, TicketPriority } from '@prisma/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -61,10 +62,10 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
   const perPage = 20
   const skip = (page - 1) * perPage
 
-  const where: any = {}
-  if (status) where.status = status
-  if (category) where.category = category
-  if (priority) where.priority = priority
+  const where: Prisma.SupportTicketWhereInput = {}
+  if (status) where.status = status as TicketStatus
+  if (category) where.category = category as TicketCategory
+  if (priority) where.priority = priority as TicketPriority
 
   const [tickets, total, stats] = await Promise.all([
     prisma.supportTicket.findMany({

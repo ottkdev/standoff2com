@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/db'
-import { Prisma } from '@prisma/client'
+import { Prisma, MarketplaceStatus } from '@prisma/client'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -45,7 +45,7 @@ export default async function AdminMarketplacePage({ searchParams }: PageProps) 
   }
 
   if (status !== 'all') {
-    where.status = status
+    where.status = status as MarketplaceStatus
   }
 
   const [listings, total, stats] = await Promise.all([
