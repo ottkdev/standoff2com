@@ -72,6 +72,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
           select: {
             username: true,
             avatarUrl: true,
+            isVerified: true,
           },
         },
         category: {
@@ -97,6 +98,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
           select: {
             username: true,
             avatarUrl: true,
+            isVerified: true,
           },
         },
         category: {
@@ -142,6 +144,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
           select: {
             username: true,
             avatarUrl: true,
+            isVerified: true,
           },
         },
         category: {
