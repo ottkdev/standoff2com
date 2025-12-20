@@ -78,3 +78,6 @@ export function ListingAdminActions({ listing }: ListingAdminActionsProps) {
   )
 }
 
+export default ListingAdminActions
+export { ListingAdminActions }
+

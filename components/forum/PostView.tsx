@@ -20,7 +20,7 @@ interface PostViewProps {
   session: Session | null
 }
 
-export function PostView({ post, session }: PostViewProps) {
+function PostView({ post, session }: PostViewProps) {
   const { data: sessionData, update } = useSession()
   const router = useRouter()
   const { toast } = useToast()
@@ -431,3 +431,6 @@ export function PostView({ post, session }: PostViewProps) {
     </div>
   )
 }
+
+export default PostView
+export { PostView }

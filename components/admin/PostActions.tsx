@@ -115,3 +115,6 @@ export function PostActions({ post }: PostActionsProps) {
   )
 }
 
+export default PostActions
+export { PostActions }
+

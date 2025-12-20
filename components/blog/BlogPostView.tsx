@@ -12,11 +12,49 @@ import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 
 interface BlogPostViewProps {
-  post: any
-  session: any
+  post: {
+    id: string
+    title: string
+    content: string
+    author: {
+      id: string
+      username: string
+      avatarUrl: string | null
+      isVerified: boolean
+    }
+    comments?: Array<{
+      id: string
+      content: string
+      author: {
+        id: string
+        username: string
+        avatarUrl: string | null
+        isVerified: boolean
+      }
+      createdAt: Date | string
+      replies?: Array<{
+        id: string
+        content: string
+        author: {
+          id: string
+          username: string
+          avatarUrl: string | null
+          isVerified: boolean
+        }
+        createdAt: Date | string
+      }>
+    }>
+  }
+  session: {
+    user: {
+      id: string
+      username: string
+      role: string
+    }
+  } | null
 }
 
-export function BlogPostView({ post, session: initialSession }: BlogPostViewProps) {
+function BlogPostView({ post, session: initialSession }: BlogPostViewProps) {
   const { data: session } = useSession()
   const { toast } = useToast()
   const [commentContent, setCommentContent] = useState('')
@@ -145,4 +183,7 @@ export function BlogPostView({ post, session: initialSession }: BlogPostViewProp
     </div>
   )
 }
+
+export default BlogPostView
+export { BlogPostView }
 

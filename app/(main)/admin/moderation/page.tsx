@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { ReportService } from '@/lib/services/report.service'
-import { ModerationPanel } from '@/components/admin/ModerationPanel'
+import ModerationPanel from '@/components/admin/ModerationPanel'
 
 interface PageProps {
   searchParams: {

@@ -1,8 +1,8 @@
 import React from 'react'
-import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
+import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
 import { Toaster } from '@/components/ui/toaster'
-import { PWAInstallPrompt } from '@/components/pwa/PWAInstallPrompt'
+import PWAInstallPrompt from '@/components/pwa/PWAInstallPrompt'
 
 export default function MainLayout({
   children,

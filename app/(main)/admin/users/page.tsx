@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { CheckCircle2, Ban, Shield, Search, Users as UsersIcon, Mail, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import { formatRelativeTime } from '@/lib/utils'
-import { UserSearchFilters } from '@/components/admin/UserSearchFilters'
+import UserSearchFilters from '@/components/admin/UserSearchFilters'
 
 interface PageProps {
   searchParams: {

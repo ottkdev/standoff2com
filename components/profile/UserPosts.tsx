@@ -8,7 +8,7 @@ interface UserPostsProps {
   userId: string
 }
 
-export async function UserPosts({ userId }: UserPostsProps) {
+async function UserPosts({ userId }: UserPostsProps) {
   const posts = await prisma.post.findMany({
     where: { authorId: userId },
     take: 10,
@@ -83,4 +83,7 @@ export async function UserPosts({ userId }: UserPostsProps) {
     </div>
   )
 }
+
+export default UserPosts
+export { UserPosts }
 

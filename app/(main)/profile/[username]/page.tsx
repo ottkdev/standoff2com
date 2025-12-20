@@ -20,10 +20,10 @@ import {
   Wallet,
 } from 'lucide-react'
 import Link from 'next/link'
-import { FollowButton } from '@/components/profile/FollowButton'
-import { UserPosts } from '@/components/profile/UserPosts'
-import { UserListings } from '@/components/profile/UserListings'
-import { ReportButton } from '@/components/report/ReportButton'
+import FollowButton from '@/components/profile/FollowButton'
+import UserPosts from '@/components/profile/UserPosts'
+import UserListings from '@/components/profile/UserListings'
+import ReportButton from '@/components/report/ReportButton'
 
 interface PageProps {
   params: {

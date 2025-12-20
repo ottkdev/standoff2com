@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { OrderService } from '@/lib/services/order.service'
-import { DisputeForm } from '@/components/marketplace/DisputeForm'
+import DisputeForm from '@/components/marketplace/DisputeForm'
 
 interface PageProps {
   params: {

@@ -309,6 +309,7 @@ export class OrderService {
           },
         },
         dispute: true,
+        rating: true,
         conversation: {
           include: {
             messages: {

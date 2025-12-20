@@ -20,7 +20,7 @@ interface DisputeFormProps {
   }
 }
 
-export function DisputeForm({ order }: DisputeFormProps) {
+function DisputeForm({ order }: DisputeFormProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [reason, setReason] = useState('')
@@ -160,4 +160,7 @@ export function DisputeForm({ order }: DisputeFormProps) {
     </div>
   )
 }
+
+export default DisputeForm
+export { DisputeForm }
 

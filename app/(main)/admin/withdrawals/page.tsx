@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { Prisma, WithdrawalStatus } from '@prisma/client'
-import { WithdrawalPanel } from '@/components/admin/WithdrawalPanel'
+import WithdrawalPanel from '@/components/admin/WithdrawalPanel'
 
 interface PageProps {
   searchParams: {

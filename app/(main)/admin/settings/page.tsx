@@ -5,7 +5,7 @@ import { prisma } from '@/lib/db'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Settings, Database, Users, MessageSquare, BookOpen, ShoppingBag, Award, Shield } from 'lucide-react'
-import { SiteSettingsForm } from '@/components/admin/SiteSettingsForm'
+import SiteSettingsForm from '@/components/admin/SiteSettingsForm'
 
 export default async function AdminSettingsPage() {
   const session = await getServerSession(authOptions)

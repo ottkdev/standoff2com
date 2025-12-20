@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { Prisma, OrderStatus } from '@prisma/client'
-import { OrderList } from '@/components/admin/AdminOrderList'
+import OrderList from '@/components/admin/AdminOrderList'
 
 interface PageProps {
   searchParams: {

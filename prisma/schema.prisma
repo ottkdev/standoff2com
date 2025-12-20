@@ -164,6 +164,11 @@ model User {
   // Support Tickets
   supportTickets SupportTicket[]
 
+  // Marketplace
+  likedListings MarketplaceListingLike[]
+  ratingsGiven  SellerRating[] @relation("RatingGiver")
+  ratingsReceived SellerRating[] @relation("RatingReceiver")
+
   @@map("users")
 }
 
@@ -398,6 +403,7 @@ model MarketplaceListing {
   approver User?              @relation("Approver", fields: [approvedById], references: [id], onDelete: SetNull)
   images   MarketplaceImage[]
   orders   MarketplaceOrder[]
+  likes    MarketplaceListingLike[]
 
   @@index([sellerId])
   @@index([status])
@@ -741,6 +747,7 @@ model MarketplaceOrder {
   seller       User               @relation("Seller", fields: [sellerId], references: [id], onDelete: Cascade)
   dispute      Dispute?
   conversation TradeConversation?
+  rating       SellerRating?
 
   @@index([buyerId])
   @@index([sellerId])
@@ -872,4 +879,39 @@ model SupportMessage {
   @@index([ticketId])
   @@index([createdAt])
   @@map("support_messages")
+}
+
+model MarketplaceListingLike {
+  userId    String
+  listingId String
+  createdAt DateTime @default(now())
+
+  user    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId])
+  @@index([listingId])
+  @@index([userId])
+  @@map("marketplace_listing_likes")
+}
+
+model SellerRating {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  sellerId  String
+  buyerId   String
+  rating    Int      // 1-5 stars
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order  MarketplaceOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  seller User             @relation("RatingReceiver", fields: [sellerId], references: [id], onDelete: Cascade)
+  buyer  User             @relation("RatingGiver", fields: [buyerId], references: [id], onDelete: Cascade)
+
+  @@index([sellerId])
+  @@index([buyerId])
+  @@index([orderId])
+  @@index([createdAt])
+  @@map("seller_ratings")
 }

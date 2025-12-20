@@ -80,3 +80,5 @@ export function MarkSoldButton({ listingId }: MarkSoldButtonProps) {
   )
 }
 
+export default MarkSoldButton
+

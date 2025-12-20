@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import { WikiCategory } from '@prisma/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -18,7 +19,7 @@ import {
   Search,
 } from 'lucide-react'
 import { Metadata } from 'next'
-import { RecentContent } from '@/components/shared/RecentContent'
+import RecentContent from '@/components/shared/RecentContent'
 
 export const metadata: Metadata = {
   title: 'Standoff 2 Wiki - Kapsamlı Oyun Rehberi | Silahlar, Haritalar, Taktikler',
@@ -116,8 +117,12 @@ const categories = [
 ]
 
 // Helper function to convert slug to enum value
-function slugToEnum(slug: string): string {
-  return slug.toUpperCase().replace(/-/g, '_')
+function slugToEnum(slug: string): WikiCategory | null {
+  const normalized = slug.toUpperCase().replace(/-/g, '_')
+  if (Object.values(WikiCategory).includes(normalized as WikiCategory)) {
+    return normalized as WikiCategory
+  }
+  return null
 }
 
 // Helper function to convert enum to slug
@@ -130,9 +135,13 @@ export default async function WikiPage() {
   const articleCounts = await Promise.all(
     categories.map(async (cat) => {
       try {
+        const categoryEnum = slugToEnum(cat.slug)
+        if (!categoryEnum) {
+          return { slug: cat.slug, count: 0 }
+        }
         const count = await prisma.wikiArticle.count({
           where: {
-            category: slugToEnum(cat.slug) as any,
+            category: categoryEnum,
             isPublished: true,
           },
         })

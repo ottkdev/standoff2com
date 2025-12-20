@@ -166,3 +166,5 @@ export function ReportButton({
   )
 }
 
+export default ReportButton
+

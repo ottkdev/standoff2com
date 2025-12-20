@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button'
 import { ShoppingBag, CheckCircle2, Clock, XCircle, DollarSign, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { formatRelativeTime } from '@/lib/utils'
-import { ListingAdminActions } from '@/components/admin/ListingAdminActions'
-import { MarketplaceSearchFilters } from '@/components/admin/MarketplaceSearchFilters'
+import ListingAdminActions from '@/components/admin/ListingAdminActions'
+import MarketplaceSearchFilters from '@/components/admin/MarketplaceSearchFilters'
 
 interface PageProps {
   searchParams: {

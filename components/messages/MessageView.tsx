@@ -42,7 +42,7 @@ interface MessageViewProps {
   session: Session
 }
 
-export function MessageView({ otherUser, messages: initialMessages, session: initialSession }: MessageViewProps) {
+function MessageView({ otherUser, messages: initialMessages, session: initialSession }: MessageViewProps) {
   const { data: session } = useSession()
   const { toast } = useToast()
   const [messages, setMessages] = useState(initialMessages)
@@ -177,4 +177,7 @@ export function MessageView({ otherUser, messages: initialMessages, session: ini
     </div>
   )
 }
+
+export default MessageView
+export { MessageView }
 

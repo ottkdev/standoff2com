@@ -8,9 +8,9 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { BookOpen, Plus, Edit, Eye, Heart, MessageSquare } from 'lucide-react'
-import { BlogDeleteButton } from '@/components/admin/BlogDeleteButton'
+import BlogDeleteButton from '@/components/admin/BlogDeleteButton'
 import { formatRelativeTime } from '@/lib/utils'
-import { BlogSearchFilters } from '@/components/admin/BlogSearchFilters'
+import BlogSearchFilters from '@/components/admin/BlogSearchFilters'
 import Image from 'next/image'
 
 interface PageProps {

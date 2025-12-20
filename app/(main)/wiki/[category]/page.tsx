@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import { WikiCategory } from '@prisma/client'
 import { notFound, redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -7,7 +8,7 @@ import Link from 'next/link'
 import { ArrowLeft, BookOpen, Eye, Calendar, Share2 } from 'lucide-react'
 import { Metadata } from 'next'
 import { formatRelativeTime } from '@/lib/utils'
-import { WikiArticleView } from '@/components/wiki/WikiArticleView'
+import WikiArticleView from '@/components/wiki/WikiArticleView'
 
 const categoryMap: Record<string, { name: string; description: string; icon: string }> = {
   silahlar: {
@@ -152,7 +153,14 @@ export default async function WikiCategoryPage({ params, searchParams }: PagePro
   const perPage = 12
   const skip = (page - 1) * perPage
 
-  const categoryEnum = params.category.toUpperCase().replace('-', '_') as any
+  const normalized = params.category.toUpperCase().replace('-', '_')
+  const categoryEnum = Object.values(WikiCategory).includes(normalized as WikiCategory)
+    ? (normalized as WikiCategory)
+    : null
+  
+  if (!categoryEnum) {
+    notFound()
+  }
 
   let articles: any[] = []
   let total = 0

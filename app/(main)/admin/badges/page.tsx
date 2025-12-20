@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Award, Plus, Edit, Trash2, Users } from 'lucide-react'
 import Link from 'next/link'
 import { formatRelativeTime } from '@/lib/utils'
-import { BadgeManager } from '@/components/admin/BadgeManager'
+import BadgeManager from '@/components/admin/BadgeManager'
 import Image from 'next/image'
 
 interface PageProps {

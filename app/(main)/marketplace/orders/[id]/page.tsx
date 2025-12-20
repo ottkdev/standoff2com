@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { OrderService } from '@/lib/services/order.service'
-import { OrderDetail } from '@/components/marketplace/OrderDetail'
+import OrderDetail from '@/components/marketplace/OrderDetail'
 
 interface PageProps {
   params: {

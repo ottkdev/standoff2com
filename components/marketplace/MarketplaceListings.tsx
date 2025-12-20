@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { MarketplaceCard } from './MarketplaceCard'
-import { ViewToggle } from './ViewToggle'
-import { ImageGallery } from './ImageGallery'
+import Image from 'next/image'
+import MarketplaceCard from './MarketplaceCard'
+import ViewToggle from './ViewToggle'
+import ImageGallery from './ImageGallery'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { User, ZoomIn } from 'lucide-react'
-import { ProfileLink } from '@/components/home/ProfileLink'
+import { User, ZoomIn, CheckCircle2 } from 'lucide-react'
+import ProfileLink from '@/components/home/ProfileLink'
 import { formatRelativeTime } from '@/lib/utils'
 import Link from 'next/link'
 
@@ -30,7 +31,7 @@ interface MarketplaceListingsProps {
   statusBadges: Record<string, string>
 }
 
-export function MarketplaceListings({ listings, statusBadges }: MarketplaceListingsProps) {
+function MarketplaceListings({ listings, statusBadges }: MarketplaceListingsProps) {
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [mounted, setMounted] = useState(false)
 
@@ -68,9 +69,9 @@ export function MarketplaceListings({ listings, statusBadges }: MarketplaceListi
         {mounted && <ViewToggle view={view} onViewChange={handleViewChange} />}
       </div>
 
-      {/* Grid View - Compact & Optimized */}
+      {/* Grid View - Professional: 4-5 columns desktop, 2-3 tablet, 1 mobile */}
       {displayView === 'grid' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 sm:gap-3 md:gap-3.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-2.5 md:gap-3">
           {listings.map((listing) => (
             <MarketplaceCard
               key={listing.id}
@@ -135,10 +136,12 @@ function ListCard({ listing, statusBadges }: { listing: Listing; statusBadges: R
             >
               {listing.images[0] ? (
                 <>
-                  <img
+                  <Image
                     src={listing.images[0].url}
                     alt={listing.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 hidden sm:flex items-center justify-center">
@@ -176,7 +179,9 @@ function ListCard({ listing, statusBadges }: { listing: Listing; statusBadges: R
               </div>
               <div className="flex items-center justify-between gap-2 text-[10px] sm:text-xs text-muted-foreground pt-1.5 border-t border-border/50">
                 <div className="flex items-center gap-1 min-w-0 flex-1">
-                  <User className="h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0" />
+                  {listing.seller.isVerified && (
+                    <CheckCircle2 className="h-3 w-3 text-green-500 flex-shrink-0" />
+                  )}
                   <ProfileLink
                     username={listing.seller.username}
                     className="hover:text-primary truncate min-w-0 transition-colors"
@@ -201,4 +206,7 @@ function ListCard({ listing, statusBadges }: { listing: Listing; statusBadges: R
     </>
   )
 }
+
+export default MarketplaceListings
+export { MarketplaceListings }
 

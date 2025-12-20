@@ -20,9 +20,9 @@ export function ListingImageGallery({ images, title }: ListingImageGalleryProps)
   return (
     <>
       <div className="space-y-2 sm:space-y-3">
-        {/* Main Image - Yükseklik sınırlandırıldı */}
+        {/* Main Image - Büyütüldü */}
         <div
-          className="aspect-square rounded-lg overflow-hidden bg-muted relative group cursor-pointer max-h-[500px] sm:max-h-[600px]"
+          className="aspect-square rounded-lg overflow-hidden bg-muted relative group cursor-pointer w-full"
           onClick={() => setSelectedIndex(0)}
         >
           <Image
@@ -71,4 +71,6 @@ export function ListingImageGallery({ images, title }: ListingImageGalleryProps)
     </>
   )
 }
+
+export default ListingImageGallery
 

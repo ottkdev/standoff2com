@@ -166,3 +166,5 @@ export function WikiArticleView({ content }: WikiArticleViewProps) {
   return <div className="wiki-content">{elements}</div>
 }
 
+export default WikiArticleView
+

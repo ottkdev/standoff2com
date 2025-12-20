@@ -168,3 +168,6 @@ export function ForumSearchFilters({ searchParams, categories }: ForumSearchFilt
   )
 }
 
+export default ForumSearchFilters
+export { ForumSearchFilters }
+

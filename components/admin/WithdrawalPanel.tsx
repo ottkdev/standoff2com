@@ -416,3 +416,6 @@ export function WithdrawalPanel({
   )
 }
 
+export default WithdrawalPanel
+export { WithdrawalPanel }
+

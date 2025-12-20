@@ -33,12 +33,16 @@ export function ImageGallery({ images, initialIndex = 0, onClose }: ImageGallery
       }
     }
 
-    document.addEventListener('keydown', handleKeyDown)
-    document.body.style.overflow = 'hidden'
+    if (typeof document !== 'undefined') {
+      document.addEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = 'hidden'
+    }
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = 'unset'
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('keydown', handleKeyDown)
+        document.body.style.overflow = 'unset'
+      }
     }
   }, [handlePrevious, handleNext, onClose])
 
@@ -144,4 +148,6 @@ export function ImageGallery({ images, initialIndex = 0, onClose }: ImageGallery
     </div>
   )
 }
+
+export default ImageGallery
 

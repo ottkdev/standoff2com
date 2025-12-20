@@ -152,3 +152,5 @@ export function PinnedPostsTable({ posts }: PinnedPostsTableProps) {
     </div>
   )
 }
+
+export default PinnedPostsTable

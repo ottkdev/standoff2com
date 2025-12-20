@@ -129,3 +129,5 @@ export function BuyButton({ listingId, price, className }: BuyButtonProps) {
   )
 }
 
+export default BuyButton
+

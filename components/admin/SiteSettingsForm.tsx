@@ -243,3 +243,6 @@ export function SiteSettingsForm() {
     </form>
   )
 }
+
+export default SiteSettingsForm
+export { SiteSettingsForm }

@@ -202,3 +202,6 @@ export function MarketplaceSearchFilters({ searchParams }: MarketplaceSearchFilt
     </Card>
   )
 }
+
+export default MarketplaceSearchFilters
+export { MarketplaceSearchFilters }

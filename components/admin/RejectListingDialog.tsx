@@ -126,3 +126,6 @@ export function RejectListingDialog({ listingId, onReject }: RejectListingDialog
   )
 }
 
+export default RejectListingDialog
+export { RejectListingDialog }
+

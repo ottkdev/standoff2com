@@ -10,7 +10,7 @@ interface FollowButtonProps {
   isFollowing: boolean
 }
 
-export function FollowButton({ userId, isFollowing: initialIsFollowing }: FollowButtonProps) {
+function FollowButton({ userId, isFollowing: initialIsFollowing }: FollowButtonProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing)
@@ -57,4 +57,7 @@ export function FollowButton({ userId, isFollowing: initialIsFollowing }: Follow
     </Button>
   )
 }
+
+export default FollowButton
+export { FollowButton }
 

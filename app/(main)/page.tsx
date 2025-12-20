@@ -17,23 +17,10 @@ import {
   Heart,
   BookOpen,
 } from 'lucide-react'
-import dynamic from 'next/dynamic'
-import { PinnedPostsTable } from '@/components/home/PinnedPostsTable'
-
-// Dynamic imports for client components - reduces initial bundle size
-// Using ssr: true ensures CSS is loaded during SSR, preventing preload warnings
-const ForumSummary = dynamic(() => import('@/components/home/ForumSummary').then((mod) => ({ default: mod.ForumSummary })), {
-  ssr: true, // Keep SSR for SEO - ensures CSS is loaded
-  loading: () => <div className="h-32 animate-pulse bg-muted rounded-lg" />,
-})
-const MarketplaceSummary = dynamic(() => import('@/components/home/MarketplaceSummary').then((mod) => ({ default: mod.MarketplaceSummary })), {
-  ssr: true, // Keep SSR for SEO - ensures CSS is loaded
-  loading: () => <div className="h-32 animate-pulse bg-muted rounded-lg" />,
-})
-const BlogSummary = dynamic(() => import('@/components/home/BlogSummary').then((mod) => ({ default: mod.BlogSummary })), {
-  ssr: true, // Keep SSR for SEO - ensures CSS is loaded
-  loading: () => <div className="h-32 animate-pulse bg-muted rounded-lg" />,
-})
+import PinnedPostsTable from '@/components/home/PinnedPostsTable'
+import ForumSummary from '@/components/home/ForumSummary'
+import MarketplaceSummary from '@/components/home/MarketplaceSummary'
+import BlogSummary from '@/components/home/BlogSummary'
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions)
@@ -407,6 +394,7 @@ export default async function HomePage() {
                       width={128}
                       height={128}
                       className="object-contain"
+                      style={{ width: 'auto', height: 'auto' }}
                       loading="lazy"
                       aria-hidden="true"
                     />

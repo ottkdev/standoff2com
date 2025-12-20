@@ -172,3 +172,5 @@ export function RecentContent({ type, items }: RecentContentProps) {
   )
 }
 
+export default RecentContent
+

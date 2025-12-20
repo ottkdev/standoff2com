@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { notFound } from 'next/navigation'
-import { MessageView } from '@/components/messages/MessageView'
+import MessageView from '@/components/messages/MessageView'
 
 interface PageProps {
   params: {

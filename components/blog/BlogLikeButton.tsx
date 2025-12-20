@@ -56,3 +56,5 @@ export function BlogLikeButton({ postId, initialLiked, initialCount }: BlogLikeB
   )
 }
 
+export default BlogLikeButton
+

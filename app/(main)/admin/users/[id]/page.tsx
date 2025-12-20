@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { CheckCircle2, Ban, Shield, User as UserIcon, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-import { UserEditForm } from '@/components/admin/UserEditForm'
-import { UserBadgeManager } from '@/components/admin/UserBadgeManager'
+import UserEditForm from '@/components/admin/UserEditForm'
+import UserBadgeManager from '@/components/admin/UserBadgeManager'
 
 export default async function AdminUserDetailPage({
   params,

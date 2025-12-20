@@ -9,7 +9,7 @@ interface UserListingsProps {
   userId: string
 }
 
-export async function UserListings({ userId }: UserListingsProps) {
+async function UserListings({ userId }: UserListingsProps) {
   const listings = await prisma.marketplaceListing.findMany({
     where: {
       sellerId: userId,
@@ -108,4 +108,7 @@ export async function UserListings({ userId }: UserListingsProps) {
     </div>
   )
 }
+
+export default UserListings
+export { UserListings }
 

@@ -30,7 +30,7 @@ interface BlogSummaryProps {
   posts: BlogPost[]
 }
 
-export function BlogSummary({ posts }: BlogSummaryProps) {
+function BlogSummary({ posts }: BlogSummaryProps) {
   if (posts.length === 0) return null
 
   return (
@@ -97,3 +97,6 @@ export function BlogSummary({ posts }: BlogSummaryProps) {
     </div>
   )
 }
+
+export default BlogSummary
+export { BlogSummary }

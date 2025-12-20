@@ -7,7 +7,7 @@ import { prisma } from '@/lib/db'
 import { formatRelativeTime, cn } from '@/lib/utils'
 import { BookOpen, ArrowRight, Search, Newspaper, Sparkles } from 'lucide-react'
 import { Metadata } from 'next'
-import { RecentContent } from '@/components/shared/RecentContent'
+import RecentContent from '@/components/shared/RecentContent'
 
 export const metadata: Metadata = {
   title: 'Standoff 2 Blog - Güncel Haberler, Duyurular ve Rehberler',

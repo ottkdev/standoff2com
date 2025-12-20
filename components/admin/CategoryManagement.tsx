@@ -273,3 +273,6 @@ export function CategoryManagement({ categories: initialCategories }: CategoryMa
   )
 }
 
+export default CategoryManagement
+export { CategoryManagement }
+

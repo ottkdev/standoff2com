@@ -52,3 +52,5 @@ export function ProfileLink({ username, isVerified, className, noLink }: Profile
   )
 }
 
+export default ProfileLink
+

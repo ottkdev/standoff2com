@@ -21,10 +21,14 @@ export function PWAInstallPrompt() {
       setTimeout(() => setShowPrompt(true), 3000)
     }
 
-    window.addEventListener('beforeinstallprompt', handler)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeinstallprompt', handler)
+    }
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handler)
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('beforeinstallprompt', handler)
+      }
     }
   }, [])
 
@@ -67,4 +71,6 @@ export function PWAInstallPrompt() {
     </div>
   )
 }
+
+export default PWAInstallPrompt
 

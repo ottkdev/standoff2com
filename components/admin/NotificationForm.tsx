@@ -158,3 +158,6 @@ export function NotificationForm() {
   )
 }
 
+export default NotificationForm
+export { NotificationForm }
+

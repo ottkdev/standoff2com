@@ -151,3 +151,6 @@ export function UserSearchFilters({ searchParams }: UserSearchFiltersProps) {
   )
 }
 
+export default UserSearchFilters
+export { UserSearchFilters }
+

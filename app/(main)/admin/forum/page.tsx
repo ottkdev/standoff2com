@@ -8,10 +8,10 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { MessageSquare, Pin, Lock, Eye, MessageCircle, TrendingUp } from 'lucide-react'
-import { PostActions } from '@/components/admin/PostActions'
-import { CategoryManagement } from '@/components/admin/CategoryManagement'
+import PostActions from '@/components/admin/PostActions'
+import CategoryManagement from '@/components/admin/CategoryManagement'
 import { formatRelativeTime } from '@/lib/utils'
-import { ForumSearchFilters } from '@/components/admin/ForumSearchFilters'
+import ForumSearchFilters from '@/components/admin/ForumSearchFilters'
 
 interface PageProps {
   searchParams: {

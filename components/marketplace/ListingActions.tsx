@@ -118,3 +118,5 @@ export function ListingActions({ listingId, status }: ListingActionsProps) {
   )
 }
 
+export default ListingActions
+

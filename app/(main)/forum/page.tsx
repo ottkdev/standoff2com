@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { ForumService } from '@/lib/services/forum.service'
 import { MessageSquare, Users, ChevronRight, Sparkles, ArrowRight, HelpCircle, TrendingUp, BookOpen } from 'lucide-react'
 import { Metadata } from 'next'
-import { RecentContent } from '@/components/shared/RecentContent'
+import RecentContent from '@/components/shared/RecentContent'
 import { prisma } from '@/lib/db'
 
 export const metadata: Metadata = {

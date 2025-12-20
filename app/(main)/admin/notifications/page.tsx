@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { NotificationForm } from '@/components/admin/NotificationForm'
+import NotificationForm from '@/components/admin/NotificationForm'
 import { prisma } from '@/lib/db'
 import { Bell } from 'lucide-react'
 

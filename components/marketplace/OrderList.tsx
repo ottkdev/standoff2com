@@ -46,7 +46,7 @@ interface OrderListProps {
   currentStatus?: string
 }
 
-export function OrderList({
+function OrderList({
   orders,
   total,
   page,
@@ -234,4 +234,7 @@ export function OrderList({
     </div>
   )
 }
+
+export default OrderList
+export { OrderList }
 

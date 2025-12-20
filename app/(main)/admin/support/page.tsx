@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { formatRelativeTime } from '@/lib/utils'
 import { HelpCircle, MessageSquare, Filter } from 'lucide-react'
-import { SupportTicketFilters } from '@/components/admin/SupportTicketFilters'
+import SupportTicketFilters from '@/components/admin/SupportTicketFilters'
 
 interface PageProps {
   searchParams: {

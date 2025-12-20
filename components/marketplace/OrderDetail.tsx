@@ -31,13 +31,14 @@ import {
 import { formatRelativeTime } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
 import Image from 'next/image'
+import SellerRatingForm from '@/components/marketplace/SellerRatingForm'
 
 interface OrderDetailProps {
   order: any
   currentUserId: string
 }
 
-export function OrderDetail({ order, currentUserId }: OrderDetailProps) {
+function OrderDetail({ order, currentUserId }: OrderDetailProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [message, setMessage] = useState('')
@@ -63,6 +64,7 @@ export function OrderDetail({ order, currentUserId }: OrderDetailProps) {
   const isBuyer = orderState.buyerId === currentUserId
   const isSeller = orderState.sellerId === currentUserId
   const canConfirmDelivery = isBuyer && orderState.status === 'PENDING_DELIVERY'
+  const canRate = isBuyer && orderState.status === 'COMPLETED' && !orderState.rating
   const conversation = orderState.conversation
 
   const formatAmount = (kurus: number) => {
@@ -296,6 +298,20 @@ export function OrderDetail({ order, currentUserId }: OrderDetailProps) {
               )}
             </div>
           )}
+
+          {/* Rating Form */}
+          {canRate && (
+            <div className="pt-4 border-t">
+              <h4 className="font-semibold mb-3 text-sm">Satıcıyı Değerlendir</h4>
+              <SellerRatingForm
+                orderId={orderState.id}
+                sellerId={orderState.sellerId}
+                onSuccess={() => {
+                  router.refresh()
+                }}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -384,4 +400,7 @@ export function OrderDetail({ order, currentUserId }: OrderDetailProps) {
     </div>
   )
 }
+
+export default OrderDetail
+export { OrderDetail }
 

@@ -26,7 +26,7 @@ interface MarketplaceSummaryProps {
   listings: MarketplaceListing[]
 }
 
-export function MarketplaceSummary({ listings }: MarketplaceSummaryProps) {
+function MarketplaceSummary({ listings }: MarketplaceSummaryProps) {
   if (listings.length === 0) return null
 
   return (
@@ -110,3 +110,6 @@ export function MarketplaceSummary({ listings }: MarketplaceSummaryProps) {
     </div>
   )
 }
+
+export default MarketplaceSummary
+export { MarketplaceSummary }

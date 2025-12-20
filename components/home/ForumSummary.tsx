@@ -38,7 +38,7 @@ interface ForumSummaryProps {
 
 type TabType = 'new' | 'comments' | 'likes'
 
-export function ForumSummary({ newPosts, mostCommented, mostLiked }: ForumSummaryProps) {
+function ForumSummary({ newPosts, mostCommented, mostLiked }: ForumSummaryProps) {
   const [activeTab, setActiveTab] = useState<TabType>('new')
 
   const activePosts = useMemo(() => {
@@ -160,12 +160,12 @@ export function ForumSummary({ newPosts, mostCommented, mostLiked }: ForumSummar
                 <div className="flex items-center gap-2 text-xs text-muted-foreground flex-shrink-0">
                   <div className="flex items-center gap-1 whitespace-nowrap rounded-full bg-primary/10 px-2 py-1 text-primary">
                     <MessageSquare className="h-3.5 w-3.5" />
-                    <span>{(post as any).commentCount ?? (post as any)._count?.comments ?? 0}</span>
+                    <span>{post.commentCount ?? post._count?.comments ?? 0}</span>
                   </div>
                   {activeTab === 'likes' ? (
                     <div className="flex items-center gap-1 whitespace-nowrap rounded-full bg-rose-500/10 px-2 py-1 text-rose-400">
                       <Heart className="h-3.5 w-3.5" />
-                      <span>{(post as any).likeCount ?? (post as any)._count?.likes ?? 0}</span>
+                      <span>{post.likeCount ?? post._count?.likes ?? 0}</span>
                     </div>
                   ) : null}
                 </div>
@@ -181,3 +181,6 @@ export function ForumSummary({ newPosts, mostCommented, mostLiked }: ForumSummar
     </div>
   )
 }
+
+export default ForumSummary
+export { ForumSummary }

@@ -1,6 +1,6 @@
 import React from 'react'
-import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
+import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
 import { Toaster } from '@/components/ui/toaster'
 
 export default function AuthLayout({
