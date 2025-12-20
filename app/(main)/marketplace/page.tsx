@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { prisma } from '@/lib/db'
+import { Prisma, MarketplaceStatus } from '@prisma/client'
 import { formatRelativeTime, cn } from '@/lib/utils'
 import { ShoppingBag, Plus, ArrowRight, Tag, User, Filter } from 'lucide-react'
 import dynamic from 'next/dynamic'
@@ -39,17 +40,12 @@ export default async function MarketplacePage({ searchParams }: PageProps) {
   const limit = 12
   const skip = (page - 1) * limit
 
-  const where: {
-    deletedAt: null
-    status?: string
-    OR?: Array<{ title: { contains: string; mode: 'insensitive' } } | { description: { contains: string; mode: 'insensitive' } }>
-    price?: { gte?: number; lte?: number }
-  } = {
+  const where: Prisma.MarketplaceListingWhereInput = {
     deletedAt: null,
   }
 
   if (status !== 'ALL') {
-    where.status = status
+    where.status = status as MarketplaceStatus
   }
 
   if (q) {

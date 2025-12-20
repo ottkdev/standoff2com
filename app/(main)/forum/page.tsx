@@ -28,7 +28,8 @@ export default async function ForumPage() {
     id: string
     title: string
     createdAt: Date
-    author: { username: string }
+    commentCount: number
+    author: { username: string; avatarUrl: string | null; isVerified: boolean }
     category: { name: string; slug: string }
   }> = []
   try {
@@ -36,10 +37,16 @@ export default async function ForumPage() {
       where: { deletedAt: null },
       take: 10,
       orderBy: { createdAt: 'desc' },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        commentCount: true,
         author: {
           select: {
             username: true,
+            avatarUrl: true,
+            isVerified: true,
           },
         },
         category: {

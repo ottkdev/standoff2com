@@ -155,6 +155,7 @@ export default async function WikiPage() {
     excerpt: string | null
     viewCount: number
     createdAt: Date
+    category: string
     author: { username: string } | null
   }> = []
   try {
@@ -162,7 +163,14 @@ export default async function WikiPage() {
       where: { isPublished: true },
       take: 6,
       orderBy: { viewCount: 'desc' },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        viewCount: true,
+        createdAt: true,
+        category: true,
         author: {
           select: {
             username: true,
@@ -182,6 +190,7 @@ export default async function WikiPage() {
     excerpt: string | null
     viewCount: number
     createdAt: Date
+    category: string
     author: { username: string } | null
   }> = []
   try {
@@ -189,7 +198,14 @@ export default async function WikiPage() {
       where: { isPublished: true },
       take: 10,
       orderBy: { createdAt: 'desc' },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        viewCount: true,
+        createdAt: true,
+        category: true,
         author: {
           select: {
             username: true,
@@ -244,7 +260,7 @@ export default async function WikiPage() {
             category: {
               name: categories.find((c) => c.slug === enumToSlug(article.category))?.name || article.category,
             },
-            author: article.author,
+            author: article.author || undefined,
             viewCount: article.viewCount,
           }))}
         />
@@ -336,12 +352,8 @@ export default async function WikiPage() {
                   {/* Bottom Row: Author + Date - Tek Satır */}
                   <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] md:text-xs text-muted-foreground">
                     <span className="truncate max-w-[100px] sm:max-w-none">{article.author?.username || 'Bilinmeyen'}</span>
-                    {article.publishedAt && (
-                      <>
-                        <span>•</span>
-                        <span className="whitespace-nowrap">{new Date(article.publishedAt).toLocaleDateString('tr-TR')}</span>
-                      </>
-                    )}
+                    <span>•</span>
+                    <span className="whitespace-nowrap">{new Date(article.createdAt).toLocaleDateString('tr-TR')}</span>
                   </div>
                 </CardHeader>
               </Link>

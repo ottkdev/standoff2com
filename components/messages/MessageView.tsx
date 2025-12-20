@@ -122,7 +122,7 @@ export function MessageView({ otherUser, messages: initialMessages, session: ini
           {/* Messages */}
           <div className="h-[400px] md:h-[500px] overflow-y-auto p-3 md:p-4 space-y-4">
             {messages.map((message) => {
-              const isOwn = message.senderId === session?.user?.id
+              const isOwn = message.sender.id === session?.user?.id
               return (
                 <div
                   key={message.id}
