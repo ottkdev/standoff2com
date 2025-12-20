@@ -241,4 +241,3 @@ function MarketplaceFilters({ statusCounts }: MarketplaceFiltersProps) {
 }
 
 export default MarketplaceFilters
-export { MarketplaceFilters }

@@ -236,5 +236,4 @@ function OrderList({
 }
 
 export default OrderList
-export { OrderList }
 

@@ -1,7 +1,7 @@
 'use client'
 
-import { PostAuthorPanel } from './PostAuthorPanel'
-import { PostContent } from './PostContent'
+import PostAuthorPanel from './PostAuthorPanel'
+import PostContent from './PostContent'
 
 interface PostLayoutProps {
   // Author data
@@ -104,4 +104,6 @@ export function PostLayout({
     </div>
   )
 }
+
+export default PostLayout
 

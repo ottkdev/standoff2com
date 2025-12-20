@@ -915,5 +915,4 @@ export function ModerationPanel({
 }
 
 export default ModerationPanel
-export { ModerationPanel }
 

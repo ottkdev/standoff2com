@@ -196,5 +196,4 @@ export function UserBadgeManager({ userId, badges, userBadges }: UserBadgeManage
 }
 
 export default UserBadgeManager
-export { UserBadgeManager }
 

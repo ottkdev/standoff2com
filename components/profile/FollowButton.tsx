@@ -59,5 +59,4 @@ function FollowButton({ userId, isFollowing: initialIsFollowing }: FollowButtonP
 }
 
 export default FollowButton
-export { FollowButton }
 

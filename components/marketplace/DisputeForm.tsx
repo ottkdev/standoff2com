@@ -162,5 +162,4 @@ function DisputeForm({ order }: DisputeFormProps) {
 }
 
 export default DisputeForm
-export { DisputeForm }
 

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { Check, X } from 'lucide-react'
 import Link from 'next/link'
-import { RejectListingDialog } from './RejectListingDialog'
+import RejectListingDialog from './RejectListingDialog'
 
 interface ListingAdminActionsProps {
   listing: {
@@ -79,5 +79,4 @@ export function ListingAdminActions({ listing }: ListingAdminActionsProps) {
 }
 
 export default ListingAdminActions
-export { ListingAdminActions }
 

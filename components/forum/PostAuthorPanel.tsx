@@ -123,3 +123,5 @@ export function PostAuthorPanel({ author, postNumber }: PostAuthorPanelProps) {
   )
 }
 
+export default PostAuthorPanel
+

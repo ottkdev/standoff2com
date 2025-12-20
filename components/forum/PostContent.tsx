@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { RelativeTime } from '@/components/ui/RelativeTime'
+import RelativeTime from '@/components/ui/RelativeTime'
 import {
   Heart,
   MessageSquare,
@@ -24,7 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ReportButton } from '@/components/report/ReportButton'
+import ReportButton from '@/components/report/ReportButton'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
@@ -258,4 +258,6 @@ export function PostContent({
     </div>
   )
 }
+
+export default PostContent
 

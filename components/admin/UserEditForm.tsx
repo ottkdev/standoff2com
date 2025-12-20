@@ -152,5 +152,4 @@ export function UserEditForm({ user }: UserEditFormProps) {
 }
 
 export default UserEditForm
-export { UserEditForm }
 

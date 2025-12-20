@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { MessageSquare, Eye, Pin, CheckCircle2 } from 'lucide-react'
-import { ProfileLink } from '@/components/home/ProfileLink'
-import { RelativeTime } from '@/components/ui/RelativeTime'
+import ProfileLink from '@/components/home/ProfileLink'
+import RelativeTime from '@/components/ui/RelativeTime'
 
 interface ForumRowProps {
   post: {

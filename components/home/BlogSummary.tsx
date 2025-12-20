@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { BookOpen, ArrowRight, Sparkles } from 'lucide-react'
-import { ProfileLink } from './ProfileLink'
-import { RelativeTime } from '@/components/ui/RelativeTime'
+import ProfileLink from './ProfileLink'
+import RelativeTime from '@/components/ui/RelativeTime'
 
 interface BlogPost {
   id: string
@@ -99,4 +99,3 @@ function BlogSummary({ posts }: BlogSummaryProps) {
 }
 
 export default BlogSummary
-export { BlogSummary }

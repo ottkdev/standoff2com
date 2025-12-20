@@ -424,5 +424,4 @@ export function DisputePanel({
 }
 
 export default DisputePanel
-export { DisputePanel }
 

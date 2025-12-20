@@ -204,4 +204,3 @@ export function MarketplaceSearchFilters({ searchParams }: MarketplaceSearchFilt
 }
 
 export default MarketplaceSearchFilters
-export { MarketplaceSearchFilters }

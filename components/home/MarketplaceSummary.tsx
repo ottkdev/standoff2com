@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { formatRelativeTime } from '@/lib/utils'
 import { ShoppingBag, ArrowRight, User, Sparkles, Shield } from 'lucide-react'
-import { ProfileLink } from './ProfileLink'
+import ProfileLink from './ProfileLink'
 
 interface MarketplaceListing {
   id: string
@@ -112,4 +112,3 @@ function MarketplaceSummary({ listings }: MarketplaceSummaryProps) {
 }
 
 export default MarketplaceSummary
-export { MarketplaceSummary }

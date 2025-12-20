@@ -85,5 +85,4 @@ async function UserPosts({ userId }: UserPostsProps) {
 }
 
 export default UserPosts
-export { UserPosts }
 

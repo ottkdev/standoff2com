@@ -6,8 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { MessageSquare, Heart, ArrowRight, Sparkles } from 'lucide-react'
-import { ProfileLink } from './ProfileLink'
-import { RelativeTime } from '@/components/ui/RelativeTime'
+import ProfileLink from './ProfileLink'
+import RelativeTime from '@/components/ui/RelativeTime'
 
 interface ForumPost {
   id: string
@@ -183,4 +183,3 @@ function ForumSummary({ newPosts, mostCommented, mostLiked }: ForumSummaryProps)
 }
 
 export default ForumSummary
-export { ForumSummary }

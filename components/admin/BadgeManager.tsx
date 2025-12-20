@@ -306,5 +306,4 @@ export function BadgeManager({ mode, badge }: BadgeManagerProps) {
 }
 
 export default BadgeManager
-export { BadgeManager }
 

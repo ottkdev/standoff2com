@@ -402,5 +402,4 @@ function OrderDetail({ order, currentUserId }: OrderDetailProps) {
 }
 
 export default OrderDetail
-export { OrderDetail }
 

@@ -245,4 +245,3 @@ export function SiteSettingsForm() {
 }
 
 export default SiteSettingsForm
-export { SiteSettingsForm }

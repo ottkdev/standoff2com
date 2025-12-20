@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { User, ZoomIn, CheckCircle2 } from 'lucide-react'
-import { ProfileLink } from '@/components/home/ProfileLink'
+import { Button } from '@/components/ui/button'
+import { ShoppingBag, ZoomIn, CheckCircle2, Eye, Heart } from 'lucide-react'
+import ProfileLink from '@/components/home/ProfileLink'
 import { formatRelativeTime } from '@/lib/utils'
-import { ImageGallery } from './ImageGallery'
+import ImageGallery from './ImageGallery'
 
 interface MarketplaceCardProps {
   listing: {
@@ -53,13 +53,22 @@ export function MarketplaceCard({ listing, statusBadges }: MarketplaceCardProps)
     }
   }
 
+  const isActive = listing.status === 'ACTIVE'
+  const isSold = listing.status === 'SOLD'
+
   return (
     <>
-      <Card className="group overflow-hidden border-border/50 bg-card hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all duration-200 flex flex-col h-full">
+      <div className="group relative overflow-hidden rounded-xl border border-border/30 bg-gradient-to-br from-card/80 via-card/60 to-card/80 backdrop-blur-sm shadow-lg shadow-black/5 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1 flex flex-col h-full cursor-pointer">
+        {/* Gradient Border Effect */}
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/0 via-primary/0 to-primary/0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 -z-10" />
+        
+        {/* Inner Shadow */}
+        <div className="absolute inset-0 rounded-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] pointer-events-none" />
+
         <Link href={`/marketplace/${listing.id}`} className="contents flex flex-col h-full">
-          {/* Image Section - Compact 180-220px height */}
+          {/* Image Section - Premium Framing */}
           <div
-            className="relative w-full h-[180px] sm:h-[200px] md:h-[220px] overflow-hidden bg-muted flex-shrink-0 cursor-pointer"
+            className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-muted/40 via-muted/20 to-muted/40 flex-shrink-0"
             onClick={handleImageClick}
           >
             {listing.images[0] ? (
@@ -69,35 +78,57 @@ export function MarketplaceCard({ listing, statusBadges }: MarketplaceCardProps)
                   alt={listing.title}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1536px) 33vw, 25vw"
-                  className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                   loading="lazy"
                 />
-                {/* Hover overlay - Desktop only */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 hidden sm:flex items-center justify-center">
-                  <ZoomIn className="h-4 w-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                {/* Premium Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                {/* Hover Action Overlay */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500 flex items-center justify-center">
+                  <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="backdrop-blur-md bg-white/10 border-white/20 text-white hover:bg-white/20"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        window.location.href = `/marketplace/${listing.id}`
+                      }}
+                    >
+                      <Eye className="h-4 w-4 mr-1.5" />
+                      Detaylar
+                    </Button>
+                  </div>
                 </div>
               </>
             ) : (
               <div className="h-full w-full flex items-center justify-center">
-                <User className="h-8 w-8 text-muted-foreground/50" />
+                <ShoppingBag className="h-16 w-16 text-muted-foreground/20" />
               </div>
             )}
 
-            {/* Status Badge - Top Right */}
-            <div className="absolute top-1.5 right-1.5 z-10">
+            {/* Status Badge - Premium Styling */}
+            <div className="absolute top-3 right-3 z-10">
               <Badge
-                className={`${statusBadges[listing.status] || 'bg-muted'} text-[9px] px-1.5 py-0.5 h-auto font-medium border-0 shadow-sm`}
+                className={`${
+                  isActive
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-lg shadow-emerald-500/20'
+                    : isSold
+                    ? 'bg-slate-500/20 text-slate-300 border-slate-500/40'
+                    : statusBadges[listing.status] || 'bg-muted'
+                } text-xs px-2.5 py-1 h-auto font-semibold border backdrop-blur-sm`}
               >
                 {getStatusLabel()}
               </Badge>
             </div>
 
-            {/* Image Count Badge - Bottom Left */}
+            {/* Image Count Badge */}
             {listing.images.length > 1 && (
-              <div className="absolute bottom-1.5 left-1.5 z-10">
+              <div className="absolute bottom-3 left-3 z-10">
                 <Badge
                   variant="secondary"
-                  className="text-[9px] px-1.5 py-0.5 h-auto bg-black/60 text-white border-0 backdrop-blur-sm"
+                  className="text-xs px-2 py-1 h-auto bg-black/70 text-white border-0 backdrop-blur-md shadow-lg"
                 >
                   +{listing.images.length - 1}
                 </Badge>
@@ -105,37 +136,44 @@ export function MarketplaceCard({ listing, statusBadges }: MarketplaceCardProps)
             )}
           </div>
 
-          {/* Content Section - Ultra Compact */}
-          <div className="flex flex-col flex-1 p-2 sm:p-2.5 min-h-0">
-            {/* Title - Max 2 lines */}
-            <h3 className="text-xs font-semibold leading-tight line-clamp-2 mb-1.5 group-hover:text-primary transition-colors duration-200 break-words">
+          {/* Content Section - Premium Spacing */}
+          <div className="flex flex-col flex-1 p-5 min-h-0 bg-gradient-to-b from-transparent to-card/40">
+            {/* Title */}
+            <h3 className="text-base font-bold leading-snug line-clamp-2 mb-3 group-hover:text-primary transition-colors duration-300 break-words">
               {listing.title}
             </h3>
 
-            {/* Price - Prominent */}
-            <div className="text-base font-bold text-primary mb-1.5 break-words">
-              {listing.price.toLocaleString('tr-TR')} ₺
+            {/* Price - Premium Styling */}
+            <div className="mb-4">
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-extrabold text-primary">
+                  {listing.price.toLocaleString('tr-TR')}
+                </span>
+                <span className="text-lg font-semibold text-primary/70">₺</span>
+              </div>
             </div>
 
-            {/* Footer Info - Compact Single Line */}
-            <div className="flex items-center justify-between gap-1.5 mt-auto pt-1.5 border-t border-border/40">
-              <div className="flex items-center gap-1 min-w-0 flex-1">
+            {/* Footer Info - Trust Indicators */}
+            <div className="flex items-center justify-between gap-3 mt-auto pt-4 border-t border-border/50">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
                 {listing.seller.isVerified && (
-                  <CheckCircle2 className="h-3 w-3 text-green-500 flex-shrink-0" />
+                  <div className="flex-shrink-0">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                  </div>
                 )}
                 <ProfileLink
                   username={listing.seller.username}
-                  className="text-[10px] text-muted-foreground hover:text-primary truncate min-w-0 transition-colors"
+                  className="text-sm font-medium text-muted-foreground hover:text-primary truncate min-w-0 transition-colors"
                   noLink
                 />
               </div>
-              <span className="text-[9px] text-muted-foreground/70 flex-shrink-0 whitespace-nowrap">
+              <span className="text-xs text-muted-foreground/60 flex-shrink-0 whitespace-nowrap">
                 {formatRelativeTime(listing.createdAt)}
               </span>
             </div>
           </div>
         </Link>
-      </Card>
+      </div>
 
       {/* Image Gallery Modal */}
       {showGallery && listing.images.length > 0 && (

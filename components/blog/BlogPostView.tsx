@@ -185,5 +185,4 @@ function BlogPostView({ post, session: initialSession }: BlogPostViewProps) {
 }
 
 export default BlogPostView
-export { BlogPostView }
 

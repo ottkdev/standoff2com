@@ -83,7 +83,7 @@ export function BuyButton({ listingId, price, className }: BuyButtonProps) {
     <>
       <Button
         size="lg"
-        className={`w-full min-h-[44px] ${className}`}
+        className={`w-full min-h-[52px] text-base font-semibold ${className}`}
         onClick={() => setIsOpen(true)}
       >
         <ShoppingCart className="h-5 w-5 mr-2" />

@@ -157,5 +157,4 @@ export default function ListingTabs({
   )
 }
 
-export { ListingTabs }
 

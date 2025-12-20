@@ -118,5 +118,4 @@ export function SupportTicketFilters({ searchParams }: SupportTicketFiltersProps
 }
 
 export default SupportTicketFilters
-export { SupportTicketFilters }
 

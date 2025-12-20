@@ -36,3 +36,5 @@ export function RelativeTime({ date, className }: RelativeTimeProps) {
   return <span className={className}>{formatRelativeTime(date)}</span>
 }
 
+export default RelativeTime
+

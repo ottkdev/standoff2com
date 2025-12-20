@@ -134,13 +134,8 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen w-full">
-      {/* Background Gradient */}
-      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-orange-500/5 via-amber-500/3 to-yellow-500/5" />
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_20%_30%,rgba(251,146,60,0.08),transparent_40%)]" />
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_80%_70%,rgba(251,191,36,0.06),transparent_40%)]" />
-
-      <div className="page-container-narrow py-6 md:py-8 lg:py-10">
+    <div className="w-full bg-background">
+      <div className="page-container-narrow py-6 md:py-8">
         {/* Breadcrumb */}
         <Link 
           href="/marketplace" 
@@ -150,212 +145,169 @@ export default async function MarketplaceListingPage({ params }: PageProps) {
           <span>Marketplace'e Dön</span>
         </Link>
 
-        {/* Main Layout */}
-        <div className="grid gap-6 md:gap-8 grid-cols-1 lg:grid-cols-[55%_45%]">
-          {/* Left Column: Image Gallery */}
-          <div className="space-y-6 lg:sticky lg:top-6 lg:self-start">
-            {/* Image Gallery */}
-            <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-br from-orange-500/20 via-amber-500/10 to-yellow-500/20 blur-xl opacity-50 rounded-xl" />
-              <div className="relative rounded-xl border border-border/70 bg-background/80 backdrop-blur-sm shadow-xl shadow-orange-500/5 overflow-hidden">
+        {/* Main Layout - Two Columns Starting at Same Top */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8 items-start">
+          {/* Left Column: Product Content */}
+          <div className="space-y-6">
+            {/* Product Image */}
+            <Card className="border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden">
+              <CardContent className="p-4 md:p-6">
                 {listing.images.length > 0 ? (
                   <ListingImageGallery images={listing.images} title={listing.title} />
                 ) : (
-                  <div className="aspect-square flex items-center justify-center bg-muted/50">
-                    <ShoppingBag className="h-20 w-20 text-muted-foreground" />
+                  <div className="aspect-square flex flex-col items-center justify-center bg-muted/30 rounded-lg border-2 border-dashed border-border/50">
+                    <ShoppingBag className="h-16 w-16 text-muted-foreground/40 mb-3" />
+                    <p className="text-sm text-muted-foreground">Görsel bulunmuyor</p>
                   </div>
                 )}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* Security Info Cards */}
-            {!isOwner && listing.status === 'ACTIVE' && (
-              <div className="space-y-4">
-                {/* Güvenli Alışveriş */}
-                <div className="relative rounded-xl border border-green-500/30 bg-green-500/5 backdrop-blur-sm shadow-lg shadow-green-500/10 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent" />
-                  <div className="relative p-5">
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0">
-                        <div className="h-14 w-14 rounded-xl bg-green-500/20 flex items-center justify-center border border-green-500/30">
-                          <Shield className="h-7 w-7 text-green-500" />
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-base mb-2 text-green-50">Güvenli Ticaret</h3>
-                        <p className="text-sm text-green-100/80 leading-relaxed">
-                          Standoff 2 Topluluk platformunda tüm işlemler güvenli escrow sistemi ile korunur. Ödemeniz teslimat onayına kadar güvende tutulur. Satıcı ve alıcı arasındaki anlaşmazlıklarda moderatör ekibimiz devreye girer. Hesap, skin ve item alışverişlerinizde güvenliğiniz bizim önceliğimizdir.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Yardım */}
-                <div className="relative rounded-xl border border-blue-500/30 bg-blue-500/5 backdrop-blur-sm shadow-lg shadow-blue-500/10 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent" />
-                  <div className="relative p-5">
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0">
-                        <div className="h-14 w-14 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
-                          <Clock className="h-7 w-7 text-blue-500" />
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-base mb-2 text-blue-50">Yardıma mı ihtiyacınız var?</h3>
-                        <p className="text-sm text-blue-100/80 leading-relaxed mb-3">
-                          Buraya tıklayarak yardım merkezi sayfamıza ulaşabilirsiniz. Üyelerimiz tarafından sıkça sorulan sorular yardım merkezinde listelenmektedir.
-                        </p>
-                        <Link href="/support" className="inline-flex items-center gap-1.5 text-sm text-blue-300 hover:text-blue-200 font-medium transition-colors">
-                          <span>Yardım Merkezi</span>
-                          <ArrowLeft className="h-3.5 w-3.5 rotate-180" />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Product Description - Directly Under Image */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">İlan Açıklaması</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap break-words">
+                  {listing.description || 'Açıklama bulunmuyor.'}
+                </p>
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Right Column: Details */}
-          <div className="space-y-6">
-            {/* Header Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Badge
-                  variant={
-                    listing.status === 'ACTIVE'
-                      ? 'default'
-                      : listing.status === 'SOLD'
-                      ? 'secondary'
-                      : listing.status === 'REJECTED'
-                      ? 'destructive'
-                      : 'outline'
-                  }
-                  className="text-xs"
-                >
-                  {listing.status === 'ACTIVE' && 'Aktif'}
-                  {listing.status === 'SOLD' && 'Satıldı'}
-                  {listing.status === 'PENDING' && 'Onay Bekliyor'}
-                  {listing.status === 'REJECTED' && 'Reddedildi'}
-                </Badge>
-                {session?.user && typeof likeCount === 'number' && (
-                  <ListingLikeButton
-                    listingId={listing.id}
-                    initialLiked={!!userLike}
-                    initialCount={Math.max(0, likeCount || 0)}
-                  />
-                )}
-              </div>
+          {/* Right Column: Purchase Panel */}
+          <div>
+            <Card className="border border-border/50 bg-card/50 backdrop-blur-sm shadow-lg">
+              <CardContent className="p-5 md:p-6 space-y-5">
+                {/* Status + Favorite */}
+                <div className="flex items-center justify-between gap-3">
+                  <Badge
+                    variant={
+                      listing.status === 'ACTIVE'
+                        ? 'default'
+                        : listing.status === 'SOLD'
+                        ? 'secondary'
+                        : listing.status === 'REJECTED'
+                        ? 'destructive'
+                        : 'outline'
+                    }
+                    className="text-xs px-2.5 py-1"
+                  >
+                    {listing.status === 'ACTIVE' && 'Aktif'}
+                    {listing.status === 'SOLD' && 'Satıldı'}
+                    {listing.status === 'PENDING' && 'Onay Bekliyor'}
+                    {listing.status === 'REJECTED' && 'Reddedildi'}
+                  </Badge>
+                  {session?.user && typeof likeCount === 'number' && (
+                    <ListingLikeButton
+                      listingId={listing.id}
+                      initialLiked={!!userLike}
+                      initialCount={Math.max(0, likeCount || 0)}
+                    />
+                  )}
+                </div>
 
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold mb-4 gradient-text break-words leading-tight">
+                {/* Item Title */}
+                <h1 className="text-xl md:text-2xl font-bold break-words leading-tight">
                   {listing.title}
                 </h1>
-              </div>
 
-              {listing.status === 'REJECTED' && listing.rejectedReason && (
-                <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 backdrop-blur-sm">
-                  <p className="text-sm font-semibold text-destructive mb-1">Red Nedeni:</p>
-                  <p className="text-sm text-muted-foreground break-words">{listing.rejectedReason}</p>
+                {/* Price Block */}
+                <div className="py-4 border-y border-border/50">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl md:text-5xl font-extrabold text-primary leading-none">
+                      {listing.price.toLocaleString('tr-TR')}
+                    </span>
+                    <span className="text-xl font-bold text-primary/70">₺</span>
+                  </div>
                 </div>
-              )}
-            </div>
 
-            {/* Quick Description */}
-            <div className="rounded-xl border border-border/70 bg-background/60 backdrop-blur-sm shadow-lg p-5">
-              <p className="text-sm text-muted-foreground leading-relaxed break-words">
-                {listing.description.length > 200 ? `${listing.description.substring(0, 200)}...` : listing.description}
-              </p>
-            </div>
+                {listing.status === 'REJECTED' && listing.rejectedReason && (
+                  <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3">
+                    <p className="text-xs font-semibold text-destructive mb-1">Red Nedeni:</p>
+                    <p className="text-xs text-muted-foreground break-words">{listing.rejectedReason}</p>
+                  </div>
+                )}
 
-            {/* Action Buttons */}
-            {!isOwner && listing.status === 'ACTIVE' && !hasActiveOrder && session?.user && (
-              <div className="space-y-3">
-                <BuyButton listingId={listing.id} price={listing.price} />
-                <ReportButton targetType="LISTING" targetId={listing.id} variant="outline" className="w-full text-xs" />
-              </div>
-            )}
+                {/* Seller Box */}
+                <Card className="border-border/50">
+                  <CardContent className="p-4">
+                    <Link
+                      href={`/profile/${listing.seller.username}`}
+                      className="flex items-center gap-3 hover:text-primary transition-colors group"
+                    >
+                      <Avatar className="h-12 w-12 flex-shrink-0 ring-2 ring-border/50 group-hover:ring-primary/50 transition-all">
+                        <AvatarImage src={listing.seller.avatarUrl || ''} />
+                        <AvatarFallback className="text-base font-semibold">
+                          {listing.seller.username[0].toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-semibold text-base truncate">{listing.seller.username}</span>
+                          {listing.seller.isVerified && (
+                            <CheckCircle2 className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                          )}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {sellerStats} Başarılı İşlem
+                          {listing.seller.isVerified && (
+                            <span className="ml-2 text-emerald-500">• Onaylı</span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </CardContent>
+                </Card>
 
-            {isOwner && (
-              <div className="rounded-xl border border-primary/30 bg-primary/5 backdrop-blur-sm shadow-lg p-5">
-                <p className="text-sm text-muted-foreground mb-4 break-words">
-                  Bu ilan size ait
-                </p>
-                <div className="flex flex-col gap-2">
-                  {listing.status === 'ACTIVE' && (
-                    <MarkSoldButton listingId={listing.id} />
-                  )}
-                  <ListingActions listingId={listing.id} status={listing.status} />
-                </div>
-              </div>
-            )}
+                {/* Primary Action */}
+                {!isOwner && listing.status === 'ACTIVE' && !hasActiveOrder && session?.user && (
+                  <div className="space-y-2">
+                    <BuyButton listingId={listing.id} price={listing.price} />
+                    <ReportButton targetType="LISTING" targetId={listing.id} variant="outline" className="w-full text-xs" />
+                  </div>
+                )}
 
-            {!isOwner && listing.status === 'ACTIVE' && hasActiveOrder && isBuyer && (
-              <div className="space-y-3">
-                <Link href={`/marketplace/orders/${listing.orders[0].id}`}>
-                  <Button size="lg" className="w-full min-h-[44px]" variant="outline">
-                    Siparişi Görüntüle
-                  </Button>
-                </Link>
-                <ReportButton targetType="LISTING" targetId={listing.id} variant="outline" className="w-full text-xs" />
-              </div>
-            )}
-
-            {!isOwner && listing.status === 'SOLD' && !hasActiveOrder && (
-              <ReportButton targetType="LISTING" targetId={listing.id} variant="outline" className="w-full text-xs" />
-            )}
-
-            {/* Seller Info Card */}
-            <div className="rounded-xl border border-border/70 bg-background/60 backdrop-blur-sm shadow-lg overflow-hidden">
-              <div className="p-5 border-b border-border/50">
-                <h3 className="font-semibold text-base">Satıcı Bilgileri</h3>
-              </div>
-              <div className="p-5 space-y-4">
-                <Link
-                  href={`/profile/${listing.seller.username}`}
-                  className="flex items-center gap-4 hover:text-primary transition-colors group"
-                >
-                  <Avatar className="h-14 w-14 flex-shrink-0 ring-2 ring-border/50 group-hover:ring-primary/50 transition-all">
-                    <AvatarImage src={listing.seller.avatarUrl || ''} />
-                    <AvatarFallback className="text-base font-semibold">
-                      {listing.seller.username[0].toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-lg truncate">{listing.seller.username}</span>
-                      {listing.seller.isVerified && (
-                        <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
+                {isOwner && (
+                  <div className="p-4 rounded-lg border border-primary/20 bg-primary/5">
+                    <p className="text-xs font-medium text-muted-foreground mb-3">
+                      Bu ilan size ait
+                    </p>
+                    <div className="flex flex-col gap-2">
+                      {listing.status === 'ACTIVE' && (
+                        <MarkSoldButton listingId={listing.id} />
                       )}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
-                      <span>{formatRelativeTime(listing.createdAt)}</span>
+                      <ListingActions listingId={listing.id} status={listing.status} />
                     </div>
                   </div>
-                </Link>
-                
-                <div className="pt-4 border-t border-border/50 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Başarılı İşlem</span>
-                    <span className="text-base font-semibold">{sellerStats}</span>
-                  </div>
-                  {listing.seller.isVerified && (
-                    <div className="flex items-center gap-2 text-sm text-green-500">
-                      <CheckCircle2 className="h-4 w-4" />
-                      <span>Onaylı Satıcı</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+                )}
 
+                {!isOwner && listing.status === 'ACTIVE' && hasActiveOrder && isBuyer && (
+                  <div className="space-y-2">
+                    <Link href={`/marketplace/orders/${listing.orders[0].id}`}>
+                      <Button size="lg" className="w-full min-h-[48px]" variant="outline">
+                        Siparişi Görüntüle
+                      </Button>
+                    </Link>
+                    <ReportButton targetType="LISTING" targetId={listing.id} variant="outline" className="w-full text-xs" />
+                  </div>
+                )}
+
+                {!isOwner && listing.status === 'SOLD' && !hasActiveOrder && (
+                  <div className="space-y-2">
+                    <div className="p-3 rounded-lg border border-slate-500/30 bg-slate-500/10 text-center">
+                      <p className="text-xs font-semibold text-slate-300 mb-1">Bu ürün satıldı</p>
+                    </div>
+                    <ReportButton targetType="LISTING" targetId={listing.id} variant="outline" className="w-full text-xs" />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
 
-        {/* Bottom Tabs Section */}
+        {/* Bottom Tabs Section - Additional Info */}
         <div className="mt-8 md:mt-10">
           <ListingTabs
             description={listing.description}

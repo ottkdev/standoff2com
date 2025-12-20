@@ -220,5 +220,4 @@ export function BlogSearchFilters({ searchParams, categories }: BlogSearchFilter
 }
 
 export default BlogSearchFilters
-export { BlogSearchFilters }
 

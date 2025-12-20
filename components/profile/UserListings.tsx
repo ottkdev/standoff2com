@@ -110,5 +110,4 @@ async function UserListings({ userId }: UserListingsProps) {
 }
 
 export default UserListings
-export { UserListings }
 

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { CheckCircle2, ArrowLeft, Send } from 'lucide-react'
-import { RelativeTime } from '@/components/ui/RelativeTime'
+import RelativeTime from '@/components/ui/RelativeTime'
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 
@@ -179,5 +179,4 @@ function MessageView({ otherUser, messages: initialMessages, session: initialSes
 }
 
 export default MessageView
-export { MessageView }
 

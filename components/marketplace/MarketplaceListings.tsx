@@ -69,9 +69,9 @@ function MarketplaceListings({ listings, statusBadges }: MarketplaceListingsProp
         {mounted && <ViewToggle view={view} onViewChange={handleViewChange} />}
       </div>
 
-      {/* Grid View - Professional: 4-5 columns desktop, 2-3 tablet, 1 mobile */}
+      {/* Grid View - Premium: 4-5 columns desktop, 2-3 tablet, 1 mobile */}
       {displayView === 'grid' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-2.5 md:gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6">
           {listings.map((listing) => (
             <MarketplaceCard
               key={listing.id}
@@ -208,5 +208,4 @@ function ListCard({ listing, statusBadges }: { listing: Listing; statusBadges: R
 }
 
 export default MarketplaceListings
-export { MarketplaceListings }
 

@@ -81,5 +81,4 @@ export function BlogDeleteButton({ postId }: BlogDeleteButtonProps) {
 }
 
 export default BlogDeleteButton
-export { BlogDeleteButton }
 
